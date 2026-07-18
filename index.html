@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lịch Làm Việc</title>
+<meta name="description" content="Công cụ sắp xếp lịch làm việc nhân viên theo tuần — không cần cơ sở dữ liệu, lưu ngay trên trình duyệt.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗓️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===== Header ===== -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 8a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 12h24" stroke="currentColor" stroke-width="2.2"/><path d="M10 4v4M22 4v4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="11" cy="18" r="1.6" fill="currentColor"/><circle cx="16" cy="18" r="1.6" fill="currentColor"/><circle cx="21" cy="18" r="1.6" fill="currentColor"/></svg>
+      </span>
+      <div>
+        <h1>Lịch Làm Việc</h1>
+        <p class="brand-sub">Ca sáng · Ca chiều — sắp theo tuần, không trùng giờ</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" id="btn-employees" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Nhân viên
+      </button>
+      <button class="btn btn-ghost" id="btn-copy" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="2"/></svg>
+        Sao chép
+      </button>
+      <button class="btn btn-primary" id="btn-download" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Tải CSV
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Location tabs ===== -->
+  <nav class="loc-tabs" id="loc-tabs" aria-label="Chọn quán"></nav>
+  <!-- ===== Staff toggle (injected by JS) ===== -->
+  <div class="staff-toggle-bar" id="staff-toggle-container"></div>
+
+  <!-- ===== Legend / coverage key ===== -->
+  <div class="legend">
+    <div class="legend-group">
+      <span class="legend-title">05:00–12:00 · tối đa 3</span>
+      <span class="chip-dot lvl-a-0"></span><span>trống</span>
+      <span class="chip-dot lvl-a-1"></span><span>1 người</span>
+      <span class="chip-dot lvl-a-2"></span><span>2 người · cảnh báo</span>
+      <span class="chip-dot lvl-a-3"></span><span>3 người · đủ</span>
+    </div>
+    <div class="legend-group">
+      <span class="legend-title">Sau 12:00 · tối thiểu 2</span>
+      <span class="chip-dot lvl-b-0"></span><span>trống</span>
+      <span class="chip-dot lvl-b-1"></span><span>1 người · cảnh báo</span>
+      <span class="chip-dot lvl-b-2"></span><span>2 người · đủ</span>
+    </div>
+  </div>
+
+  <!-- ===== Schedule table ===== -->
+  <main class="table-wrap">
+    <div id="empty-state" class="empty-state" hidden>
+      <div class="empty-illustration" aria-hidden="true">🗓️</div>
+      <h2>Chưa có nhân viên nào ở quán này</h2>
+      <p>Thêm nhân viên để bắt đầu xếp ca làm việc theo tuần.</p>
+      <button class="btn btn-primary" id="btn-empty-add">Thêm nhân viên đầu tiên</button>
+    </div>
+    <table class="schedule" id="schedule-table" hidden>
+      <thead>
+        <tr class="row-head">
+          <th class="col-name">Tên NV</th>
+          <!-- day headers injected -->
+        </tr>
+        <tr class="row-strip">
+          <th class="col-name strip-label">Mức phủ ca</th>
+          <!-- coverage strips injected -->
+        </tr>
+      </thead>
+      <tbody id="schedule-body"></tbody>
+    </table>
+  </main>
+
+  <p class="footnote">Dữ liệu được lưu tự động trên trình duyệt này (không dùng máy chủ / cơ sở dữ liệu). Dùng “Sao chép” hoặc “Tải CSV” để lưu trữ hoặc chia sẻ với người khác.</p>
+</div>
+
+<!-- ===== Shift editor drawer ===== -->
+<div class="overlay" id="overlay" hidden></div>
+<aside class="drawer" id="shift-drawer" hidden aria-label="Chỉnh sửa ca làm việc">
+  <div class="drawer-head">
+    <div>
+      <p class="drawer-eyebrow" id="drawer-eyebrow">THỨ 2</p>
+      <h2 id="drawer-title">Tên nhân viên</h2>
+    </div>
+    <button class="icon-btn" id="drawer-close" aria-label="Đóng" type="button">✕</button>
+  </div>
+
+  <!-- Warning banner: full-width inside drawer body area -->
+  <p class="field-warning" id="shift-warning" hidden></p>
+
+  <div class="drawer-body">
+    <!-- Left column: current shifts -->
+    <div class="drawer-col drawer-col-narrow">
+      <h3 class="drawer-section-title">Ca hiện tại</h3>
+      <ul class="shift-list" id="shift-list"></ul>
+      <p class="hint-empty" id="shift-list-empty">Chưa có ca nào trong ngày này.</p>
+    </div>
+
+    <!-- Right column: add new shift -->
+    <div class="drawer-col">
+      <h3 class="drawer-section-title">Thêm ca mới</h3>
+      <div class="preset-row" id="preset-row"></div>
+      <div class="time-row" style="margin-bottom: 12px;">
+        <label class="time-field grow">
+          <span>Chọn nhân viên trực</span>
+          <select id="input-shift-emp" class="emp-select-input" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); font-size: 13.5px; font-family: inherit; background: #fff;"></select>
+        </label>
+      </div>
+      <div class="time-row">
+        <label class="time-field">
+          <span>Bắt đầu</span>
+          <input type="time" id="input-start" value="05:00" step="1800">
+        </label>
+        <label class="time-field">
+          <span>Kết thúc</span>
+          <input type="time" id="input-end" value="08:00" step="1800">
+        </label>
+        <button class="btn btn-secondary" id="btn-add-shift" type="button">Thêm ca</button>
+      </div>
+      <p class="field-error" id="shift-error" hidden></p>
+    </div>
+  </div>
+
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" id="btn-cancel-drawer" type="button">Huỷ</button>
+    <button class="btn btn-primary" id="btn-save-drawer" type="button">Lưu thay đổi</button>
+  </div>
+</aside>
+
+<!-- ===== Employee manager drawer ===== -->
+<aside class="drawer" id="employee-drawer" hidden aria-label="Quản lý nhân viên">
+  <div class="drawer-head">
+    <div>
+      <p class="drawer-eyebrow" id="emp-drawer-eyebrow">QUÁN 5</p>
+      <h2>Nhân viên</h2>
+    </div>
+    <button class="icon-btn" id="emp-drawer-close" aria-label="Đóng" type="button">✕</button>
+  </div>
+  <div class="drawer-body">
+    <ul class="employee-list" id="employee-list"></ul>
+    <h3 class="drawer-section-title">Thêm nhân viên</h3>
+    <div class="time-row">
+      <label class="time-field grow">
+        <span>Tên nhân viên</span>
+        <input type="text" id="input-new-emp" placeholder="Ví dụ: Lan Anh" maxlength="40">
+      </label>
+      <button class="btn btn-secondary" id="btn-add-emp" type="button">Thêm</button>
+    </div>
+    <p class="field-hint">Mã nhân viên được cấp tự động (VD: NV01, NV02…).</p>
+  </div>
+</aside>
+
+<!-- ===== Confirm modal ===== -->
+<div class="modal-overlay" id="confirm-overlay" hidden>
+  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <h3 id="confirm-title">Xác nhận lưu thay đổi</h3>
+    <p id="confirm-message">Bạn có chắc muốn lưu thay đổi này không?</p>
+    <div class="modal-warning" id="confirm-warning" hidden></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirm-cancel" type="button">Huỷ</button>
+      <button class="btn btn-primary" id="confirm-ok" type="button">Xác nhận & Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div class="toast" id="toast" hidden></div>
+
+<!-- Add-location control, placed via JS into loc-tabs -->
+<script src="app.js"></script>
+</body>
+</html>
