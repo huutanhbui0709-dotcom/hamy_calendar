@@ -127,7 +127,7 @@ function loadData() {
   } catch (e) {}
 
   // Luôn nạp dữ liệu mới nhất từ server (đồng bộ tất cả thiết bị)
-  fetch('/data/admin_schedule.json')
+  fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
     .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
     .then(data => {
       if (data && data.locations && data.locations.length) {

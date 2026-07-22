@@ -468,7 +468,7 @@
       }
 
       // Luôn luôn lấy bản cập nhật mới nhất từ server
-      fetch('/data/published_schedule.json')
+      fetch('/data/published_schedule.json?t=' + Date.now(), { cache: 'no-store' })
         .then(function (res) { return res.json(); })
         .then(function (data) {
           if (data && (data.locations || data.publishedAt)) {
@@ -614,7 +614,7 @@
       } catch (e) { return { locations: [] }; }
     })();
     // Nạp sysData mới nhất từ server
-    fetch('/data/admin_schedule.json')
+    fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data && data.locations) {
@@ -638,7 +638,7 @@
       }).catch(function (e) { console.warn('Không lưu registrations:', e); });
     };
     // Nạp regData mới nhất từ server
-    fetch('/data/employee_registrations.json')
+    fetch('/data/employee_registrations.json?t=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (Array.isArray(data)) {
@@ -888,17 +888,19 @@
         btnSave.textContent = 'Đang lưu...';
         btnSave.disabled = true;
 
-        fetch('/data/admin_schedule.json', {
+        fetch('/api/employee/save-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(sysData)
-        }).then(function() {
+          body: JSON.stringify({ empCode: empCode, email: email })
+        }).then(function(res) {
+          if (!res.ok) throw new Error('Save failed');
+          // Cập nhật local memory copy để hiển thị ngay
           rebuildEmailMap();
           showEmailSection(empCode);
           showToast('Đã lưu email và đồng bộ vào hệ thống!');
         }).catch(function(e) {
           console.error(e);
-          showToast('Lỗi khi lưu email.', 'error');
+          showToast('Lỗi khi lưu email. Vui lòng thử lại.', 'error');
         }).finally(function() {
           btnSave.textContent = oldText;
           btnSave.disabled = false;

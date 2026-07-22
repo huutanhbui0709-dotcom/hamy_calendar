@@ -283,6 +283,45 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+  }
+
+  // ─── API: Lưu email nhân viên từ trang đăng ký ─────────────────────────
+  if (pathname === '/api/employee/save-email') {
+    if (req.method === 'POST') {
+      const { empCode, email } = await readBody(req);
+      if (!empCode || !email) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Thiếu thông tin' }));
+        return;
+      }
+      const dataPath = path.join(__dirname, 'admin_schedule.json');
+      let sysData = { locations: [] };
+      if (fs.existsSync(dataPath)) {
+        sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      }
+      let updated = false;
+      if (sysData && sysData.locations) {
+        sysData.locations.forEach(loc => {
+          if (loc.employees) {
+            loc.employees.forEach(emp => {
+              if (emp.code === empCode) {
+                emp.email = email.trim();
+                updated = true;
+              }
+            });
+          }
+        });
+      }
+      if (!updated) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Không tìm thấy nhân viên' }));
+        return;
+      }
+      fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true }));
+      return;
+    }
     res.writeHead(405); res.end('Method Not Allowed');
     return;
   }
