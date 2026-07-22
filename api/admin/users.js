@@ -1,5 +1,5 @@
 import { put, list } from '@vercel/blob';
-import bcrypt from 'bcryptjs';
+import { genSalt, hash } from 'bcryptjs';
 import { jwtVerify } from 'jose';
 
 const BLOB_PREFIX = 'cfhm/';
@@ -92,8 +92,8 @@ export default async function handler(req, res) {
         return;
       }
 
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(password, salt);
+      const salt = await genSalt(10);
+      const passwordHash = await hash(password, salt);
       const newAdmin = {
         id: 'admin-' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
         username,
@@ -126,8 +126,8 @@ export default async function handler(req, res) {
         return;
       }
 
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(newPassword, salt);
+      const salt = await genSalt(10);
+      const passwordHash = await hash(newPassword, salt);
       users[userIndex].passwordHash = passwordHash;
 
       await saveAdminUsers(users);

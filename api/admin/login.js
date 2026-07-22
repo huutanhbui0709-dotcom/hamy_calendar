@@ -1,5 +1,5 @@
 import { put, list } from '@vercel/blob';
-import bcrypt from 'bcryptjs';
+import { genSalt, hash, compare } from 'bcryptjs';
 import { SignJWT } from 'jose';
 
 const BLOB_PREFIX = 'cfhm/';
@@ -48,8 +48,8 @@ export default async function handler(req, res) {
       const users = await getAdminUsers();
       if (users.length === 0) {
         // Tạo tài khoản admin mặc định: admin / admin123
-        const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash('admin123', salt);
+        const salt = await genSalt(10);
+        const passwordHash = await hash('admin123', salt);
         const rootAdmin = {
           id: 'root-admin-id',
           username: 'admin',
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
         return;
       }
 
-      const isMatch = await bcrypt.compare(password, user.passwordHash);
+      const isMatch = await compare(password, user.passwordHash);
       if (!isMatch) {
         res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu không chính xác.' });
         return;
