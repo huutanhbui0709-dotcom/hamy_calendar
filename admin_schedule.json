@@ -9,22 +9,26 @@
         {
           "id": "emp-101",
           "code": "TANH",
-          "name": "Tánh"
+          "name": "Tánh",
+          "email": "buitanh243@gmail.com"
         },
         {
           "id": "emp-102",
           "code": "AIVY",
-          "name": "Ái Vy"
+          "name": "Ái Vy",
+          "email": "aivy@gmail.com"
         },
         {
           "id": "emp-103",
           "code": "HAVY",
-          "name": "Hà Vy"
+          "name": "Hà Vy",
+          "email": "havy@gmail.com"
         },
         {
           "id": "emp-104",
           "code": "MUOI",
-          "name": "Muội"
+          "name": "Muội",
+          "email": "muoi@gmail.com"
         },
         {
           "id": "emp-105",
@@ -181,12 +185,14 @@
         {
           "id": "emp-202",
           "code": "CHI",
-          "name": "Chi"
+          "name": "Chi",
+          "email": "chi@gmail.com"
         },
         {
           "id": "emp-203",
           "code": "HAVY",
-          "name": "Hà Vy"
+          "name": "Hà Vy",
+          "email": "havy@gmail.com"
         },
         {
           "id": "emp-204",
@@ -217,6 +223,12 @@
           "id": "emp-209",
           "code": "HUONG",
           "name": "Hương"
+        },
+        {
+          "id": "7f1o8rono36",
+          "code": "AIVY",
+          "name": "Ái vy",
+          "email": "aivy@gmail.com"
         }
       ],
       "schedule": {
@@ -229,7 +241,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         },
         "T3": {
           "emp-201": [],
@@ -240,7 +253,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         },
         "T4": {
           "emp-201": [],
@@ -251,7 +265,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         },
         "T5": {
           "emp-201": [],
@@ -262,7 +277,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         },
         "T6": {
           "emp-201": [],
@@ -273,7 +289,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         },
         "T7": {
           "emp-201": [],
@@ -284,7 +301,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         },
         "CN": {
           "emp-201": [],
@@ -295,7 +313,8 @@
           "emp-206": [],
           "emp-207": [],
           "emp-208": [],
-          "emp-209": []
+          "emp-209": [],
+          "7f1o8rono36": []
         }
       }
     }

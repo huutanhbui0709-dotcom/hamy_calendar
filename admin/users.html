@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý tài khoản Admin | CFHM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["'Be Vietnam Pro'", 'Inter', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#E3F2ED', 100: '#C7E5DB', 400: '#3BAF8E', 500: '#0E7C66', 600: '#0A6655', 700: '#08463A' },
+            accent: { 50: '#E7E9F7', 100: '#CFD3F0', 400: '#6477D0', 500: '#3A4DB0', 600: '#2E3E99', 700: '#232F70' },
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Be Vietnam Pro', 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50/50 min-h-screen text-gray-800">
+  <div class="max-w-5xl mx-auto p-4 md:p-8 space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-gray-200">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2 text-brand-600 font-semibold text-sm">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Hệ thống Bảo mật</span>
+        </div>
+        <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Quản lý Tài khoản Admin</h1>
+        <p class="text-sm text-gray-500 font-medium">Thêm, xóa tài khoản quản trị viên và thay đổi mật khẩu.</p>
+      </div>
+      <div>
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-bold text-sm transition-all shadow-sm">
+          <i class="fa-solid fa-arrow-left-long"></i>
+          <span>Quay lại Dashboard</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Danh sách Admin -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 space-y-4 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-900">Danh sách Admin</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-400">
+                <th class="py-3 px-4">Tên đăng nhập</th>
+                <th class="py-3 px-4">Vai trò</th>
+                <th class="py-3 px-4 text-right">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body" class="divide-y divide-gray-50 text-sm">
+              <!-- Dữ liệu render từ JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Form Thêm Admin mới -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 space-y-5 shadow-sm h-fit">
+        <div class="space-y-1">
+          <h2 class="text-lg font-bold text-gray-900">Thêm Admin mới</h2>
+          <p class="text-xs text-gray-400">Tạo tài khoản quản trị mới để đồng quản lý.</p>
+        </div>
+
+        <form id="add-admin-form" class="space-y-4">
+          <div id="add-error" class="hidden flex items-center gap-2 p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl font-medium">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="add-error-text"></span>
+          </div>
+
+          <div class="space-y-1">
+            <label for="new-username" class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Tên đăng nhập</label>
+            <input type="text" id="new-username" required
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold transition-all bg-gray-50/50 focus:bg-white"
+              placeholder="Ví dụ: admin_phu">
+          </div>
+
+          <div class="space-y-1">
+            <label for="new-password" class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Mật khẩu</label>
+            <input type="password" id="new-password" required
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold transition-all bg-gray-50/50 focus:bg-white"
+              placeholder="Tối thiểu 6 ký tự">
+          </div>
+
+          <button type="submit" id="btn-add"
+            class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm">
+            <i class="fa-solid fa-plus mr-1"></i> Thêm tài khoản
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Đổi Mật Khẩu -->
+  <div id="password-modal" class="hidden fixed inset-0 z-50 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <h3 class="font-extrabold text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-key text-brand-600"></i>
+          <span>Đổi mật khẩu cho: <span id="modal-target-user" class="text-brand-600"></span></span>
+        </h3>
+        <button id="modal-close" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+      </div>
+
+      <form id="change-password-form" class="space-y-4">
+        <input type="hidden" id="modal-user-id">
+        <div id="change-error" class="hidden flex items-center gap-2 p-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl font-medium">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span id="change-error-text"></span>
+        </div>
+
+        <div class="space-y-1">
+          <label for="modal-new-password" class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Mật khẩu mới</label>
+          <input type="password" id="modal-new-password" required
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold transition-all bg-gray-50/50 focus:bg-white"
+            placeholder="Nhập mật khẩu mới...">
+        </div>
+
+        <button type="submit" id="btn-save-password"
+          class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm">
+          Lưu thay đổi
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentAdmin = {};
+    let adminsList = [];
+
+    // Load danh sách Admin
+    async function loadAdmins() {
+      try {
+        const res = await fetch('/api/admin/users');
+        if (res.status === 401) {
+          // Bị chặn vì chưa đăng nhập -> Chuyển về login
+          window.location.href = '/admin/login';
+          return;
+        }
+        const data = await res.json();
+        currentAdmin = data.currentUser || {};
+        adminsList = data.users || [];
+        
+        renderAdmins();
+      } catch (err) {
+        console.error(err);
+        alert('Lỗi tải danh sách Admin.');
+      }
+    }
+
+    // Render danh sách lên giao diện
+    function renderAdmins() {
+      const tbody = document.getElementById('users-table-body');
+      tbody.innerHTML = '';
+
+      if (adminsList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="py-8 text-center text-gray-400 italic font-medium">Chưa có quản trị viên nào.</td></tr>`;
+        return;
+      }
+
+      adminsList.forEach(admin => {
+        const isSelf = admin.id === currentAdmin.id;
+        const selfTag = isSelf ? ' <span class="text-xs bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full font-bold">Bạn</span>' : '';
+        
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50/50 transition-colors';
+        tr.innerHTML = `
+          <td class="py-4 px-4 font-semibold text-gray-800">${admin.username}${selfTag}</td>
+          <td class="py-4 px-4"><span class="capitalize px-2.5 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600">${admin.role}</span></td>
+          <td class="py-4 px-4 text-right space-x-2">
+            <button onclick="openPasswordModal('${admin.id}', '${admin.username}')" class="text-xs font-bold text-brand-600 hover:text-brand-800 transition-colors inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-brand-50">
+              <i class="fa-solid fa-key"></i> Đổi mật khẩu
+            </button>
+            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" ${isSelf ? 'disabled' : ''} class="text-xs font-bold text-red-600 hover:text-red-800 disabled:opacity-30 disabled:pointer-events-none transition-colors inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-red-50">
+              <i class="fa-solid fa-trash"></i> Xóa
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Thêm Admin
+    document.getElementById('add-admin-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('add-error');
+      const errTxt = document.getElementById('add-error-text');
+      const btn = document.getElementById('btn-add');
+      
+      errEl.classList.add('hidden');
+      const username = document.getElementById('new-username').value.trim();
+      const password = document.getElementById('new-password').value;
+
+      if (password.length < 6) {
+        errTxt.textContent = 'Mật khẩu phải tối thiểu 6 ký tự.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang thêm...`;
+
+      try {
+        const res = await fetch('/api/admin/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        
+        if (!res.ok) throw new Error(data.error || 'Lỗi thêm Admin.');
+        
+        document.getElementById('new-username').value = '';
+        document.getElementById('new-password').value = '';
+        
+        alert('Đã tạo tài khoản quản trị mới thành công!');
+        loadAdmins();
+      } catch (err) {
+        errTxt.textContent = err.message;
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Thêm tài khoản`;
+      }
+    });
+
+    // Đổi mật khẩu
+    function openPasswordModal(id, username) {
+      document.getElementById('modal-user-id').value = id;
+      document.getElementById('modal-target-user').textContent = username;
+      document.getElementById('modal-new-password').value = '';
+      document.getElementById('change-error').classList.add('hidden');
+      document.getElementById('password-modal').classList.remove('hidden');
+    }
+
+    document.getElementById('modal-close').onclick = function() {
+      document.getElementById('password-modal').classList.add('hidden');
+    };
+
+    document.getElementById('change-password-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('change-error');
+      const errTxt = document.getElementById('change-error-text');
+      const btn = document.getElementById('btn-save-password');
+
+      errEl.classList.add('hidden');
+      const userId = document.getElementById('modal-user-id').value;
+      const newPassword = document.getElementById('modal-new-password').value;
+
+      if (newPassword.length < 6) {
+        errTxt.textContent = 'Mật khẩu phải tối thiểu 6 ký tự.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang lưu...`;
+
+      try {
+        const res = await fetch('/api/admin/users', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Lỗi đổi mật khẩu.');
+
+        alert('Đã đổi mật khẩu thành công!');
+        document.getElementById('password-modal').classList.add('hidden');
+      } catch (err) {
+        errTxt.textContent = err.message;
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Lưu thay đổi';
+      }
+    });
+
+    // Xóa Admin
+    async function deleteAdmin(id, username) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa tài khoản Admin: "${username}"?`)) return;
+
+      try {
+        const res = await fetch('/api/admin/users', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: id })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Lỗi xóa Admin.');
+
+        alert('Đã xóa thành công!');
+        loadAdmins();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // Khởi chạy khi load trang
+    loadAdmins();
+  </script>
+</body>
+</html>

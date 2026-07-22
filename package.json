@@ -8,6 +8,8 @@
     "vercel-dev": "vercel dev"
   },
   "dependencies": {
-    "@vercel/blob": "^0.27.3"
+    "@vercel/blob": "^0.27.3",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.4"
   }
 }

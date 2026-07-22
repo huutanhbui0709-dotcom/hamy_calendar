@@ -1,0 +1,20 @@
+[
+  {
+    "id": "admin-dvbmaddmrvk9rf6",
+    "username": "huutanh",
+    "passwordHash": "$2b$10$B7FGrwvnB7SspKDcIPMOtOt7FwmLimVlV2wxaUs5guhBBMfItGrX.",
+    "role": "admin"
+  },
+  {
+    "id": "admin-2gv2i8bmrvka04o",
+    "username": "hamy",
+    "passwordHash": "$2b$10$Wqcpt1r0U6TLph8w9TPr6eElu8D6rLHbENZXIBP4.88Te/D4yJhlm",
+    "role": "admin"
+  },
+  {
+    "id": "admin-5y0wcsomrvkchtr",
+    "username": "tieumi",
+    "passwordHash": "$2b$10$O1Hs2wr93JMNzF9nO0eF8..aIw/S9ygUB0axN6Amukfidq9oENIpG",
+    "role": "admin"
+  }
+]

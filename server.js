@@ -1,6 +1,6 @@
 /* =========================================================================
-   CFHM Calendar — File-based Server
-   Cho phép đọc/ghi JSON files từ browser, đảm bảo mọi thiết bị thấy data giống nhau
+   CFHM Calendar — File-based Server (with Authentication & CRUD)
+   Cho phép đọc/ghi JSON files từ browser, có bảo mật và quản lý Admin.
    Chạy: node server.js
    ========================================================================= */
 
@@ -9,9 +9,14 @@ const fs   = require('fs');
 const path = require('path');
 const url  = require('url');
 const os   = require('os');
+const bcrypt = require('bcryptjs');
+const jose = require('jose');
 
 const PORT = 3000;
 const ROOT = __dirname;
+
+const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
+const SECRET_KEY = new TextEncoder().encode(JWT_SECRET);
 
 // Chỉ cho phép đọc/ghi các file này
 const DATA_FILES = new Set([
@@ -42,16 +47,214 @@ function getLocalIP() {
   return 'localhost';
 }
 
-const server = http.createServer((req, res) => {
-  // CORS headers (cho phép truy cập từ mạng nội bộ)
+// Đọc danh sách Admin local
+function getLocalAdminUsers() {
+  const filePath = path.join(ROOT, 'admin_users.json');
+  try {
+    if (!fs.existsSync(filePath)) {
+      // Tự khởi tạo admin/admin123 nếu file chưa tồn tại
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync('admin123', salt);
+      const defaultUsers = [{
+        id: 'root-admin-id',
+        username: 'admin',
+        passwordHash: hash,
+        role: 'admin'
+      }];
+      fs.writeFileSync(filePath, JSON.stringify(defaultUsers, null, 2), 'utf8');
+      return defaultUsers;
+    }
+    const content = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(content);
+  } catch (e) {
+    console.error('Lỗi đọc local admin users:', e);
+    return [];
+  }
+}
+
+// Ghi danh sách Admin local
+function saveLocalAdminUsers(users) {
+  const filePath = path.join(ROOT, 'admin_users.json');
+  fs.writeFileSync(filePath, JSON.stringify(users, null, 2), 'utf8');
+}
+
+// Đọc body của request
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk.toString(); });
+    req.on('end', () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch (e) {
+        resolve({});
+      }
+    });
+  });
+}
+
+// Xác thực cookie token local
+async function checkAdminAuthLocal(req) {
+  try {
+    const cookieHeader = req.headers.cookie || '';
+    const tokenCookie = cookieHeader.split(';').find(c => c.trim().startsWith('admin_token='));
+    if (!tokenCookie) return null;
+    const token = tokenCookie.split('=')[1];
+    const { payload } = await jose.jwtVerify(token, SECRET_KEY);
+    return payload;
+  } catch (err) {
+    return null;
+  }
+}
+
+const server = http.createServer(async (req, res) => {
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
   const parsed   = url.parse(req.url);
   let   pathname = decodeURIComponent(parsed.pathname);
+
+  // ─── API: Đăng nhập Admin ────────────────────────────────────────────────
+  if (pathname === '/api/admin/login') {
+    if (req.method === 'GET') {
+      // Hỗ trợ khởi tạo
+      const users = getLocalAdminUsers();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, message: 'Hệ thống đã khởi tạo mặc định tài khoản admin/admin123' }));
+      return;
+    }
+    if (req.method === 'POST') {
+      const { username, password } = await readBody(req);
+      if (!username || !password) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Thiếu username hoặc password' }));
+        return;
+      }
+      const users = getLocalAdminUsers();
+      const user = users.find(u => u.username === username);
+      if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Username hoặc Password không đúng.' }));
+        return;
+      }
+      // Tạo token JWT
+      const token = await new jose.SignJWT({ id: user.id, username: user.username, role: user.role })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('2h')
+        .sign(SECRET_KEY);
+
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Set-Cookie': `admin_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=7200`
+      });
+      res.end(JSON.stringify({ ok: true, message: 'Đăng nhập thành công' }));
+      return;
+    }
+    res.writeHead(405); res.end('Method Not Allowed');
+    return;
+  }
+
+  // ─── API: Quản lý tài khoản Admin (CRUD) ──────────────────────────────
+  if (pathname === '/api/admin/users') {
+    const currentUser = await checkAdminAuthLocal(req);
+    if (!currentUser) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Vui lòng đăng nhập Admin.' }));
+      return;
+    }
+
+    const users = getLocalAdminUsers();
+
+    if (req.method === 'GET') {
+      const safeUsers = users.map(u => ({ id: u.id, username: u.username, role: u.role }));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        currentUser: { id: currentUser.id, username: currentUser.username },
+        users: safeUsers
+      }));
+      return;
+    }
+
+    if (req.method === 'POST') {
+      const { username, password } = await readBody(req);
+      if (!username || !password) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Thiếu thông tin' }));
+        return;
+      }
+      if (users.some(u => u.username === username)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Tên đăng nhập đã tồn tại' }));
+        return;
+      }
+      const salt = bcrypt.genSaltSync(10);
+      const passwordHash = bcrypt.hashSync(password, salt);
+      const newAdmin = {
+        id: 'admin-' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+        username,
+        passwordHash,
+        role: 'admin'
+      };
+      users.push(newAdmin);
+      saveLocalAdminUsers(users);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    if (req.method === 'PUT') {
+      const { userId, newPassword } = await readBody(req);
+      if (!userId || !newPassword) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Thiếu thông tin' }));
+        return;
+      }
+      const userIndex = users.findIndex(u => u.id === userId);
+      if (userIndex === -1) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Không tìm thấy user' }));
+        return;
+      }
+      const salt = bcrypt.genSaltSync(10);
+      users[userIndex].passwordHash = bcrypt.hashSync(newPassword, salt);
+      saveLocalAdminUsers(users);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    if (req.method === 'DELETE') {
+      const { userId } = await readBody(req);
+      if (!userId) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Thiếu userId' }));
+        return;
+      }
+      if (userId === currentUser.id) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Không thể tự xóa chính mình.' }));
+        return;
+      }
+      const userIndex = users.findIndex(u => u.id === userId);
+      if (userIndex === -1) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Không tìm thấy user' }));
+        return;
+      }
+      users.splice(userIndex, 1);
+      saveLocalAdminUsers(users);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    res.writeHead(405); res.end('Method Not Allowed');
+    return;
+  }
 
   // ─── API: đọc/ghi data files ────────────────────────────────────────────
   if (pathname.startsWith('/data/')) {
@@ -65,7 +268,7 @@ const server = http.createServer((req, res) => {
 
     const filePath = path.join(ROOT, fileName);
 
-    // GET /data/:file — đọc file
+    // GET /data/:file — đọc file (công khai)
     if (req.method === 'GET') {
       try {
         const content = fs.readFileSync(filePath, 'utf8');
@@ -78,8 +281,17 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    // POST /data/:file — ghi file
+    // POST /data/:file — ghi file (Bảo vệ trừ employee_registrations)
     if (req.method === 'POST') {
+      if (fileName !== 'employee_registrations.json') {
+        const currentUser = await checkAdminAuthLocal(req);
+        if (!currentUser) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Unauthorized: Cần đăng nhập Admin để ghi dữ liệu.' }));
+          return;
+        }
+      }
+
       let body = '';
       req.on('data', chunk => { body += chunk.toString(); });
       req.on('end', () => {
@@ -101,10 +313,27 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // ─── Static files ────────────────────────────────────────────────────────
-  // URL rewriting cho clean URLs
+  // ─── Routing & Route Protection ──────────────────────────────────────────
+  // Hỗ trợ Clean URLs
   if (pathname === '/' || pathname === '/index') pathname = '/index.html';
   if (pathname === '/schedule') pathname = '/schedule.html';
+  if (pathname === '/admin/login') pathname = '/admin/login.html';
+  if (pathname === '/admin/users') pathname = '/admin/users.html';
+
+  // Bảo vệ route phía Server (Mô phỏng Edge Middleware)
+  const isProtectedPath = 
+    pathname === '/index.html' || 
+    (pathname.startsWith('/admin/') && pathname !== '/admin/login.html');
+
+  if (isProtectedPath) {
+    const currentUser = await checkAdminAuthLocal(req);
+    if (!currentUser) {
+      // Chuyển hướng sang trang đăng nhập
+      res.writeHead(302, { 'Location': '/admin/login' });
+      res.end();
+      return;
+    }
+  }
 
   const filePath = path.join(ROOT, pathname);
 
@@ -117,10 +346,8 @@ const server = http.createServer((req, res) => {
   try {
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
-      const indexFile = path.join(filePath, 'index.html');
-      const content = fs.readFileSync(indexFile);
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(content);
+      res.writeHead(302, { 'Location': pathname + '/index.html' });
+      res.end();
       return;
     }
 
@@ -137,14 +364,15 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   const ip = getLocalIP();
+  // Khởi tạo sẵn tài khoản Admin local
+  getLocalAdminUsers();
   console.log('\n  ╔══════════════════════════════════════════════╗');
   console.log('  ║   🌿  CFHM — Lịch Làm Việc Server           ║');
   console.log('  ╠══════════════════════════════════════════════╣');
   console.log(`  ║   Local:    http://localhost:${PORT}             ║`);
   console.log(`  ║   Network:  http://${ip}:${PORT}         ║`);
   console.log('  ╠══════════════════════════════════════════════╣');
-  console.log('  ║   Tất cả thiết bị cùng WiFi đều truy cập được ║');
-  console.log('  ║   Data lưu vào file JSON, không mất khi đổi   ║');
-  console.log('  ║   trình duyệt hay thiết bị.                    ║');
+  console.log('  ║   Tài khoản Admin test local mặc định:       ║');
+  console.log('  ║   User: admin  /  Pass: admin123             ║');
   console.log('  ╚══════════════════════════════════════════════╝\n');
 });

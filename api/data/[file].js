@@ -7,6 +7,23 @@
  */
 
 import { put, list } from '@vercel/blob';
+import { jwtVerify } from 'jose';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
+
+async function checkAdminAuth(req) {
+  try {
+    const cookies = req.headers.cookie || '';
+    const tokenCookie = cookies.split(';').find(c => c.trim().startsWith('admin_token='));
+    if (!tokenCookie) return false;
+    const token = tokenCookie.split('=')[1];
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    await jwtVerify(token, secret);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
 /* ─── Danh sách file được phép đọc/ghi ─────────────────────────────────── */
 const ALLOWED_FILES = new Set([
@@ -86,6 +103,15 @@ export default async function handler(req, res) {
   /* ── POST: Ghi đè lên Blob ──────────────────────────────────────────── */
   if (req.method === 'POST') {
     try {
+      // Bảo vệ các file cấu hình admin và lịch đã xuất bản
+      if (fileName !== 'employee_registrations.json') {
+        const isAuthorized = await checkAdminAuth(req);
+        if (!isAuthorized) {
+          res.status(401).json({ error: 'Unauthorized: Bạn cần đăng nhập quyền Admin.' });
+          return;
+        }
+      }
+
       // Đọc body — Vercel tự parse JSON nếu Content-Type: application/json
       const body = req.body;
       if (body === undefined || body === null) {

@@ -86,9 +86,9 @@ function nameToCode(name) {
   return str;
 }
 
-function addEmployeeToLocation(loc, name, ensureShape = true) {
+function addEmployeeToLocation(loc, name, ensureShape = true, email = '') {
   const code = nameToCode(name);
-  const emp = { id: uid(), code, name: name.trim() };
+  const emp = { id: uid(), code, name: name.trim(), email: (email || '').trim() };
   loc.employees.push(emp);
   if (ensureShape) ensureScheduleShape(loc);
   return emp;
@@ -856,17 +856,19 @@ function renderEmployeeList() {
   }
   loc.employees.forEach(emp => {
     const li = document.createElement('li');
+    const displayEmail = emp.email ? escapeHtml(emp.email) : '<span style="color:#94a3b8; font-style:italic;">(Chưa có email)</span>';
     li.innerHTML = `
       <div class="emp-info">
         <span class="emp-avatar">${initials(emp.name)}</span>
-        <div class="emp-name-wrap">
-          <span class="emp-name">${escapeHtml(emp.name)}</span>
-          <span class="emp-code">${emp.code}</span>
+        <div class="emp-name-wrap" style="display: flex; flex-direction: column;">
+          <span class="emp-name" style="font-weight: 700;">${escapeHtml(emp.name)}</span>
+          <span class="emp-code" style="font-size: 11px; color: #64748b;">Mã: ${emp.code}</span>
+          <span class="emp-email" style="font-size: 11.5px; color: #0e7c66; margin-top: 2px;">${displayEmail}</span>
         </div>
       </div>
       <div class="emp-actions">
-        <button class="emp-btn" data-action="rename" title="Đổi tên nhân viên">✏️</button>
-        <button class="emp-btn danger" data-action="delete" title="Xoá nhân viên">🗑️</button>
+        <button class="emp-btn" data-action="rename" title="Sửa thông tin"><i class="fa-solid fa-pen" style="font-size: 13px; color: #64748b;"></i></button>
+        <button class="emp-btn danger" data-action="delete" title="Xoá nhân viên"><i class="fa-solid fa-trash" style="font-size: 13px;"></i></button>
       </div>`;
     $('[data-action="rename"]', li).addEventListener('click', () => startRenameEmployee(li, loc, emp));
     $('[data-action="delete"]', li).addEventListener('click', () => {
@@ -891,23 +893,34 @@ function renderEmployeeList() {
 
 function startRenameEmployee(li, loc, emp) {
   const wrap = $('.emp-name-wrap', li);
-  const original = emp.name;
-  wrap.innerHTML = `<input type="text" class="emp-name-input" value="${escapeHtml(original)}" maxlength="40"><span class="emp-code">${emp.code}</span>`;
-  const input = $('input', wrap);
-  input.focus();
-  input.select();
+  const originalName = emp.name;
+  const originalEmail = emp.email || '';
+  
+  wrap.innerHTML = `
+    <input type="text" class="emp-name-input" placeholder="Tên" value="${escapeHtml(originalName)}" maxlength="40" style="margin-bottom:4px; font-weight:700;">
+    <input type="email" class="emp-email-input" placeholder="Email (Tùy chọn)" value="${escapeHtml(originalEmail)}" maxlength="60" style="font-size:12px; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius:4px;">
+    <span class="emp-code" style="font-size:11px; color:#64748b; margin-top:4px;">Mã: ${emp.code}</span>
+  `;
+  
+  const nameInput = $('.emp-name-input', wrap);
+  const emailInput = $('.emp-email-input', wrap);
+  nameInput.focus();
+  
   let settled = false;
   const commit = () => {
     if (settled) return;
     settled = true;
-    const name = input.value.trim();
-    if (name && name !== original) {
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    
+    if (name && (name !== originalName || email !== originalEmail)) {
       showConfirm({
-        title: 'Xác nhận đổi tên',
-        message: `Đổi tên "${original}" thành "${name}"?`,
+        title: 'Xác nhận thay đổi',
+        message: `Cập nhật thông tin nhân viên?`,
         onConfirm: () => { 
           emp.name = name; 
-          emp.code = nameToCode(name); // Cập nhật lại mã nhân viên theo tên mới
+          emp.email = email;
+          emp.code = nameToCode(name);
           saveData(); 
           renderEmployeeList(); 
           renderTable(); 
@@ -918,21 +931,45 @@ function startRenameEmployee(li, loc, emp) {
       renderEmployeeList();
     }
   };
-  input.addEventListener('keydown', e => {
+
+  // Click outside or Blur logic needs to wait for either input
+  let blurTimeout;
+  const setupBlur = (el) => {
+    el.addEventListener('blur', () => {
+      clearTimeout(blurTimeout);
+      blurTimeout = setTimeout(() => {
+        // Chỉ commit khi không có input nào đang focus
+        if (document.activeElement !== nameInput && document.activeElement !== emailInput) {
+          commit();
+        }
+      }, 200);
+    });
+  };
+
+  nameInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') commit();
     if (e.key === 'Escape') { settled = true; renderEmployeeList(); }
   });
-  input.addEventListener('blur', () => setTimeout(commit, 120));
+  emailInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') commit();
+    if (e.key === 'Escape') { settled = true; renderEmployeeList(); }
+  });
+
+  setupBlur(nameInput);
+  setupBlur(emailInput);
 }
 
 function handleAddEmployee() {
   const input = $('#input-new-emp');
+  const inputEmail = $('#input-new-emp-email');
   const name = input.value.trim();
+  const email = inputEmail.value.trim();
   if (!name) return;
   const loc = getActiveLocation();
-  const emp = addEmployeeToLocation(loc, name);
+  const emp = addEmployeeToLocation(loc, name, true, email);
   saveData();
   input.value = '';
+  inputEmail.value = '';
   renderEmployeeList();
   renderTable();
   renderLocTabs();

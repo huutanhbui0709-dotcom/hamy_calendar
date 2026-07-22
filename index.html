@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lịch Làm Việc - CPHM</title>
+  <title>Lịch Làm Việc - CFHM</title>
   <meta name="description" content="Công cụ sắp xếp lich lam viec nhân viên theo tuần.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -365,7 +365,7 @@
           </svg>
         </span>
         <div>
-          <h1>Quản lý lịch làm CPHM</h1>
+          <h1>Quản lý lịch làm CFHM</h1>
           <p class="brand-sub">Ca sáng · Sắp xếp theo tuần, không trùng giờ</p>
         </div>
       </div>
@@ -380,14 +380,16 @@
           </svg>
           Nhân viên
         </button>
-        <button class="btn btn-primary" id="btn-download" type="button">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M12 3v12m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" />
-            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" />
-          </svg>
-          Tải Excel
+        <a href="/admin/users" class="btn btn-ghost"
+          style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-users-gear"></i>
+          Tài khoản Admin
+        </a>
+
+        <button class="btn btn-ghost" id="btn-logout" type="button"
+          style="color: #ef4444; border-color: #fecaca; background: #fef2f2;">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Đăng xuất
         </button>
       </div>
     </header>
@@ -405,13 +407,20 @@
       <div class="staff-toggle-bar"
         style="display:flex; justify-content:space-between; align-items:center; width:100%;">
         <div id="staff-toggle-container" style="display:flex; align-items:center;"></div>
-        <button class="btn" id="btn-copy" type="button"
-          style="padding: 6px 16px; font-size: 12.5px; border-radius: 999px; border: 1.5px solid var(--primary); background: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; color: #fff; font-weight:700; transition: background .15s, transform .1s; box-shadow: 0 2px 8px rgba(14,124,102,.18);"
-          onmouseenter="this.style.background='var(--primary-ink)'"
-          onmouseleave="this.style.background='var(--primary)'" onmousedown="this.style.transform='scale(.96)'"
-          onmouseup="this.style.transform=''">
-          <i class="fa-solid fa-floppy-disk"></i> Lưu vào hệ thống
-        </button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" id="btn-download" type="button"
+            style="padding: 6px 16px; font-size: 12.5px; border-radius: 999px; border: 1.5px solid #cbd5e1; background: #f8fafc; color: #475569; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight:700; transition: background .15s, transform .1s;"
+            onmouseenter="this.style.background='#f1f5f9'" onmouseleave="this.style.background='#f8fafc'">
+            <i class="fa-solid fa-file-excel" style="color: #107c41;"></i> Tải Excel
+          </button>
+          <button class="btn" id="btn-copy" type="button"
+            style="padding: 6px 16px; font-size: 12.5px; border-radius: 999px; border: 1.5px solid var(--primary); background: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; color: #fff; font-weight:700; transition: background .15s, transform .1s; box-shadow: 0 2px 8px rgba(14,124,102,.18);"
+            onmouseenter="this.style.background='var(--primary-ink)'"
+            onmouseleave="this.style.background='var(--primary)'" onmousedown="this.style.transform='scale(.96)'"
+            onmouseup="this.style.transform=''">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu vào hệ thống
+          </button>
+        </div>
       </div>
       <div class="legend">
         <div class="legend-group">
@@ -647,8 +656,12 @@
             <span>Tên nhân viên</span>
             <input type="text" id="input-new-emp" placeholder="Ví dụ: Gia Phát" maxlength="40">
           </label>
+          <label class="time-field" style="width:100%; margin-top:8px;">
+            <span>Email nhân viên (Tùy chọn)</span>
+            <input type="email" id="input-new-emp-email" placeholder="example@gmail.com" maxlength="60">
+          </label>
           <button class="btn btn-secondary" id="btn-add-emp" type="button"
-            style="width:100%;justify-content:center;margin-top:8px;">
+            style="width:100%;justify-content:center;margin-top:12px;">
             + Thêm nhân viên
           </button>
           <p class="field-hint" style="margin-top:8px;">Mã nhân viên được tạo tự động theo tên (VD: Gia Phát → GIAPHAT).
@@ -1065,6 +1078,14 @@
         cfg.endTime = document.getElementById('lock-end-time').value;
         saveLockConfig(cfg);
         alert('✅ Đã lưu cấu hình thời gian mở đăng ký!');
+      });
+
+      // Đăng xuất Admin
+      document.getElementById('btn-logout').addEventListener('click', function () {
+        if (confirm('Bạn có chắc chắn muốn đăng xuất tài khoản Admin?')) {
+          document.cookie = "admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+          window.location.href = "/admin/login";
+        }
       });
 
       // Init

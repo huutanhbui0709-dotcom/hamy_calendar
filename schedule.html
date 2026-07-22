@@ -354,6 +354,40 @@
                 </div>
               </div>
 
+              <!-- Email nhân viên -->
+              <div id="email-section" class="hidden">
+                <!-- Đã có email: hiện dạng ẩn -->
+                <div id="email-display" class="hidden">
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Email xác nhận</label>
+                  <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2" stroke-linecap="round" class="shrink-0">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span id="email-masked" class="mono text-sm font-semibold text-emerald-700 flex-1"></span>
+                  </div>
+                </div>
+                <!-- Chưa có email: hiện ô nhập -->
+                <div id="email-input-wrap" class="hidden">
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5" for="input-email">
+                    Email của bạn <span class="text-red-400">*</span>
+                  </label>
+                  <div class="flex gap-2">
+                    <input type="email" id="input-email" autocomplete="email"
+                      class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold bg-gray-50 focus:bg-white transition-all mono"
+                      placeholder="example@gmail.com">
+                    <button type="button" id="btn-save-email" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shrink-0">
+                      Lưu
+                    </button>
+                  </div>
+                  <p class="text-xs text-orange-500 mt-1.5 flex items-start gap-1.5 font-medium leading-relaxed">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Lưu ý: Email sau khi lưu sẽ đồng bộ hệ thống và <b>không thể tự thay đổi</b>. Hãy nhập chính xác!
+                  </p>
+                </div>
+              </div>
+
               <!-- Lịch Trực Cả Tuần -->
               <div class="space-y-4">
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Thời Gian Đăng Ký Trực
@@ -586,6 +620,7 @@
         if (data && data.locations) {
           sysData = data;
           localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
+          rebuildEmailMap(); // Cập nhật lại email map khi có dữ liệu admin mới nhất
           // Cập nhật lại dropdown nhân viên
           rebuildEmpDropdown();
         }
@@ -609,6 +644,7 @@
         if (Array.isArray(data)) {
           regData = data;
           localStorage.setItem(REG_KEY, JSON.stringify(data));
+          rebuildEmailMap(); // Cập nhật email map từ server
           renderRecentList();
         }
       }).catch(function () { });
@@ -669,9 +705,92 @@
       }
     });
 
+    /* ====== Email logic ====== */
+    var EMAIL_STORE_KEY = 'cfhm-emp-emails';
+    // emailMap là cache bộ nhớ, được xây dựng từ regData và danh sách nhân viên của hệ thống
+    var emailMap = {};
+
+    function rebuildEmailMap() {
+      emailMap = {};
+      
+      // 1. Quét email từ thông tin nhân viên do Admin quản lý (Độ ưu tiên cao vì là dữ liệu admin thiết lập)
+      if (sysData && sysData.locations) {
+        sysData.locations.forEach(function (loc) {
+          if (loc.employees) {
+            loc.employees.forEach(function (emp) {
+              if (emp.email) emailMap[emp.code] = emp.email;
+            });
+          }
+        });
+      }
+
+      // 2. Dự phòng: quét từ lịch sử đăng ký nếu trước đó admin chưa cài mail nhưng nv đã từng tự nhập
+      regData.forEach(function (r) {
+        if (r.email && !emailMap[r.empCode]) emailMap[r.empCode] = r.email;
+      });
+
+      // Ghi các email vào localStorage để dùng offline
+      localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(emailMap));
+    }
+
+    function getEmailMap() {
+      // Ưu tiên emailMap trong bộ nhớ (xây từ regData), fallback localStorage
+      if (Object.keys(emailMap).length) return emailMap;
+      try { return JSON.parse(localStorage.getItem(EMAIL_STORE_KEY)) || {}; } catch (e) { return {}; }
+    }
+    function saveEmailMap(map) {
+      emailMap = map;
+      localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(map));
+      // Không cần gọi server riêng: email được gửi lên cùng regData khi submit form
+    }
+    function maskEmail(email) {
+      var parts = email.split('@');
+      if (parts.length !== 2) return email;
+      var local = parts[0];
+      var domain = parts[1];
+      var visible = local.length <= 2 ? local[0] : local.slice(0, 2);
+      return visible + '***@' + domain;
+    }
+    function showEmailSection(empCode) {
+      var emailSection = document.getElementById('email-section');
+      var emailDisplay = document.getElementById('email-display');
+      var emailInputWrap = document.getElementById('email-input-wrap');
+      var emailMasked = document.getElementById('email-masked');
+      var inputEmail = document.getElementById('input-email');
+
+      if (!empCode) {
+        emailSection.classList.add('hidden');
+        emailDisplay.classList.add('hidden');
+        emailInputWrap.classList.add('hidden');
+        return;
+      }
+
+      var emailMap = getEmailMap();
+      var stored = emailMap[empCode];
+      emailSection.classList.remove('hidden');
+
+      if (stored) {
+        emailMasked.textContent = maskEmail(stored);
+        emailDisplay.classList.remove('hidden');
+        emailInputWrap.classList.add('hidden');
+        inputEmail.value = '';
+      } else {
+        emailDisplay.classList.add('hidden');
+        emailInputWrap.classList.remove('hidden');
+        inputEmail.value = '';
+        inputEmail.focus();
+      }
+    }
+
+    // Trigger email section when employee is chosen
+    selectEmp.addEventListener('change', function () {
+      showEmailSection(selectEmp.value);
+    });
+
     // Render weekly days inputs inside form
     var daysContainer = document.getElementById('weekly-days-container');
     DAYS.forEach(function (day) {
+      // ... (rest of days rendering code inside the file remains unharmed by targeting this spot for the save button)
       var dayDiv = document.createElement('div');
       dayDiv.className = 'day-block';
       dayDiv.dataset.day = day.key;
@@ -736,6 +855,59 @@
       container.appendChild(div);
     }
 
+    // Xử lý nút Lưu Email
+    document.getElementById('btn-save-email').addEventListener('click', function () {
+      var inputEmailEl = document.getElementById('input-email');
+      var email = inputEmailEl.value.trim();
+      var empCode = selectEmp.value;
+      if (!empCode) return;
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Vui lòng nhập địa chỉ email hợp lệ.', 'error');
+        inputEmailEl.focus();
+        return;
+      }
+      
+      // Cập nhật sysData và push lên server
+      var updated = false;
+      if (sysData && sysData.locations) {
+        sysData.locations.forEach(function(loc) {
+          if (loc.employees) {
+            loc.employees.forEach(function(emp) {
+              if (emp.code === empCode) {
+                emp.email = email;
+                updated = true;
+              }
+            });
+          }
+        });
+      }
+      if (updated) {
+        // Disable nút trong lúc lưu
+        var btnSave = document.getElementById('btn-save-email');
+        var oldText = btnSave.textContent;
+        btnSave.textContent = 'Đang lưu...';
+        btnSave.disabled = true;
+
+        fetch('/data/admin_schedule.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sysData)
+        }).then(function() {
+          rebuildEmailMap();
+          showEmailSection(empCode);
+          showToast('Đã lưu email và đồng bộ vào hệ thống!');
+        }).catch(function(e) {
+          console.error(e);
+          showToast('Lỗi khi lưu email.', 'error');
+        }).finally(function() {
+          btnSave.textContent = oldText;
+          btnSave.disabled = false;
+        });
+      } else {
+        showToast('Không tìm thấy nhân viên trong hệ thống.', 'error');
+      }
+    });
+
     // Handle Form Submit
     document.getElementById('register-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -748,6 +920,19 @@
       if (!empCode) { errEl.textContent = 'Vui lòng chọn tên nhân viên.'; errEl.classList.remove('hidden'); return; }
 
       var empName = empMap[empCode];
+
+      var emailMap = getEmailMap();
+      var finalEmail = emailMap[empCode];
+      
+      if (!finalEmail) {
+        errEl.textContent = 'Vui lòng nhập và bấm nút Lưu email xác nhận trước khi đăng ký ca!';
+        errEl.classList.remove('hidden');
+        var inputEmail = document.getElementById('input-email');
+        if (inputEmail && !document.getElementById('email-input-wrap').classList.contains('hidden')) {
+          inputEmail.focus();
+        }
+        return;
+      }
 
       var daysChecked = [];
       var validationOk = true;
@@ -792,15 +977,18 @@
         regData = regData.filter(function (x) {
           return !(x.empCode === empCode && x.day === dayInfo.day);
         });
-        // Add new
+        // Add new — include email to sync lên server
         regData.push({
           id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
           empCode: empCode,
+          email: finalEmail,
           day: dayInfo.day,
           timeRanges: dayInfo.timeRanges,
           submittedAt: new Date().toISOString()
         });
       });
+
+      rebuildEmailMap(); // Cập nhật cache sau khi push
 
       saveRegs();
 
@@ -809,6 +997,10 @@
 
       // Reset fields
       selectEmp.value = '';
+      selectEmpText.textContent = '— Chọn nhân viên —';
+      selectEmpText.classList.add('text-gray-500');
+      selectEmpText.classList.remove('text-gray-900');
+      showEmailSection(''); // Hide email section
 
       dayBlocks.forEach(function (dayBlock) {
         dayBlock.querySelector('.day-enabled').checked = false;
