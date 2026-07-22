@@ -623,6 +623,10 @@
           rebuildEmailMap(); // Cập nhật lại email map khi có dữ liệu admin mới nhất
           // Cập nhật lại dropdown nhân viên
           rebuildEmpDropdown();
+          // Cập nhật lại giao diện hiển thị email
+          if (typeof selectEmp !== 'undefined' && selectEmp) {
+            showEmailSection(selectEmp.value);
+          }
         }
       }).catch(function () { });
 
@@ -646,6 +650,10 @@
           localStorage.setItem(REG_KEY, JSON.stringify(data));
           rebuildEmailMap(); // Cập nhật email map từ server
           renderRecentList();
+          // Cập nhật lại giao diện hiển thị email
+          if (typeof selectEmp !== 'undefined' && selectEmp) {
+            showEmailSection(selectEmp.value);
+          }
         }
       }).catch(function () { });
 
@@ -765,8 +773,35 @@
         return;
       }
 
-      var emailMap = getEmailMap();
-      var stored = emailMap[empCode];
+      // Tìm email trực tiếp trong sysData (độ ưu tiên cao nhất)
+      var stored = null;
+      if (sysData && sysData.locations) {
+        sysData.locations.forEach(function (loc) {
+          if (loc.employees) {
+            loc.employees.forEach(function (emp) {
+              if (emp.code === empCode && emp.email) {
+                stored = emp.email;
+              }
+            });
+          }
+        });
+      }
+
+      // Dự phòng: Tìm trong regData
+      if (!stored && regData) {
+        regData.forEach(function (r) {
+          if (r.empCode === empCode && r.email) {
+            stored = r.email;
+          }
+        });
+      }
+
+      // Dự phòng cuối: Tìm trong localMap
+      if (!stored) {
+        var emailMap = getEmailMap();
+        stored = emailMap[empCode];
+      }
+
       emailSection.classList.remove('hidden');
 
       if (stored) {
