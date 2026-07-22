@@ -19,7 +19,7 @@ export async function middleware(request) {
 
     if (!token) {
       url.pathname = '/admin/login';
-      return Response.redirect(url);
+      return Response.redirect(url.toString());
     }
 
     try {
@@ -30,7 +30,7 @@ export async function middleware(request) {
     } catch (err) {
       console.error('Middleware JWT verification failed:', err);
       url.pathname = '/admin/login';
-      const res = Response.redirect(url);
+      const res = Response.redirect(url.toString());
       // Xoá cookie hết hạn
       res.headers.set('Set-Cookie', 'admin_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');
       return res;
