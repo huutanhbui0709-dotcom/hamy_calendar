@@ -1,4 +1,171 @@
 {
-  "publishedAt": null,
-  "locations": []
+  "publishedAt": "2026-07-22T03:05:05.677Z",
+  "locations": [
+    {
+      "id": "loc-quan5",
+      "name": "QUÁN 5",
+      "require3Before9": true,
+      "employees": [
+        {
+          "id": "emp-101",
+          "name": "Tánh",
+          "code": "TANH"
+        },
+        {
+          "id": "emp-102",
+          "name": "Ái Vy",
+          "code": "AIVY"
+        },
+        {
+          "id": "emp-103",
+          "name": "Hà Vy",
+          "code": "HAVY"
+        },
+        {
+          "id": "emp-104",
+          "name": "Muội",
+          "code": "MUOI"
+        },
+        {
+          "id": "emp-105",
+          "name": "Lan Anh",
+          "code": "LANANH"
+        },
+        {
+          "id": "emp-106",
+          "name": "Thuý Anh",
+          "code": "THUYANH"
+        },
+        {
+          "id": "emp-107",
+          "name": "Ngọc Thảo",
+          "code": "NGOCTHAO"
+        },
+        {
+          "id": "emp-108",
+          "name": "Hương",
+          "code": "HUONG"
+        },
+        {
+          "id": "emp-109",
+          "name": "Dì My",
+          "code": "DIMY"
+        }
+      ],
+      "schedule": {
+        "T2": {
+          "emp-101": [
+            {
+              "s": 300,
+              "e": 480
+            }
+          ]
+        },
+        "T3": {},
+        "T4": {
+          "emp-101": [
+            {
+              "s": 300,
+              "e": 480
+            }
+          ],
+          "emp-102": [
+            {
+              "s": 480,
+              "e": 1020
+            }
+          ],
+          "emp-103": [
+            {
+              "s": 330,
+              "e": 720
+            }
+          ],
+          "emp-104": [
+            {
+              "s": 1020,
+              "e": 1320
+            }
+          ],
+          "emp-105": [
+            {
+              "s": 720,
+              "e": 1320
+            }
+          ],
+          "emp-106": [
+            {
+              "s": 330,
+              "e": 720
+            }
+          ]
+        },
+        "T5": {},
+        "T6": {},
+        "T7": {},
+        "CN": {}
+      }
+    },
+    {
+      "id": "loc-quan2",
+      "name": "QUÁN 2",
+      "require3Before9": true,
+      "employees": [
+        {
+          "id": "emp-201",
+          "name": "Hoa",
+          "code": "HOA"
+        },
+        {
+          "id": "emp-202",
+          "name": "Chi",
+          "code": "CHI"
+        },
+        {
+          "id": "emp-203",
+          "name": "Hà Vy",
+          "code": "HAVY"
+        },
+        {
+          "id": "emp-204",
+          "name": "Muội",
+          "code": "MUOI"
+        },
+        {
+          "id": "emp-205",
+          "name": "Hiền",
+          "code": "HIEN"
+        },
+        {
+          "id": "emp-206",
+          "name": "Ngọc Thảo",
+          "code": "NGOCTHAO"
+        },
+        {
+          "id": "emp-207",
+          "name": "Gia Phát",
+          "code": "GIAPHAT"
+        },
+        {
+          "id": "emp-208",
+          "name": "Dì My",
+          "code": "DIMY"
+        },
+        {
+          "id": "emp-209",
+          "name": "Hương",
+          "code": "HUONG"
+        }
+      ],
+      "schedule": {
+        "T2": {},
+        "T3": {},
+        "T4": {},
+        "T5": {},
+        "T6": {},
+        "T7": {},
+        "CN": {}
+      }
+    }
+  ]
 }

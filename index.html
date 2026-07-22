@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lịch Làm Việc</title>
+  <title>Lịch Làm Việc - CPHM</title>
   <meta name="description" content="Công cụ sắp xếp lich lam viec nhân viên theo tuần.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -365,8 +365,8 @@
           </svg>
         </span>
         <div>
-          <h1>Lịch Làm Việc</h1>
-          <p class="brand-sub">Ca sáng · Ca chiều — sắp theo tuần, không trùng giờ</p>
+          <h1>Quản lý lịch làm CPHM</h1>
+          <p class="brand-sub">Ca sáng · Sắp xếp theo tuần, không trùng giờ</p>
         </div>
       </div>
       <div class="topbar-actions">
@@ -407,7 +407,9 @@
         <div id="staff-toggle-container" style="display:flex; align-items:center;"></div>
         <button class="btn" id="btn-copy" type="button"
           style="padding: 6px 16px; font-size: 12.5px; border-radius: 999px; border: 1.5px solid var(--primary); background: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; color: #fff; font-weight:700; transition: background .15s, transform .1s; box-shadow: 0 2px 8px rgba(14,124,102,.18);"
-          onmouseenter="this.style.background='var(--primary-ink)'" onmouseleave="this.style.background='var(--primary)'" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+          onmouseenter="this.style.background='var(--primary-ink)'"
+          onmouseleave="this.style.background='var(--primary)'" onmousedown="this.style.transform='scale(.96)'"
+          onmouseup="this.style.transform=''">
           <i class="fa-solid fa-floppy-disk"></i> Lưu vào hệ thống
         </button>
       </div>
@@ -689,17 +691,17 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(arr)
-        }).catch(function(e) { console.warn('Không lưu được registrations:', e); });
+        }).catch(function (e) { console.warn('Không lưu được registrations:', e); });
       }
       // Lấy registrations mới nhất từ server khi tải trang
       fetch('/data/employee_registrations.json')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
           if (Array.isArray(data) && data.length) {
             localStorage.setItem(REG_KEY, JSON.stringify(data));
             if (typeof renderAdminTable === 'function') renderAdminTable();
           }
-        }).catch(function(){});
+        }).catch(function () { });
 
       // Build empCode -> empName map from system data (try both v1 and v2)
       var empNameMap = {};
@@ -720,12 +722,12 @@
       buildNameMap('lich-lam-viec:data:v2'); // new name-based codes take priority
       // Cũng nạp từ server để có empNameMap đầy đủ
       fetch('/data/admin_schedule.json')
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          if (d && d.locations) d.locations.forEach(function(loc) {
-            if (loc.employees) loc.employees.forEach(function(emp) { empNameMap[emp.code] = emp.name; });
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.locations) d.locations.forEach(function (loc) {
+            if (loc.employees) loc.employees.forEach(function (emp) { empNameMap[emp.code] = emp.name; });
           });
-        }).catch(function(){});
+        }).catch(function () { });
 
       function getEmpName(code) { return empNameMap[code] || code; }
 
@@ -1009,17 +1011,17 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(cfg)
-        }).catch(function(e) { console.warn('Không lưu lock config:', e); });
+        }).catch(function (e) { console.warn('Không lưu lock config:', e); });
       }
       // Nạp lock config từ server khi tải trang
       fetch('/data/lock_config.json')
-        .then(function(r) { return r.json(); })
-        .then(function(cfg) {
+        .then(function (r) { return r.json(); })
+        .then(function (cfg) {
           if (cfg && typeof cfg === 'object') {
             localStorage.setItem(LOCK_REG_KEY, JSON.stringify(cfg));
             updateLockUI();
           }
-        }).catch(function(){});
+        }).catch(function () { });
 
       function updateLockUI() {
         var cfg = getLockConfig();
