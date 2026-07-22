@@ -144,14 +144,14 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST') {
       const { username, password } = await readBody(req);
       if (!username || !password) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(400, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
         res.end(JSON.stringify({ error: 'Thiếu username hoặc password' }));
         return;
       }
       const users = getLocalAdminUsers();
       const user = users.find(u => u.username === username);
       if (!user || !verifyPassword(password, user.passwordHash)) {
-        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.writeHead(401, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
         res.end(JSON.stringify({ error: 'Username hoặc Password không đúng.' }));
         return;
       }
@@ -163,9 +163,25 @@ const server = http.createServer(async (req, res) => {
 
       res.writeHead(200, {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
         'Set-Cookie': `admin_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=7200`
       });
       res.end(JSON.stringify({ ok: true, message: 'Đăng nhập thành công' }));
+      return;
+    }
+    res.writeHead(405); res.end('Method Not Allowed');
+    return;
+  }
+
+  // ─── API: Đăng xuất Admin ────────────────────────────────────────────────
+  if (pathname === '/api/admin/logout') {
+    if (req.method === 'POST') {
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Set-Cookie': 'admin_token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      });
+      res.end(JSON.stringify({ ok: true, message: 'Đã đăng xuất thành công.' }));
       return;
     }
     res.writeHead(405); res.end('Method Not Allowed');
@@ -176,7 +192,7 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/admin/users') {
     const currentUser = await checkAdminAuthLocal(req);
     if (!currentUser) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.writeHead(401, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
       res.end(JSON.stringify({ error: 'Unauthorized: Vui lòng đăng nhập Admin.' }));
       return;
     }
@@ -185,7 +201,10 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'GET') {
       const safeUsers = users.map(u => ({ id: u.id, username: u.username, role: u.role }));
-      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.writeHead(200, { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+      });
       res.end(JSON.stringify({
         currentUser: { id: currentUser.id, username: currentUser.username },
         users: safeUsers

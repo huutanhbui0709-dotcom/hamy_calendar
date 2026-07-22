@@ -701,7 +701,7 @@
   <script>
     (function () {
       // Kiểm tra đăng nhập tức thì (Lớp 2 - Client Guard)
-      fetch('/api/admin/users')
+      fetch('/api/admin/users', { cache: 'no-store' })
         .then(function (r) {
           if (!r.ok) {
             window.location.href = '/admin/login';
@@ -1106,11 +1106,15 @@
         alert('✅ Đã lưu cấu hình thời gian mở đăng ký!');
       });
 
-      // Đăng xuất Admin
       document.getElementById('btn-logout').addEventListener('click', function () {
         if (confirm('Bạn có chắc chắn muốn đăng xuất tài khoản Admin?')) {
-          document.cookie = "admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-          window.location.href = "/admin/login";
+          fetch('/api/admin/logout', { method: 'POST' })
+            .then(function () {
+              window.location.href = "/admin/login";
+            })
+            .catch(function () {
+              window.location.href = "/admin/login";
+            });
         }
       });
 

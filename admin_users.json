@@ -1,20 +1,8 @@
 [
   {
-    "id": "admin-dvbmaddmrvk9rf6",
-    "username": "huutanh",
-    "passwordHash": "$2b$10$B7FGrwvnB7SspKDcIPMOtOt7FwmLimVlV2wxaUs5guhBBMfItGrX.",
-    "role": "admin"
-  },
-  {
-    "id": "admin-2gv2i8bmrvka04o",
-    "username": "hamy",
-    "passwordHash": "$2b$10$Wqcpt1r0U6TLph8w9TPr6eElu8D6rLHbENZXIBP4.88Te/D4yJhlm",
-    "role": "admin"
-  },
-  {
-    "id": "admin-5y0wcsomrvkchtr",
-    "username": "tieumi",
-    "passwordHash": "$2b$10$O1Hs2wr93JMNzF9nO0eF8..aIw/S9ygUB0axN6Amukfidq9oENIpG",
+    "id": "root-admin-id",
+    "username": "admin",
+    "passwordHash": "c5a8c44ece816331b8df2af482225564:bf67696ad2cdc325e32f1b55f25ad39b7591a35f0eb65ab1b4dd12b3145bce8bc18de4003225ad5efee25d621ee1fa8bfcb3c183ca37e3ef30e4293a6d266f61",
     "role": "admin"
   }
 ]

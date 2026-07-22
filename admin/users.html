@@ -154,7 +154,7 @@
     // Load danh sách Admin
     async function loadAdmins() {
       try {
-        const res = await fetch('/api/admin/users');
+        const res = await fetch('/api/admin/users', { cache: 'no-store' });
         if (!res.ok) {
           // Bị chặn vì chưa đăng nhập -> Chuyển về login
           window.location.href = '/admin/login';
