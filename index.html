@@ -348,6 +348,17 @@
 
 <body>
 
+  <!-- Loading overlay để tránh FOUC khi kiểm tra đăng nhập -->
+  <div id="auth-loading-overlay" style="position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <div style="text-align: center;">
+      <div style="border: 4px solid #f3f3f3; border-top: 4px solid #0e7c66; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+      <div style="color: #64748b; font-size: 14px; font-weight: 600;">Đang xác thực quyền Admin...</div>
+    </div>
+    <style>
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+  </div>
+
   <div class="app-shell">
 
     <!-- Header -->
@@ -689,6 +700,21 @@
   <script src="app.js"></script>
   <script>
     (function () {
+      // Kiểm tra đăng nhập tức thì (Lớp 2 - Client Guard)
+      fetch('/api/admin/users')
+        .then(function (r) {
+          if (r.status === 401) {
+            window.location.href = '/admin/login';
+            return;
+          }
+          // Đăng nhập hợp lệ, xoá màn hình Loading
+          var overlay = document.getElementById('auth-loading-overlay');
+          if (overlay) overlay.remove();
+        })
+        .catch(function () {
+          window.location.href = '/admin/login';
+        });
+
       var REG_KEY = 'cfhm-schedule-v1';
       var CORE_KEY = 'lich-lam-viec:data:v2';
       var DAYS = [{ key: 'T2', label: 'Thứ 2' }, { key: 'T3', label: 'Thứ 3' }, { key: 'T4', label: 'Thứ 4' }, { key: 'T5', label: 'Thứ 5' }, { key: 'T6', label: 'Thứ 6' }, { key: 'T7', label: 'Thứ 7' }, { key: 'CN', label: 'Chủ Nhật' }];

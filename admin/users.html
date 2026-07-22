@@ -27,6 +27,17 @@
   </style>
 </head>
 <body class="bg-gray-50/50 min-h-screen text-gray-800">
+  <!-- Loading overlay để tránh FOUC khi kiểm tra đăng nhập -->
+  <div id="auth-loading-overlay" style="position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <div style="text-align: center;">
+      <div style="border: 4px solid #f3f3f3; border-top: 4px solid #0e7c66; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+      <div style="color: #64748b; font-size: 14px; font-weight: 600;">Đang xác thực quyền Admin...</div>
+    </div>
+    <style>
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+  </div>
+
   <div class="max-w-5xl mx-auto p-4 md:p-8 space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-gray-200">
@@ -154,9 +165,13 @@
         adminsList = data.users || [];
         
         renderAdmins();
+        // Đăng nhập hợp lệ, xoá màn hình Loading
+        const overlay = document.getElementById('auth-loading-overlay');
+        if (overlay) overlay.remove();
       } catch (err) {
         console.error(err);
         alert('Lỗi tải danh sách Admin.');
+        window.location.href = '/admin/login';
       }
     }
 
