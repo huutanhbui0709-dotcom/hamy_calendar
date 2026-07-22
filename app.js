@@ -3,7 +3,7 @@
    Không dùng cơ sở dữ liệu: toàn bộ dữ liệu lưu trong localStorage.
    ========================================================================= */
 
-const STORAGE_KEY = 'lich-lam-viec:data:v1';
+const STORAGE_KEY = 'lich-lam-viec:data:v2';
 const NOON = 12 * 60;
 const DAY_START = 5 * 60;   // 05:00
 const DAY_END = 22 * 60;    // 22:00
@@ -72,9 +72,22 @@ function makeLocation(name, employeeNames) {
   return loc;
 }
 
+// Chuyển đổi tên tiếng Việt thành mã không dấu viết liền để tránh trùng lắp
+function nameToCode(name) {
+  var str = name.trim().toUpperCase();
+  str = str.replace(/A|Á|À|Ả|Ã|Ạ|Ă|Ắ|Ằ|Ẳ|Ẵ|Ặ|Â|Ấ|Ầ|Ẩ|Ẫ|Ậ/g, "A");
+  str = str.replace(/D|Đ/g, "D");
+  str = str.replace(/E|É|È|Ẻ|Ẽ|Ẹ|Ê|Ế|Ề|Ể|Ễ|Ệ/g, "E");
+  str = str.replace(/I|Í|Ì|Ỉ|Ĩ|Ị/g, "I");
+  str = str.replace(/O|Ó|Ò|Ỏ|Õ|Ọ|Ô|Ố|Ồ|Ổ|Ỗ|Ộ|Ơ|Ớ|Ờ|Ở|Ỡ|Ợ/g, "O");
+  str = str.replace(/U|Ú|Ù|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự/g, "U");
+  str = str.replace(/Y|Ý|Ỳ|Ỷ|Ỹ|Y/g, "Y");
+  str = str.replace(/[^A-Z0-9]/g, "");
+  return str;
+}
+
 function addEmployeeToLocation(loc, name, ensureShape = true) {
-  const code = 'NV' + pad2(loc.nextEmpNum);
-  loc.nextEmpNum += 1;
+  const code = nameToCode(name);
   const emp = { id: uid(), code, name: name.trim() };
   loc.employees.push(emp);
   if (ensureShape) ensureScheduleShape(loc);
@@ -97,25 +110,53 @@ function createDefaultData() {
 }
 
 function loadData() {
+  // Lấy cache local tạm thời để render ngay lập tức
+  let initialData = createDefaultData();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return createDefaultData();
-    const parsed = JSON.parse(raw);
-    if (!parsed.locations || !parsed.locations.length) return createDefaultData();
-    parsed.locations.forEach(loc => {
-      ensureScheduleShape(loc);
-      // backfill flag for old saved data
-      if (loc.require3Before9 === undefined) loc.require3Before9 = true;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.locations && parsed.locations.length) {
+        parsed.locations.forEach(loc => {
+          ensureScheduleShape(loc);
+          if (loc.require3Before9 === undefined) loc.require3Before9 = true;
+        });
+        initialData = parsed;
+      }
+    }
+  } catch (e) {}
+
+  // Luôn nạp dữ liệu mới nhất từ server (đồng bộ tất cả thiết bị)
+  fetch('/data/admin_schedule.json')
+    .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+    .then(data => {
+      if (data && data.locations && data.locations.length) {
+        data.locations.forEach(loc => {
+          ensureScheduleShape(loc);
+          if (loc.require3Before9 === undefined) loc.require3Before9 = true;
+        });
+        state.data = data;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); // cập nhật cache
+        if (typeof renderAll === 'function') renderAll();
+      }
+    })
+    .catch(() => {
+      // Fallback: nếu không có server, dùng cache localStorage
+      console.warn('Server không hoạt động, dùng dữ liệu cục bộ.');
     });
-    return parsed;
-  } catch (e) {
-    console.warn('Không đọc được dữ liệu đã lưu, dùng dữ liệu mặc định.', e);
-    return createDefaultData();
-  }
+
+  return initialData;
 }
 
 function saveData() {
+  // Lưu vào localStorage cache trước (tức thì)
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+  // Lưu vào file server (đồng bộ tất cả thiết bị)
+  fetch('/data/admin_schedule.json', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(state.data)
+  }).catch(e => console.warn('Không lưu được vào server:', e));
 }
 
 const state = {
@@ -348,6 +389,44 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// Per-employee color palette — bright hues for chip backgrounds (teal/indigo = dark)
+const EMP_COLORS = [
+  '#FFE066', // yellow
+  '#FF9A3C', // orange
+  '#FF6B9D', // pink
+  '#A8FFD8', // mint
+  '#7FE0FF', // sky
+  '#D4A3FF', // lavender
+  '#FF8A8A', // coral
+  '#B8F573', // lime
+  '#FFC3A0', // peach
+  '#85E0FF', // light blue
+  '#FFD1F5', // blush
+  '#AAFFC3', // green
+];
+
+// Darker variants for use on light backgrounds (drawer list)
+const EMP_COLORS_DARK = [
+  '#B08A00', // yellow → dark gold
+  '#C45A00', // orange → burnt
+  '#A3004F', // pink → magenta
+  '#007A50', // mint → forest
+  '#006A99', // sky → ocean
+  '#5A00AA', // lavender → purple
+  '#A01010', // coral → crimson
+  '#3A7A00', // lime → olive
+  '#9C4A10', // peach → sienna
+  '#00618A', // light blue → teal
+  '#8A0060', // blush → rose
+  '#006A3A', // green → emerald
+];
+
+function getEmpColor(empId, loc, dark = false) {
+  const idx = loc.employees.findIndex(e => e.id === empId);
+  const palette = dark ? EMP_COLORS_DARK : EMP_COLORS;
+  return palette[(idx < 0 ? 0 : idx) % palette.length];
+}
+
 function renderTable() {
   const loc = getActiveLocation();
   const table = $('#schedule-table');
@@ -422,7 +501,7 @@ function renderTable() {
       td.innerHTML = dayShifts.map(sh => {
         const periodClass = sh.s < NOON ? 'period-a' : 'period-b';
         return `<div class="shift-chip-block ${periodClass}">
-          <span class="shift-chip-emp">${escapeHtml(sh.empName)}</span>
+          <span class="shift-chip-emp" style="text-transform:uppercase;letter-spacing:.04em;">${escapeHtml(sh.empName)}</span>
           <span class="shift-chip-time">${shiftLabel(sh)}</span>
         </div>`;
       }).join('');
@@ -468,6 +547,7 @@ function openShiftDrawer(locId, dayKey) {
   renderPresetRow();
   renderShiftList();
   refreshDrawerWarning();
+  renderSuggestedList(loc, dayKey);
 
   $('#overlay').hidden = false;
   $('#shift-drawer').hidden = false;
@@ -477,6 +557,112 @@ function closeShiftDrawer() {
   $('#overlay').hidden = true;
   $('#shift-drawer').hidden = true;
   state.drawer = null;
+}
+
+/* ---- Suggested employee list from registration data ---- */
+function renderSuggestedList(loc, dayKey) {
+  const listEl = $('#drawer-suggested-list');
+  const emptyEl = $('#drawer-suggested-empty');
+  if (!listEl) return;
+
+  // Map empCode -> empName from this location
+  const codeToName = {};
+  const nameToEmpId = {};
+  loc.employees.forEach(emp => {
+    codeToName[emp.code] = emp.name;
+    // normalize for lookup: strip accents, upper, nospace
+    const normalized = nameToCode(emp.name);
+    nameToEmpId[normalized] = emp.id;
+    // also map by code directly
+    nameToEmpId[emp.code] = emp.id;
+  });
+
+  // Load registration data
+  let regs = [];
+  try { regs = JSON.parse(localStorage.getItem('cfhm-schedule-v1') || '[]'); } catch(e) {}
+
+  // Map day key: the reg data may use T2/T3... same as this system
+  const dayRegs = regs.filter(r => r.day === dayKey);
+
+  listEl.innerHTML = '';
+  if (!dayRegs.length) {
+    emptyEl.hidden = false;
+    return;
+  }
+  emptyEl.hidden = true;
+
+  // Sort by earliest start time
+  dayRegs.sort((a, b) => {
+    const getStart = r => (r.timeRanges && r.timeRanges.length) ? r.timeRanges[0].start : '23:59';
+    return getStart(a).localeCompare(getStart(b));
+  });
+
+  dayRegs.forEach(reg => {
+    const empCode = reg.empCode || '';
+    // Resolve name: first try nameMap from location, fall back to stored name or code
+    const empName = codeToName[empCode] || reg.empName || empCode;
+    // Resolve empId for auto-fill
+    const empId = nameToEmpId[empCode] || nameToEmpId[nameToCode(empName)] || null;
+
+    // Build color from EMP_COLORS_DARK
+    let empColor = '#555';
+    if (empId) {
+      const idx = loc.employees.findIndex(e => e.id === empId);
+      if (idx >= 0) empColor = EMP_COLORS_DARK[idx % EMP_COLORS_DARK.length];
+    }
+
+    const times = (reg.timeRanges || []);
+    const card = document.createElement('div');
+    card.className = 'suggest-card';
+    card.style.cursor = 'default';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.style.cssText = `font-weight:700;font-size:13px;color:${empColor};cursor:pointer;user-select:none;`;
+    nameSpan.textContent = empName;
+    nameSpan.addEventListener('click', () => {
+      const empSelect = $('#input-shift-emp');
+      if (empId && empSelect) {
+        empSelect.value = empId;
+      }
+    });
+    card.appendChild(nameSpan);
+
+    const timesContainer = document.createElement('span');
+    timesContainer.className = 'suggest-times';
+
+    times.forEach(t => {
+      const badge = document.createElement('button');
+      badge.type = 'button';
+      badge.className = 'suggest-time-badge';
+      badge.style.cursor = 'pointer';
+      badge.textContent = `${t.start}–${t.end}`;
+      badge.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const empSelect = $('#input-shift-emp');
+        if (empId && empSelect) {
+          empSelect.value = empId;
+        }
+        $('#input-start').value = t.start;
+        $('#input-end').value = t.end;
+        
+        // Highlight the clicked badge
+        $$('.suggest-time-badge').forEach(b => {
+          b.style.boxShadow = '';
+          b.style.borderColor = 'var(--line)';
+          b.style.background = 'var(--surface-sunken)';
+          b.style.color = 'var(--ink-soft)';
+        });
+        badge.style.setProperty('background', 'var(--primary-tint)', 'important');
+        badge.style.setProperty('color', 'var(--primary)', 'important');
+        badge.style.setProperty('border-color', 'var(--primary)', 'important');
+        badge.style.boxShadow = '0 0 0 2px var(--primary-tint)';
+      });
+      timesContainer.appendChild(badge);
+    });
+
+    card.appendChild(timesContainer);
+    listEl.appendChild(card);
+  });
 }
 
 function renderPresetRow() {
@@ -507,9 +693,10 @@ function renderShiftList() {
   draft.slice().sort((a, b) => a.s - b.s).forEach(sh => {
     const emp = loc.employees.find(e => e.id === sh.empId);
     const empName = emp ? emp.name : 'Chưa rõ';
+    const empColor = getEmpColor(sh.empId, loc, true); // dark variant for light bg
     const li = document.createElement('li');
     const periodClass = sh.s < NOON ? 'period-a' : 'period-b';
-    li.innerHTML = `<span class="shift-label"><span class="badge ${periodClass}"></span><strong>${escapeHtml(empName)}</strong>: ${shiftLabel(sh)}</span>`;
+    li.innerHTML = `<span class="shift-label"><span class="badge ${periodClass}"></span><strong style="color:${empColor};text-transform:uppercase;letter-spacing:.03em;font-size:13px;">${escapeHtml(empName)}</strong>: ${shiftLabel(sh)}</span>`;
     const removeBtn = document.createElement('button');
     removeBtn.className = 'shift-remove';
     removeBtn.type = 'button';
@@ -663,7 +850,8 @@ function renderEmployeeList() {
     const li = document.createElement('li');
     li.style.background = 'transparent';
     li.style.border = 'none';
-    li.innerHTML = '<span class="field-hint">Chưa có nhân viên nào.</span>';
+    li.style.padding = '12px 0';
+    li.innerHTML = '<span class="field-hint">Chưa có nhân viên nào. Thêm nhân viên bên phải ➜</span>';
     list.appendChild(li);
   }
   loc.employees.forEach(emp => {
@@ -677,8 +865,8 @@ function renderEmployeeList() {
         </div>
       </div>
       <div class="emp-actions">
-        <button class="icon-btn" data-action="rename" title="Đổi tên">✎</button>
-        <button class="icon-btn" data-action="delete" title="Xoá nhân viên">🗑</button>
+        <button class="emp-btn" data-action="rename" title="Đổi tên nhân viên">✏️</button>
+        <button class="emp-btn danger" data-action="delete" title="Xoá nhân viên">🗑️</button>
       </div>`;
     $('[data-action="rename"]', li).addEventListener('click', () => startRenameEmployee(li, loc, emp));
     $('[data-action="delete"]', li).addEventListener('click', () => {
@@ -700,6 +888,7 @@ function renderEmployeeList() {
   });
 }
 
+
 function startRenameEmployee(li, loc, emp) {
   const wrap = $('.emp-name-wrap', li);
   const original = emp.name;
@@ -716,7 +905,13 @@ function startRenameEmployee(li, loc, emp) {
       showConfirm({
         title: 'Xác nhận đổi tên',
         message: `Đổi tên "${original}" thành "${name}"?`,
-        onConfirm: () => { emp.name = name; saveData(); renderEmployeeList(); renderTable(); },
+        onConfirm: () => { 
+          emp.name = name; 
+          emp.code = nameToCode(name); // Cập nhật lại mã nhân viên theo tên mới
+          saveData(); 
+          renderEmployeeList(); 
+          renderTable(); 
+        },
         onCancel: () => renderEmployeeList()
       });
     } else {
@@ -788,15 +983,127 @@ function buildMatrix(loc) {
 
 function copyTable() {
   const loc = getActiveLocation();
-  if (!loc.employees.length) { showToast('Chưa có dữ liệu để sao chép.', 'warn'); return; }
-  const matrix = buildMatrix(loc);
-  const text = matrix.map(row => row.join('\t')).join('\n');
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Đã sao chép — dán trực tiếp vào Excel hoặc Google Sheets.');
-  }).catch(() => {
-    showToast('Không thể sao chép tự động. Vui lòng thử lại.', 'danger');
+  if (!loc || !loc.employees.length) {
+    showToast('Chưa có dữ liệu để lưu.', 'warn');
+    return;
+  }
+  
+  // === Lưu snapshot toàn bộ lịch các quán vào localStorage để nhân viên xem ===
+  const snapshot = {
+    publishedAt: new Date().toISOString(),
+    locations: state.data.locations.map(l => {
+      const locSched = {};
+      DAYS.forEach(d => {
+        locSched[d.key] = {};
+        l.employees.forEach(emp => {
+          const shifts = (l.schedule[d.key] && l.schedule[d.key][emp.id]) || [];
+          if (shifts.length > 0) {
+            locSched[d.key][emp.id] = shifts.map(sh => ({ s: sh.s, e: sh.e }));
+          }
+        });
+      });
+      return {
+        id: l.id,
+        name: l.name,
+        require3Before9: l.require3Before9,
+        employees: l.employees.map(e => ({ id: e.id, name: e.name, code: e.code })),
+        schedule: locSched
+      };
+    })
+  };
+  // Lưu cache cục bộ
+  localStorage.setItem('cfhm-published-schedule', JSON.stringify(snapshot));
+  // Lưu vào file server (đồng bộ tất cả thiết bị)
+  fetch('/data/published_schedule.json', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(snapshot)
+  }).catch(e => console.warn('Không lưu được published schedule:', e));
+  
+  const originalTable = document.querySelector('table.schedule');
+  if (!originalTable) {
+    showToast('Không tìm thấy bảng lịch làm việc.', 'warn');
+    return;
+  }
+
+  showToast('✅ Đã lưu lịch vào hệ thống! Đang tạo ảnh...');
+
+  // Create temporary wrapper
+  const tempContainer = document.createElement('div');
+  tempContainer.style.cssText = 'position: absolute; left: -9999px; top: -9999px; background: #ffffff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: ' + (originalTable.offsetWidth + 48) + 'px; font-family: "Be Vietnam Pro", Inter, sans-serif;';
+  
+  // Header with store name
+  const header = document.createElement('div');
+  header.style.cssText = 'text-align: center; margin-bottom: 20px; border-bottom: 2px solid #0e7c66; padding-bottom: 14px;';
+  header.innerHTML = '<h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #0e7c66; letter-spacing: 0.05em; text-transform: uppercase;">LỊCH LÀM VIỆC — ' + loc.name.toUpperCase() + '</h2>';
+  tempContainer.appendChild(header);
+
+  // Clone table
+  const clonedTable = originalTable.cloneNode(true);
+  clonedTable.style.width = '100%';
+  clonedTable.style.minWidth = '920px';
+  clonedTable.style.setProperty('position', 'relative', 'important');
+  
+  // Force all sticky headers and cells to static to fix html2canvas position:sticky rendering bug
+  const stickyEls = clonedTable.querySelectorAll('th, td, thead, tbody, tr');
+  stickyEls.forEach(el => {
+    el.style.setProperty('position', 'static', 'important');
+  });
+
+  // Remove empty hints so the image is clean
+  const emptyHints = clonedTable.querySelectorAll('.cell-empty-hint');
+  emptyHints.forEach(hint => hint.innerHTML = '&nbsp;');
+
+  tempContainer.appendChild(clonedTable);
+  
+  // Append inside panel-schedule to inherit all css variables properly
+  const parentContainer = document.getElementById('panel-schedule') || document.body;
+  parentContainer.appendChild(tempContainer);
+
+  html2canvas(tempContainer, {
+    scale: 2.5,
+    useCORS: true,
+    logging: false,
+    backgroundColor: '#ffffff'
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      tempContainer.remove();
+      if (!blob) {
+        showToast('Không thể tạo hình ảnh.', 'danger');
+        return;
+      }
+      
+      try {
+        const item = new ClipboardItem({ 'image/png': blob });
+        navigator.clipboard.write([item]).then(() => {
+          showToast('✅ Đã sao chép ảnh lịch ' + loc.name + ' vào clipboard!');
+        }).catch(err => {
+          console.error(err);
+          downloadBlobImage(blob, loc.name);
+        });
+      } catch (e) {
+        console.error(e);
+        downloadBlobImage(blob, loc.name);
+      }
+    }, 'image/png');
+  }).catch(err => {
+    console.error(err);
+    showToast('Lỗi khi chuyển đổi bảng sang hình ảnh.', 'danger');
+    tempContainer.remove();
   });
 }
+
+function downloadBlobImage(blob, locName) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lich-lam-viec-' + locName.toLowerCase().replace(/\s+/g, '-') + '.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('Do cài đặt bảo mật trình duyệt, ảnh đã được tải về máy!', 'info');
+}
+
 
 function downloadCSV() {
   const loc = getActiveLocation();

@@ -1,0 +1,926 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Ca Làm Việc</title>
+  <meta name="description" content="Nhân viên đăng ký lịch làm việc cho cả tuần">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["'Be Vietnam Pro'", 'Inter', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#E3F2ED', 100: '#C7E5DB', 400: '#3BAF8E', 500: '#0E7C66', 600: '#0A6655', 700: '#08463A' },
+            accent: { 50: '#E7E9F7', 100: '#CFD3F0', 400: '#6477D0', 500: '#3A4DB0', 600: '#2E3E99', 700: '#232F70' },
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Be Vietnam Pro', Inter, sans-serif;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp .22s cubic-bezier(.25, .46, .45, .94) both;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(.93);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .pop {
+      animation: pop .18s ease both;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #D1D5DB;
+      border-radius: 99px;
+    }
+
+    .day-block {
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 16px;
+      background: #F8FAFC;
+      transition: all 0.2s;
+    }
+
+    .day-block:focus-within {
+      border-color: #3BAF8E;
+      background: #FFFFFF;
+    }
+
+    /* ===== Tab Nav ===== */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .tab-btn.active {
+      background: #0E7C66;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(14, 124, 102, .2);
+    }
+
+    .tab-btn:not(.active):hover {
+      background: #E3F2ED;
+      color: #0E7C66;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ===== Published Schedule Table ===== */
+    .pub-table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+    }
+
+    table.pub-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+      background: #fff;
+    }
+
+    .pub-table thead th {
+      background: #1e293b;
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .pub-table thead th:first-child {
+      border-radius: 13px 0 0 0;
+      min-width: 110px;
+    }
+
+    .pub-table thead th:last-child {
+      border-radius: 0 13px 0 0;
+    }
+
+    .pub-table tbody tr {
+      border-bottom: 1px solid #F1F5F9;
+      transition: background .1s;
+    }
+
+    .pub-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .pub-table tbody tr:hover {
+      background: #E3F2ED;
+    }
+
+    .pub-table td {
+      padding: 9px 14px;
+      font-size: 12.5px;
+      vertical-align: top;
+    }
+
+    .pub-table td:first-child {
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+
+    .shift-badge {
+      display: inline-block;
+      background: #0E7C66;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin: 2px 2px 2px 0;
+      white-space: nowrap;
+    }
+
+    .pub-empty-day {
+      color: #CBD5E1;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-gray-800 min-h-screen">
+
+  <!-- ===== TOPBAR ===== -->
+  <header class="bg-gray-900 sticky top-0 z-30 shadow-xl">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+          <svg viewBox="0 0 32 32" width="20" height="20" fill="none">
+            <path d="M4 8a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z" stroke="#fff"
+              stroke-width="2.2" />
+            <path d="M4 12h24" stroke="#fff" stroke-width="2.2" />
+            <path d="M10 4v4M22 4v4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" />
+            <circle cx="11" cy="18" r="1.6" fill="#fff" />
+            <circle cx="16" cy="18" r="1.6" fill="#fff" />
+            <circle cx="21" cy="18" r="1.6" fill="#fff" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-white font-bold text-base leading-tight">CFHM - Nhân viên</p>
+          <p class="text-gray-400 text-xs">Dành cho nhân viên cửa hàng</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <div class="max-w-2xl mx-auto">
+
+      <!-- ===== TAB NAV ===== -->
+      <div class="tab-nav fade-up" id="main-tab-nav">
+        <button class="tab-btn active" id="tab-btn-view" onclick="switchTab('view')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round">
+            <rect x="3" y="4" width="18" height="18" rx="3" />
+            <path d="M3 9h18M9 4v5M15 4v5" />
+          </svg>
+          Xem lịch làm
+        </button>
+        <button class="tab-btn" id="tab-btn-register" onclick="switchTab('register')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Đăng ký ca
+        </button>
+      </div>
+
+      <!-- ===== TAB: XEM LỊCH ===== -->
+      <div class="tab-panel active fade-up" id="panel-view">
+
+        <!-- Khi chưa có lịch được publish -->
+        <div id="pub-empty" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center space-y-3">
+          <div class="text-4xl">📋</div>
+          <p class="text-gray-500 font-semibold text-sm">Chưa có lịch làm việc nào được đăng.</p>
+          <p class="text-gray-400 text-xs">Admin sẽ đăng lịch sớm. Bạn có thể đăng ký ca ở tab bên cạnh.</p>
+        </div>
+
+        <!-- Khi có lịch được publish -->
+        <div id="pub-schedule" class="hidden space-y-4">
+          <div
+            class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 fade-up">
+            <div>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Lịch làm việc tuần</p>
+              <!-- Container cho các nút chuyển quán -->
+              <div id="pub-loc-tabs" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100">
+              <p class="text-[11px] text-gray-400 font-medium">Cập nhật lúc</p>
+              <p class="text-xs font-semibold text-brand-600 mono" id="pub-time">—</p>
+            </div>
+          </div>
+          <div class="pub-table-wrap">
+            <table class="pub-table">
+              <thead>
+                <tr id="pub-table-head">
+                  <!-- Days injected by JS -->
+                </tr>
+              </thead>
+              <tbody id="pub-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== TAB: ĐĂNG KÝ ===== -->
+      <div class="tab-panel" id="panel-register">
+
+        <!-- Lock Screen -->
+        <div id="lock-container"
+          class="hidden bg-white rounded-2xl shadow-sm border border-red-100 p-8 fade-up text-center space-y-4">
+          <div class="w-16 h-16 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-500 text-3xl">
+            🔒</div>
+          <h2 class="text-xl font-bold text-gray-900">Hiện không thể đăng ký lịch làm</h2>
+          <p class="text-gray-500 text-sm leading-relaxed">Vui lòng quay lại vào</p>
+          <p id="lock-time-window"
+            class="font-bold text-brand-600 text-base py-1 px-4 bg-brand-50 rounded-lg inline-block"></p>
+        </div>
+
+        <!-- Form container -->
+        <div id="form-container" class="space-y-5">
+          <!-- Form card -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 fade-up">
+            <div class="mb-6">
+              <h2 class="text-xl font-bold text-gray-900">Đăng Ký Ca Làm Việc Tuần</h2>
+              <p class="text-gray-400 text-sm mt-1">Chọn tên của bạn và thiết lập lịch làm việc cho cả tuần.</p>
+            </div>
+
+            <form id="register-form" novalidate class="space-y-6">
+              <!-- Chọn Nhân Viên -->
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5"
+                  for="select-emp-btn">
+                  Chọn Tên Bạn (Mã nhân viên) <span class="text-red-400">*</span>
+                </label>
+                <div class="relative" id="custom-emp-dropdown">
+                  <button type="button" id="select-emp-btn"
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold transition-all bg-gray-50 focus:bg-white flex items-center justify-between text-left">
+                    <span id="select-emp-text" class="text-gray-500">— Chọn nhân viên —</span>
+                    <svg class="text-gray-400" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                  <div id="select-emp-menu"
+                    class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                    <div class="max-h-56 overflow-y-auto p-1.5 flex flex-col gap-0.5" id="select-emp-list"></div>
+                  </div>
+                  <input type="hidden" id="select-emp" value="">
+                </div>
+              </div>
+
+              <!-- Lịch Trực Cả Tuần -->
+              <div class="space-y-4">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Thời Gian Đăng Ký Trực
+                  Trong Tuần</label>
+                <p class="text-xs text-gray-400 italic">Bật nút chọn ở những ngày bạn muốn đăng ký và chỉnh sửa giờ.</p>
+                <div id="weekly-days-container" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div>
+              </div>
+
+              <!-- Messages -->
+              <div id="form-error"
+                class="hidden bg-red-50 border border-red-200 text-red-600 text-sm font-semibold px-4 py-3 rounded-xl">
+              </div>
+              <div id="form-success"
+                class="hidden bg-brand-50 border border-brand-100 text-brand-700 text-sm font-semibold px-4 py-3 rounded-xl flex items-start gap-2">
+                <svg class="flex-shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span id="success-msg"></span>
+              </div>
+
+              <button type="submit"
+                class="w-full bg-brand-500 hover:bg-brand-600 active:scale-[.98] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md text-sm tracking-wide">
+                Gửi Lịch Làm Việc Tuần
+              </button>
+            </form>
+          </div>
+
+          <!-- Recent -->
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 fade-up">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Đã đăng ký gần đây</h3>
+            <div id="recent-list" class="space-y-1">
+              <p class="text-sm text-gray-400 italic">Chưa có đăng ký nào.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="toast"
+    class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-xl text-sm font-semibold">
+  </div>
+
+  <script>
+    var CORE_STORAGE_KEY = 'lich-lam-viec:data:v2';
+    var REG_KEY = 'cfhm-schedule-v1';
+    var PUB_KEY = 'cfhm-published-schedule';
+    var DAYS = [
+      { key: 'T2', label: 'Thứ 2' }, { key: 'T3', label: 'Thứ 3' }, { key: 'T4', label: 'Thứ 4' },
+      { key: 'T5', label: 'Thứ 5' }, { key: 'T6', label: 'Thứ 6' }, { key: 'T7', label: 'Thứ 7' },
+      { key: 'CN', label: 'Chủ Nhật' }
+    ];
+    var esc = function (s) { return String(s ?? '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] }); };
+
+    /* ====== Tab switching ====== */
+    var currentTab = 'view';
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tab-btn-view').classList.toggle('active', tab === 'view');
+      document.getElementById('tab-btn-register').classList.toggle('active', tab === 'register');
+      document.getElementById('panel-view').classList.toggle('active', tab === 'view');
+      document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+    }
+
+    var activePubLocId = null;
+
+    /* ====== Render published schedule ====== */
+    function renderPublishedSchedule() {
+      var raw = localStorage.getItem(PUB_KEY);
+      var pubEmpty = document.getElementById('pub-empty');
+      var pubSchedule = document.getElementById('pub-schedule');
+
+      if (!raw) {
+        pubEmpty.classList.remove('hidden');
+        pubSchedule.classList.add('hidden');
+      }
+
+      // Luôn luôn lấy bản cập nhật mới nhất từ server
+      fetch('/data/published_schedule.json')
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && (data.locations || data.publishedAt)) {
+            var oldRaw = localStorage.getItem(PUB_KEY);
+            var newRaw = JSON.stringify(data);
+            if (oldRaw !== newRaw) {
+              localStorage.setItem(PUB_KEY, newRaw);
+              renderPublishedSchedule(); // Render lại nếu có dữ liệu mới
+            }
+          }
+        }).catch(function () { });
+
+      if (!raw) return;
+
+
+      var snap;
+      try { snap = JSON.parse(raw); } catch (e) {
+        pubEmpty.classList.remove('hidden');
+        pubSchedule.classList.add('hidden');
+        return;
+      }
+
+      // Format fallback cho snapshot cũ
+      var locations = snap.locations;
+      if (!locations && snap.locationName) {
+        locations = [{
+          id: 'loc-default',
+          name: snap.locationName,
+          employees: snap.employees || [],
+          schedule: snap.schedule || {}
+        }];
+      }
+
+      // Nếu snapshot không có danh sách quán đầy đủ, lấy từ sysData
+      if (sysData && sysData.locations && sysData.locations.length) {
+        var snapLocMap = {};
+        if (locations) {
+          locations.forEach(function (l) { snapLocMap[l.name] = l; snapLocMap[l.id] = l; });
+        }
+        locations = sysData.locations.map(function (sysLoc) {
+          var matched = snapLocMap[sysLoc.name] || snapLocMap[sysLoc.id];
+          return matched || {
+            id: sysLoc.id,
+            name: sysLoc.name,
+            employees: sysLoc.employees || [],
+            schedule: sysLoc.schedule || {}
+          };
+        });
+      }
+
+      if (!locations || !locations.length) {
+        pubEmpty.classList.remove('hidden');
+        pubSchedule.classList.add('hidden');
+        return;
+      }
+
+      pubEmpty.classList.add('hidden');
+      pubSchedule.classList.remove('hidden');
+
+      // Update Header time
+      var pubAt = snap.publishedAt ? new Date(snap.publishedAt) : null;
+      document.getElementById('pub-time').textContent = pubAt
+        ? pubAt.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' }) + ' ' +
+        pubAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+        : '—';
+
+      // Ensure active location
+      if (!activePubLocId || !locations.find(function (l) { return l.id === activePubLocId; })) {
+        activePubLocId = locations[0].id;
+      }
+
+      // Render Quán Tabs
+      var locTabsEl = document.getElementById('pub-loc-tabs');
+      locTabsEl.innerHTML = locations.map(function (loc) {
+        var isActive = loc.id === activePubLocId;
+        return '<button type="button" onclick="switchPubLoc(\'' + loc.id + '\')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all ' +
+          (isActive ? 'bg-brand-500 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200') + '">' +
+          esc(loc.name) + ' (' + (loc.employees ? loc.employees.length : 0) + ' NV)</button>';
+      }).join('');
+
+      var curLoc = locations.find(function (l) { return l.id === activePubLocId; }) || locations[0];
+
+      // Table head (THỨ 2 -> CN)
+      var thead = document.getElementById('pub-table-head');
+      thead.innerHTML = DAYS.map(function (d) {
+        return '<th class="text-center bg-gray-900 text-white py-2.5 px-3 text-xs font-extrabold tracking-wider border-r border-gray-800 last:border-0">' + esc(d.label.toUpperCase()) + '</th>';
+      }).join('');
+
+      // Table body: Single row matching Admin grid style
+      var tbody = document.getElementById('pub-table-body');
+      var tr = document.createElement('tr');
+
+      DAYS.forEach(function (d) {
+        var td = document.createElement('td');
+        td.className = 'align-top p-2 border-r border-gray-100 last:border-0 bg-gray-50/50 min-w-[130px]';
+
+        // Gather all shifts for this day and sort by start time
+        var dayShifts = [];
+        (curLoc.employees || []).forEach(function (emp) {
+          var shifts = (curLoc.schedule[d.key] && curLoc.schedule[d.key][emp.id]) || [];
+          shifts.forEach(function (sh) {
+            dayShifts.push({ s: sh.s, e: sh.e, empId: emp.id, empName: emp.name });
+          });
+        });
+        dayShifts.sort(function (a, b) { return a.s - b.s; });
+
+        if (dayShifts.length === 0) {
+          td.innerHTML = '<div class="h-20 flex items-center justify-center text-gray-300 text-xs italic">Chưa có ca</div>';
+        } else {
+          var html = dayShifts.map(function (sh) {
+            var periodClass = sh.s < 720 ? 'bg-brand-500 text-white' : 'bg-accent-500 text-white';
+            var sH = Math.floor(sh.s / 60), sM = sh.s % 60;
+            var eH = Math.floor(sh.e / 60), eM = sh.e % 60;
+            var fmt = function (h, m) { return m === 0 ? h + 'h' : h + 'h' + (m < 10 ? '0' + m : m); };
+            var timeLabel = fmt(sH, sM) + '-' + fmt(eH, eM);
+
+            return '<div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg mb-1.5 shadow-sm font-bold text-xs ' + periodClass + '">' +
+              '<span class="uppercase tracking-wider font-extrabold truncate max-w-[70px]">' + esc(sh.empName) + '</span>' +
+              '<span class="mono text-[10.5px] opacity-90 ml-1">' + timeLabel + '</span>' +
+              '</div>';
+          }).join('');
+          td.innerHTML = html;
+        }
+        tr.appendChild(td);
+      });
+
+      tbody.innerHTML = '';
+      tbody.appendChild(tr);
+    }
+
+    function switchPubLoc(locId) {
+      activePubLocId = locId;
+      renderPublishedSchedule();
+    }
+
+    // Load app system locations and employees — từ server (đồng bộ tất cả thiết bị)
+    var sysData = (function () {
+      try {
+        var raw = localStorage.getItem(CORE_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : { locations: [] };
+      } catch (e) { return { locations: [] }; }
+    })();
+    // Nạp sysData mới nhất từ server
+    fetch('/data/admin_schedule.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.locations) {
+          sysData = data;
+          localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
+          // Cập nhật lại dropdown nhân viên
+          rebuildEmpDropdown();
+        }
+      }).catch(function () { });
+
+    // Load current registered schedule data — từ server
+    var regData = (function () { try { return JSON.parse(localStorage.getItem(REG_KEY)) || []; } catch (e) { return []; } })();
+    var saveRegs = function () {
+      localStorage.setItem(REG_KEY, JSON.stringify(regData));
+      // Lưu vào server (đồng bộ tất cả thiết bị)
+      fetch('/data/employee_registrations.json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(regData)
+      }).catch(function (e) { console.warn('Không lưu registrations:', e); });
+    };
+    // Nạp regData mới nhất từ server
+    fetch('/data/employee_registrations.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (Array.isArray(data)) {
+          regData = data;
+          localStorage.setItem(REG_KEY, JSON.stringify(data));
+          renderRecentList();
+        }
+      }).catch(function () { });
+
+
+    var selectEmp = document.getElementById('select-emp');
+    var selectEmpBtn = document.getElementById('select-emp-btn');
+    var selectEmpText = document.getElementById('select-emp-text');
+    var selectEmpMenu = document.getElementById('select-emp-menu');
+    var selectEmpList = document.getElementById('select-emp-list');
+    var customEmpDropdown = document.getElementById('custom-emp-dropdown');
+
+    // Aggregate all unique employees from all locations
+    var empMap = {};
+
+    function rebuildEmpDropdown() {
+      empMap = {};
+      if (sysData.locations && sysData.locations.length) {
+        sysData.locations.forEach(function (loc) {
+          if (loc.employees && loc.employees.length) {
+            loc.employees.forEach(function (emp) {
+              empMap[emp.code] = emp.name;
+            });
+          }
+        });
+      }
+      // Populate Custom Select Employee element
+      selectEmpList.innerHTML = '';
+      var sortedCodes = Object.keys(empMap).sort();
+      sortedCodes.forEach(function (code) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-full text-left px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors focus:bg-brand-50 focus:text-brand-700 outline-none';
+        btn.textContent = empMap[code] + ' (' + code + ')';
+        btn.onclick = function () {
+          selectEmp.value = code;
+          selectEmpText.textContent = empMap[code] + ' (' + code + ')';
+          selectEmpText.classList.remove('text-gray-500');
+          selectEmpText.classList.add('text-gray-900');
+          selectEmpMenu.classList.add('hidden');
+          selectEmp.dispatchEvent(new Event('change'));
+        };
+        selectEmpList.appendChild(btn);
+      });
+    }
+    rebuildEmpDropdown();
+
+
+    // Toggle dropdown
+    selectEmpBtn.onclick = function () {
+      selectEmpMenu.classList.toggle('hidden');
+    };
+
+    // Close dropdown on click outside
+    document.addEventListener('click', function (e) {
+      if (!customEmpDropdown.contains(e.target)) {
+        selectEmpMenu.classList.add('hidden');
+      }
+    });
+
+    // Render weekly days inputs inside form
+    var daysContainer = document.getElementById('weekly-days-container');
+    DAYS.forEach(function (day) {
+      var dayDiv = document.createElement('div');
+      dayDiv.className = 'day-block';
+      dayDiv.dataset.day = day.key;
+      dayDiv.innerHTML = '\
+      <div class="flex items-center justify-between mb-3">\
+        <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-gray-700">\
+          <input type="checkbox" class="day-enabled rounded text-brand-500 focus:ring-brand-500/30 w-4 h-4" style="accent-color:#0E7C66">\
+          <span>' + esc(day.label) + '</span>\
+        </label>\
+        <button type="button" class="btn-add-day-range hidden flex items-center gap-1 text-xs font-bold text-brand-500 hover:text-brand-700">\
+          + Thêm giờ\
+        </button>\
+      </div>\
+      <div class="day-time-ranges space-y-2 hidden"></div>';
+
+      var chk = dayDiv.querySelector('.day-enabled');
+      var addBtn = dayDiv.querySelector('.btn-add-day-range');
+      var timeRangesDiv = dayDiv.querySelector('.day-time-ranges');
+
+      chk.onchange = function () {
+        if (chk.checked) {
+          addBtn.classList.remove('hidden');
+          timeRangesDiv.classList.remove('hidden');
+          if (timeRangesDiv.children.length === 0) {
+            addTimeRowToDay(timeRangesDiv);
+          }
+        } else {
+          addBtn.classList.add('hidden');
+          timeRangesDiv.classList.add('hidden');
+        }
+      };
+
+      addBtn.onclick = function () {
+        addTimeRowToDay(timeRangesDiv);
+      };
+
+      daysContainer.appendChild(dayDiv);
+    });
+
+    function addTimeRowToDay(container) {
+      var div = document.createElement('div');
+      div.className = 'time-row flex items-center gap-2 pop';
+      div.innerHTML = '\
+      <div class="flex-1 flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-2 py-1.5 focus-within:border-brand-400 transition-colors">\
+        <span class="text-xs font-semibold text-gray-400 shrink-0">Từ</span>\
+        <input type="time" class="time-start flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono" value="05:00" step="1800">\
+        <span class="text-gray-300 font-light">—</span>\
+        <span class="text-xs font-semibold text-gray-400 shrink-0">đến</span>\
+        <input type="time" class="time-end flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono" value="08:00" step="1800">\
+      </div>\
+      <button type="button" class="btn-rm-time-row w-6 h-6 rounded flex items-center justify-center text-gray-300 hover:bg-red-50 hover:text-red-400 transition-colors flex-shrink-0" title="Xóa">\
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>\
+      </button>';
+
+      div.querySelector('.btn-rm-time-row').onclick = function () {
+        if (container.children.length > 1) {
+          div.remove();
+        } else {
+          showToast('Cần ít nhất 1 khung giờ nếu đã bật ngày này', 'warn');
+        }
+      };
+      container.appendChild(div);
+    }
+
+    // Handle Form Submit
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('form-error');
+      var okEl = document.getElementById('form-success');
+      errEl.classList.add('hidden');
+      okEl.classList.add('hidden');
+
+      var empCode = selectEmp.value;
+      if (!empCode) { errEl.textContent = 'Vui lòng chọn tên nhân viên.'; errEl.classList.remove('hidden'); return; }
+
+      var empName = empMap[empCode];
+
+      var daysChecked = [];
+      var validationOk = true;
+
+      // IE compatible selection
+      var dayBlocks = Array.from(document.querySelectorAll('.day-block'));
+      dayBlocks.forEach(function (dayBlock) {
+        var dayKey = dayBlock.dataset.day;
+        var isEnabled = dayBlock.querySelector('.day-enabled').checked;
+        if (isEnabled) {
+          var ranges = [];
+          dayBlock.querySelectorAll('.time-row').forEach(function (row) {
+            var s = row.querySelector('.time-start').value;
+            var en = row.querySelector('.time-end').value;
+            if (!s || !en || s >= en) {
+              validationOk = false;
+              return;
+            }
+            ranges.push({ start: s, end: en });
+          });
+          if (ranges.length > 0) {
+            daysChecked.push({ day: dayKey, timeRanges: ranges });
+          }
+        }
+      });
+
+      if (!validationOk) {
+        errEl.textContent = 'Khung giờ ở các ngày đã chọn không hợp lệ — giờ kết thúc phải sau giờ bắt đầu.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      if (daysChecked.length === 0) {
+        errEl.textContent = 'Vui lòng chọn và thiết lập ít nhất 1 ngày làm việc.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      // Save each day as a separate registration item (or update if needed)
+      daysChecked.forEach(function (dayInfo) {
+        // Remove any existing registration for this employee/day combo
+        regData = regData.filter(function (x) {
+          return !(x.empCode === empCode && x.day === dayInfo.day);
+        });
+        // Add new
+        regData.push({
+          id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+          empCode: empCode,
+          day: dayInfo.day,
+          timeRanges: dayInfo.timeRanges,
+          submittedAt: new Date().toISOString()
+        });
+      });
+
+      saveRegs();
+
+      document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
+      okEl.classList.remove('hidden');
+
+      // Reset fields
+      selectEmp.value = '';
+
+      dayBlocks.forEach(function (dayBlock) {
+        dayBlock.querySelector('.day-enabled').checked = false;
+        dayBlock.querySelector('.btn-add-day-range').classList.add('hidden');
+        var container = dayBlock.querySelector('.day-time-ranges');
+        container.classList.add('hidden');
+        container.innerHTML = '';
+      });
+
+      renderRecentList();
+      showToast('✅ Đăng ký lịch tuần thành công!');
+    });
+
+    function renderRecentList() {
+      var el = document.getElementById('recent-list');
+      var recent = regData.slice().reverse().slice(0, 8);
+      if (!recent.length) { el.innerHTML = '<p class="text-sm text-gray-400 italic">Chưa có đăng ký nào.</p>'; return; }
+      el.innerHTML = recent.map(function (r) {
+        var dl = DAYS.find(function (d) { return d.key === r.day; }); dl = dl ? dl.label : r.day;
+        var name = empMap[r.empCode] || r.empCode;
+        return '<div class="flex items-center gap-2.5 py-2 border-b border-gray-50 last:border-0">\
+        <span class="mono text-xs font-bold text-white bg-brand-500 px-2 py-0.5 rounded-lg tracking-wider shrink-0">'+ esc(name) + '</span>\
+        <span class="text-xs font-semibold text-gray-400 shrink-0">'+ esc(dl) + '</span>\
+        <span class="mono text-xs text-gray-600 font-medium truncate">' + r.timeRanges.map(function (t) { return t.start + '–' + t.end; }).join(' · ') + '</span>\
+      </div>';
+      }).join('');
+    }
+    renderRecentList();
+    renderPublishedSchedule();
+
+    /* ====== Kiểm tra khóa đăng ký ====== */
+    function checkRegistrationLock() {
+      var LOCK_REG_KEY = 'cfhm-registration-lock-config';
+      var cfg = { enabled: false };
+      try {
+        var raw = localStorage.getItem(LOCK_REG_KEY);
+        if (raw) cfg = JSON.parse(raw);
+      } catch (e) { }
+
+      // Fetch lock config từ server để đảm bảo mới nhất
+      fetch('/data/lock_config.json')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data && typeof data === 'object') {
+            var oldRaw = localStorage.getItem(LOCK_REG_KEY);
+            var newRaw = JSON.stringify(data);
+            if (oldRaw !== newRaw) {
+              localStorage.setItem(LOCK_REG_KEY, newRaw);
+              checkRegistrationLock(); // Tự gọi lại hàm để update giao diện nếu có thay đổi
+            }
+          }
+        }).catch(function () { });
+
+      if (!cfg.enabled) {
+        // Mở khoá
+        document.getElementById('form-container').classList.remove('hidden');
+        document.getElementById('lock-container').classList.add('hidden');
+        return;
+      }
+
+
+      var now = new Date();
+      var day = now.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+      var hour = now.getHours();
+      var min = now.getMinutes();
+
+      function toMinutes(dayStr, timeStr) {
+        var dayMap = { 'T2': 1, 'T3': 2, 'T4': 3, 'T5': 4, 'T6': 5, 'T7': 6, 'CN': 0 };
+        var dayNum = dayMap[dayStr] !== undefined ? dayMap[dayStr] : 0;
+        var daysSinceMonday = (dayNum + 6) % 7;
+        var timeParts = timeStr.split(':');
+        var h = parseInt(timeParts[0] || '0', 10);
+        var m = parseInt(timeParts[1] || '0', 10);
+        return daysSinceMonday * 24 * 60 + h * 60 + m;
+      }
+
+      var currentDaysSinceMonday = (day + 6) % 7;
+      var currentMinutes = currentDaysSinceMonday * 24 * 60 + hour * 60 + min;
+
+      var startMin = toMinutes(cfg.startDay, cfg.startTime);
+      var endMin = toMinutes(cfg.endDay, cfg.endTime);
+
+      var isOpen = false;
+      if (startMin <= endMin) {
+        isOpen = currentMinutes >= startMin && currentMinutes <= endMin;
+      } else {
+        isOpen = currentMinutes >= startMin || currentMinutes <= endMin;
+      }
+
+      if (!isOpen) {
+        // Khi khoá: Giữ tab nút Đăng ký, chỉ ẩn form và hiện màn hình khoá
+        document.getElementById('form-container').classList.add('hidden');
+        document.getElementById('lock-container').classList.remove('hidden');
+
+        var dayLabels = { 'T2': 'Thứ 2', 'T3': 'Thứ 3', 'T4': 'Thứ 4', 'T5': 'Thứ 5', 'T6': 'Thứ 6', 'T7': 'Thứ 7', 'CN': 'Chủ Nhật' };
+        var startLabel = (dayLabels[cfg.startDay] || cfg.startDay) + ' ' + cfg.startTime;
+        var endLabel = (dayLabels[cfg.endDay] || cfg.endDay) + ' ' + cfg.endTime;
+
+        document.getElementById('lock-time-window').textContent = startLabel + ' đến ' + endLabel;
+      }
+    }
+    checkRegistrationLock();
+
+
+    var toastT;
+    function showToast(msg, type) {
+      var el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full shadow-xl text-sm font-semibold ' +
+        (type === 'warn' ? 'bg-amber-600 text-white' : 'bg-gray-900 text-white');
+      clearTimeout(toastT);
+      toastT = setTimeout(function () { el.classList.add('hidden'); }, 2800);
+    }
+  </script>
+</body>
+
+</html>

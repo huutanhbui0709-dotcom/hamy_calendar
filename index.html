@@ -1,188 +1,1077 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lịch Làm Việc</title>
-<meta name="description" content="Công cụ sắp xếp lịch làm việc nhân viên theo tuần — không cần cơ sở dữ liệu, lưu ngay trên trình duyệt.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗓️</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch Làm Việc</title>
+  <meta name="description" content="Công cụ sắp xếp lich lam viec nhân viên theo tuần.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css"
+    integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    .main-tab-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--line);
+      margin-bottom: 20px;
+      background: var(--surface);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      overflow: hidden;
+    }
+
+    .main-tab-btn {
+      padding: 11px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      background: transparent;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      cursor: pointer;
+      transition: color .15s, border-color .15s, background .15s;
+      white-space: nowrap;
+      font-family: inherit;
+      margin-bottom: -2px;
+    }
+
+    .main-tab-btn:hover {
+      color: var(--primary);
+      background: var(--primary-tint);
+    }
+
+    .main-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--primary-tint);
+    }
+
+    .reg-panel {
+      animation: reg-fade .2s ease;
+    }
+
+    @keyframes reg-fade {
+      from {
+        opacity: 0;
+        transform: translateY(6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .reg-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+
+    .reg-search {
+      flex: 1;
+      min-width: 160px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: var(--surface-sunken);
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .reg-search:focus {
+      border-color: var(--primary);
+    }
+
+    .reg-dropdown {
+      min-width: 160px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-transform: uppercase;
+      background: var(--surface-sunken);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .reg-count {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-faint);
+      background: var(--surface-sunken);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .reg-table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    table.reg-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .reg-table thead th {
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .reg-table tbody tr {
+      border-bottom: 1px solid var(--line);
+      transition: background .1s;
+    }
+
+    .reg-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .reg-table tbody tr:hover {
+      background: var(--primary-tint);
+    }
+
+    .reg-table td {
+      padding: 10px 14px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .reg-emp-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      padding: 3px 8px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+
+    .reg-emp-badge.morning {
+      background: var(--primary-tint);
+      color: var(--primary-ink);
+    }
+
+    .reg-emp-badge.evening {
+      background: var(--accent-tint);
+      color: var(--accent-ink);
+    }
+
+    .reg-time-badge {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      background: var(--surface-sunken);
+      color: var(--ink);
+      padding: 3px 8px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+
+    .reg-del-btn {
+      border: none;
+      background: transparent;
+      color: var(--ink-faint);
+      cursor: pointer;
+      font-size: 16px;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      transition: background .12s, color .12s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reg-del-btn:hover {
+      background: var(--danger-tint);
+      color: var(--danger);
+    }
+
+    .reg-empty {
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--ink-faint);
+      font-size: 14px;
+    }
+
+    .weekly-reg-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    table.weekly-reg-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .weekly-reg-table thead th {
+      background: var(--ink);
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .weekly-reg-table tbody tr {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .weekly-reg-table tbody tr:nth-child(even) {
+      background: var(--surface-sunken);
+    }
+
+    .weekly-reg-table tbody td {
+      padding: 12px 16px;
+      vertical-align: top;
+    }
+
+    .weekly-reg-table td.day-col {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ink);
+      white-space: nowrap;
+      border-right: 2px solid var(--line-strong);
+      width: 110px;
+    }
+
+    .reg-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .reg-chip.morning {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .reg-chip.evening {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .reg-chip .chip-name {
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .reg-chip .chip-time {
+      opacity: .8;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+    }
+
+    .reg-emp-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .reg-link {
+      font-size: 12px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .reg-link:hover {
+      text-decoration: underline;
+    }
+
+    .reg-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .reg-total-badge {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      background: var(--surface-sunken);
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="app-shell">
+  <div class="app-shell">
 
-  <!-- ===== Header ===== -->
-  <header class="topbar">
-    <div class="topbar-brand">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 8a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 12h24" stroke="currentColor" stroke-width="2.2"/><path d="M10 4v4M22 4v4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="11" cy="18" r="1.6" fill="currentColor"/><circle cx="16" cy="18" r="1.6" fill="currentColor"/><circle cx="21" cy="18" r="1.6" fill="currentColor"/></svg>
-      </span>
+    <!-- Header -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="26" height="26">
+            <path d="M4 8a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Z" fill="none"
+              stroke="currentColor" stroke-width="2.2" />
+            <path d="M4 12h24" stroke="currentColor" stroke-width="2.2" />
+            <path d="M10 4v4M22 4v4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            <circle cx="11" cy="18" r="1.6" fill="currentColor" />
+            <circle cx="16" cy="18" r="1.6" fill="currentColor" />
+            <circle cx="21" cy="18" r="1.6" fill="currentColor" />
+          </svg>
+        </span>
+        <div>
+          <h1>Lịch Làm Việc</h1>
+          <p class="brand-sub">Ca sáng · Ca chiều — sắp theo tuần, không trùng giờ</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" id="btn-employees" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+          </svg>
+          Nhân viên
+        </button>
+        <button class="btn btn-primary" id="btn-download" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M12 3v12m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+          </svg>
+          Tải Excel
+        </button>
+      </div>
+    </header>
+
+    <!-- Main tab nav -->
+    <nav class="main-tab-nav" aria-label="Chuyển chế độ xem">
+      <button class="main-tab-btn active" data-maintab="schedule">&#128197; Lịch Làm Việc</button>
+      <button class="main-tab-btn" data-maintab="weekly-reg">&#128203; Lịch Đăng Ký</button>
+      <button class="main-tab-btn" data-maintab="admin">&#9881;&#65039; Quản Lý Admin</button>
+    </nav>
+
+    <!-- TAB 1: Calendar -->
+    <div id="panel-schedule">
+      <nav class="loc-tabs" id="loc-tabs" aria-label="Chọn quán"></nav>
+      <div class="staff-toggle-bar"
+        style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+        <div id="staff-toggle-container" style="display:flex; align-items:center;"></div>
+        <button class="btn" id="btn-copy" type="button"
+          style="padding: 6px 16px; font-size: 12.5px; border-radius: 999px; border: 1.5px solid var(--primary); background: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; color: #fff; font-weight:700; transition: background .15s, transform .1s; box-shadow: 0 2px 8px rgba(14,124,102,.18);"
+          onmouseenter="this.style.background='var(--primary-ink)'" onmouseleave="this.style.background='var(--primary)'" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu vào hệ thống
+        </button>
+      </div>
+      <div class="legend">
+        <div class="legend-group">
+          <span class="legend-title">05:00-12:00 &middot; tối đa 3</span>
+          <span class="chip-dot lvl-a-0"></span><span>trống</span>
+          <span class="chip-dot lvl-a-1"></span><span>1 người</span>
+          <span class="chip-dot lvl-a-2"></span><span>2 người &middot; cảnh báo</span>
+          <span class="chip-dot lvl-a-3"></span><span>3 người &middot; đủ</span>
+        </div>
+        <div class="legend-group">
+          <span class="legend-title">Sau 12:00 &middot; tối thiểu 2</span>
+          <span class="chip-dot lvl-b-0"></span><span>trống</span>
+          <span class="chip-dot lvl-b-1"></span><span>1 người &middot; cảnh báo</span>
+          <span class="chip-dot lvl-b-2"></span><span>2 người &middot; đủ</span>
+        </div>
+      </div>
+      <main class="table-wrap">
+        <div id="empty-state" class="empty-state" hidden>
+          <div class="empty-illustration" aria-hidden="true">&#128197;</div>
+          <h2>Chưa có nhân viên nào ở quán này</h2>
+          <p>Thêm nhân viên để bắt đầu xếp ca làm việc theo tuần.</p>
+          <button class="btn btn-primary" id="btn-empty-add">Thêm nhân viên đầu tiên</button>
+        </div>
+        <table class="schedule" id="schedule-table" hidden>
+          <thead>
+            <tr class="row-head">
+              <th class="col-name">Tên NV</th>
+            </tr>
+            <tr class="row-strip">
+              <th class="col-name strip-label">Mức phủ ca</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-body"></tbody>
+        </table>
+      </main>
+      <p class="footnote">Dữ liệu được lưu tự động trên trình duyệt này. &middot; <a class="reg-link"
+          href="schedule-system.html" target="_blank">Trang đăng ký ca cho nhân viên</a></p>
+    </div>
+
+    <!-- TAB 2: Lịch Đăng Ký -->
+    <div id="panel-weekly-reg" hidden class="reg-panel">
+      <div class="reg-header-row">
+        <div>
+          <h2 style="font-size:17px;font-weight:800;margin:0 0 2px;">Lịch Đăng Ký Theo Tuần</h2>
+          <p style="font-size:12.5px;color:var(--ink-soft);margin:0;">Ca đăng ký từ nhân viên, phân theo thứ.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="btn-refresh-weekly" class="btn btn-secondary" style="padding:6px 12px;font-size:12px;"
+            title="Làm mới dữ liệu"><i class="fa-solid fa-arrows-rotate" style="color: rgb(248, 248, 248);"></i> Làm
+            mới</button>
+          <span class="reg-total-badge" id="reg-weekly-total">0 ca</span>
+        </div>
+      </div>
+      <div class="weekly-reg-wrap">
+        <table class="weekly-reg-table">
+          <thead>
+            <tr>
+              <th style="width:110px;">Thứ</th>
+              <th>Ca đăng ký</th>
+            </tr>
+          </thead>
+          <tbody id="reg-weekly-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: Admin -->
+    <div id="panel-admin" hidden class="reg-panel">
+      <div class="reg-header-row">
+        <div>
+          <h2 style="font-size:17px;font-weight:800;margin:0 0 2px;">Quản lý theo nhân viên</h2>
+          <p style="font-size:12.5px;color:var(--ink-soft);margin:0;">Xem, lọc và xóa từng ca đăng ký.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <!-- Auto-delete toggle -->
+          <label id="auto-clear-label"
+            style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12.5px;color:var(--ink-soft);padding:6px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-sunken);user-select:none;"
+            title="Tự động xóa lúc 23:59 thứ 7 hàng tuần">
+            <span style="font-size:11px;"><i class="fa-solid fa-alarm-clock fa-xl"
+                style="color: rgb(118, 128, 125);"></i></span>
+            <span>Tự động xoá tất cả data</span>
+            <span id="auto-clear-status"
+              style="font-family:var(--font-mono);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#e5e5e5;color:#888;">TẮt</span>
+            <input type="checkbox" id="auto-clear-toggle"
+              style="accent-color:var(--primary);width:15px;height:15px;cursor:pointer;">
+          </label>
+          <!-- Lock registration toggle -->
+          <label id="lock-reg-label"
+            style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12.5px;color:var(--ink-soft);padding:6px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-sunken);user-select:none;"
+            title="Khóa không cho nhân viên đăng ký ngoài khung giờ được chọn">
+            <span><i class="fa-solid fa-lock" style="color: rgb(118, 128, 125);"></i></span>
+            <span>Khóa đăng ký ngoài giờ</span>
+            <span id="lock-reg-status"
+              style="font-family:var(--font-mono);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#e5e5e5;color:#888;">Tắt</span>
+            <input type="checkbox" id="lock-reg-toggle"
+              style="accent-color:var(--primary);width:15px;height:15px;cursor:pointer;">
+          </label>
+          <!-- Delete all button -->
+          <button id="btn-clear-all" class="btn"
+            style="padding:6px 14px;font-size:12px;background:var(--danger);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;"
+            title="Xóa toàn bộ lịch đăng ký"><i class="fa-solid fa-trash" style="color: rgb(248, 248, 248);"></i> Xóa
+            tất cả</button>
+          <button id="btn-refresh-admin" class="btn btn-secondary" style="padding:6px 12px;font-size:12px;"
+            title="Làm mới dữ liệu"><i class="fa-solid fa-arrows-rotate" style="color: rgb(248, 248, 248);"></i> Làm
+            mới</button>
+        </div>
+      </div>
+      <!-- Lock Registration settings row -->
+      <div id="lock-reg-settings-row"
+        style="display:none; align-items:center; gap:12px; padding:10px 16px; border:1px dashed var(--line-strong); border-radius:var(--radius-md); background:var(--surface-sunken); margin: 0 0 16px 0; font-size:12.5px; flex-wrap:wrap;">
+        <span style="font-weight:700; color:var(--ink-soft);"><i class="fa-solid fa-clock"></i> Khung giờ mở đăng ký
+          hàng tuần:</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span>Từ</span>
+          <select id="lock-start-day"
+            style="padding:4px 8px; border-radius:4px; border:1px solid var(--line); font-size:12px; font-weight:600; background:#fff;">
+            <option value="T2">Thứ 2</option>
+            <option value="T3">Thứ 3</option>
+            <option value="T4">Thứ 4</option>
+            <option value="T5">Thứ 5</option>
+            <option value="T6">Thứ 6</option>
+            <option value="T7">Thứ 7</option>
+            <option value="CN">Chủ Nhật</option>
+          </select>
+          <input type="time" id="lock-start-time"
+            style="padding:3px 8px; border-radius:4px; border:1px solid var(--line); font-size:12px; font-weight:600; background:#fff;"
+            value="00:00">
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span>Đến</span>
+          <select id="lock-end-day"
+            style="padding:4px 8px; border-radius:4px; border:1px solid var(--line); font-size:12px; font-weight:600; background:#fff;">
+            <option value="T2">Thứ 2</option>
+            <option value="T3">Thứ 3</option>
+            <option value="T4">Thứ 4</option>
+            <option value="T5">Thứ 5</option>
+            <option value="T6">Thứ 6</option>
+            <option value="T7">Thứ 7</option>
+            <option value="CN" selected>Chủ Nhật</option>
+          </select>
+          <input type="time" id="lock-end-time"
+            style="padding:3px 8px; border-radius:4px; border:1px solid var(--line); font-size:12px; font-weight:600; background:#fff;"
+            value="12:00">
+        </div>
+        <button id="btn-save-lock-config" class="btn btn-secondary"
+          style="padding:5px 12px; font-size:12px; height:auto; width:auto; border-radius:6px; margin-left:auto;">Lưu
+          cấu hình</button>
+      </div>
+      <div class="reg-filter-bar">
+        <input type="text" id="reg-search" class="reg-search" placeholder="Tìm tên nhân viên..." autocomplete="off">
+        <select id="reg-dropdown" class="reg-dropdown">
+          <option value="">Tất cả nhân viên</option>
+        </select>
+        <span class="reg-count" id="reg-count">0 kết quả</span>
+      </div>
+      <!-- Employee cards container -->
+      <div id="reg-admin-cards"
+        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:4px 0;"></div>
+      <div id="reg-admin-empty" class="reg-empty" hidden>Không có dữ liệu phù hợp.</div>
+    </div>
+
+  </div><!-- /app-shell -->
+
+  <!-- Drawers -->
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="drawer" id="shift-drawer" hidden aria-label="Chỉnh sửa ca làm việc">
+    <div class="drawer-head">
       <div>
-        <h1>Lịch Làm Việc</h1>
-        <p class="brand-sub">Ca sáng · Ca chiều — sắp theo tuần, không trùng giờ</p>
+        <p class="drawer-eyebrow" id="drawer-eyebrow">THU 2</p>
+        <h1 id="drawer-title">Tên nhân viên</h1>
+      </div>
+      <button class="icon-btn" id="drawer-close" aria-label="Dong" type="button">&#10005;</button>
+    </div>
+    <p class="field-warning" id="shift-warning" hidden></p>
+    <div class="drawer-body">
+      <div class="drawer-col drawer-col-narrow">
+        <h3 class="drawer-section-title">Ca hiện tại</h3>
+        <ul class="shift-list" id="shift-list"></ul>
+        <p class="hint-empty" id="shift-list-empty">Chua co ca nao trống ngay nay.</p>
+      </div>
+      <div class="drawer-col">
+        <h3 class="drawer-section-title">Thêm ca mới</h3>
+        <div class="preset-row" id="preset-row"></div>
+        <div class="time-row" style="margin-bottom:12px;">
+          <label class="time-field grow">
+            <span>Chọn nhân viên trực</span>
+            <select id="input-shift-emp" class="emp-select-input"
+              style="width:100%;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);font-size:13.5px;font-family:inherit;background:#fff;"></select>
+          </label>
+        </div>
+        <div class="time-row">
+          <label class="time-field"><span>Bắt đầu</span><input type="time" id="input-start" value="05:00"
+              step="1800"></label>
+          <label class="time-field"><span>Kết thúc</span><input type="time" id="input-end" value="08:00"
+              step="1800"></label>
+          <button class="btn btn-secondary" id="btn-add-shift" type="button">Thêm ca</button>
+        </div>
+        <p class="field-error" id="shift-error" hidden></p>
+      </div>
+      <!-- Gợi ý nhân viên có thể làm -->
+      <div class="drawer-col" style="flex: 0 0 320px; border-left: 1px solid var(--line);">
+        <h3 class="drawer-section-title">Nhân viên đã đăng ký</h3>
+        <div id="drawer-suggested-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        <p class="hint-empty" id="drawer-suggested-empty"
+          style="font-size:12.5px; color:var(--ink-faint); font-style:italic;">Không có ai đăng ký hôm nay.</p>
       </div>
     </div>
-    <div class="topbar-actions">
-      <button class="btn btn-ghost" id="btn-employees" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Nhân viên
-      </button>
-      <button class="btn btn-ghost" id="btn-copy" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="2"/></svg>
-        Sao chép
-      </button>
-      <button class="btn btn-primary" id="btn-download" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Tải CSV
-      </button>
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" id="btn-cancel-drawer" type="button">Hủy</button>
+      <button class="btn btn-primary" id="btn-save-drawer" type="button">Lưu thay đổi</button>
     </div>
-  </header>
+  </aside>
 
-  <!-- ===== Location tabs ===== -->
-  <nav class="loc-tabs" id="loc-tabs" aria-label="Chọn quán"></nav>
-  <!-- ===== Staff toggle (injected by JS) ===== -->
-  <div class="staff-toggle-bar" id="staff-toggle-container"></div>
-
-  <!-- ===== Legend / coverage key ===== -->
-  <div class="legend">
-    <div class="legend-group">
-      <span class="legend-title">05:00–12:00 · tối đa 3</span>
-      <span class="chip-dot lvl-a-0"></span><span>trống</span>
-      <span class="chip-dot lvl-a-1"></span><span>1 người</span>
-      <span class="chip-dot lvl-a-2"></span><span>2 người · cảnh báo</span>
-      <span class="chip-dot lvl-a-3"></span><span>3 người · đủ</span>
-    </div>
-    <div class="legend-group">
-      <span class="legend-title">Sau 12:00 · tối thiểu 2</span>
-      <span class="chip-dot lvl-b-0"></span><span>trống</span>
-      <span class="chip-dot lvl-b-1"></span><span>1 người · cảnh báo</span>
-      <span class="chip-dot lvl-b-2"></span><span>2 người · đủ</span>
-    </div>
-  </div>
-
-  <!-- ===== Schedule table ===== -->
-  <main class="table-wrap">
-    <div id="empty-state" class="empty-state" hidden>
-      <div class="empty-illustration" aria-hidden="true">🗓️</div>
-      <h2>Chưa có nhân viên nào ở quán này</h2>
-      <p>Thêm nhân viên để bắt đầu xếp ca làm việc theo tuần.</p>
-      <button class="btn btn-primary" id="btn-empty-add">Thêm nhân viên đầu tiên</button>
-    </div>
-    <table class="schedule" id="schedule-table" hidden>
-      <thead>
-        <tr class="row-head">
-          <th class="col-name">Tên NV</th>
-          <!-- day headers injected -->
-        </tr>
-        <tr class="row-strip">
-          <th class="col-name strip-label">Mức phủ ca</th>
-          <!-- coverage strips injected -->
-        </tr>
-      </thead>
-      <tbody id="schedule-body"></tbody>
-    </table>
-  </main>
-
-  <p class="footnote">Dữ liệu được lưu tự động trên trình duyệt này (không dùng máy chủ / cơ sở dữ liệu). Dùng “Sao chép” hoặc “Tải CSV” để lưu trữ hoặc chia sẻ với người khác.</p>
-</div>
-
-<!-- ===== Shift editor drawer ===== -->
-<div class="overlay" id="overlay" hidden></div>
-<aside class="drawer" id="shift-drawer" hidden aria-label="Chỉnh sửa ca làm việc">
-  <div class="drawer-head">
-    <div>
-      <p class="drawer-eyebrow" id="drawer-eyebrow">THỨ 2</p>
-      <h2 id="drawer-title">Tên nhân viên</h2>
-    </div>
-    <button class="icon-btn" id="drawer-close" aria-label="Đóng" type="button">✕</button>
-  </div>
-
-  <!-- Warning banner: full-width inside drawer body area -->
-  <p class="field-warning" id="shift-warning" hidden></p>
-
-  <div class="drawer-body">
-    <!-- Left column: current shifts -->
-    <div class="drawer-col drawer-col-narrow">
-      <h3 class="drawer-section-title">Ca hiện tại</h3>
-      <ul class="shift-list" id="shift-list"></ul>
-      <p class="hint-empty" id="shift-list-empty">Chưa có ca nào trong ngày này.</p>
-    </div>
-
-    <!-- Right column: add new shift -->
-    <div class="drawer-col">
-      <h3 class="drawer-section-title">Thêm ca mới</h3>
-      <div class="preset-row" id="preset-row"></div>
-      <div class="time-row" style="margin-bottom: 12px;">
-        <label class="time-field grow">
-          <span>Chọn nhân viên trực</span>
-          <select id="input-shift-emp" class="emp-select-input" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); font-size: 13.5px; font-family: inherit; background: #fff;"></select>
-        </label>
+  <aside class="drawer" id="employee-drawer" hidden aria-label="Quản lý nhân viên">
+    <div class="drawer-head">
+      <div>
+        <p class="drawer-eyebrow" id="emp-drawer-eyebrow">QUÁN 5</p>
+        <h2>Nhân viên</h2>
       </div>
-      <div class="time-row">
-        <label class="time-field">
-          <span>Bắt đầu</span>
-          <input type="time" id="input-start" value="05:00" step="1800">
-        </label>
-        <label class="time-field">
-          <span>Kết thúc</span>
-          <input type="time" id="input-end" value="08:00" step="1800">
-        </label>
-        <button class="btn btn-secondary" id="btn-add-shift" type="button">Thêm ca</button>
+      <button class="icon-btn" id="emp-drawer-close" aria-label="Đóng" type="button">&#10005;</button>
+    </div>
+    <div class="drawer-body">
+      <!-- Left: danh sách -->
+      <div class="drawer-col">
+        <h3 class="drawer-section-title">Danh sách nhân viên</h3>
+        <ul class="employee-list" id="employee-list"></ul>
       </div>
-      <p class="field-error" id="shift-error" hidden></p>
+      <!-- Right: form thêm -->
+      <div class="drawer-col drawer-col-narrow">
+        <h3 class="drawer-section-title">Thêm nhân viên mới</h3>
+        <div class="emp-add-form">
+          <label class="time-field" style="width:100%">
+            <span>Tên nhân viên</span>
+            <input type="text" id="input-new-emp" placeholder="Ví dụ: Gia Phát" maxlength="40">
+          </label>
+          <button class="btn btn-secondary" id="btn-add-emp" type="button"
+            style="width:100%;justify-content:center;margin-top:8px;">
+            + Thêm nhân viên
+          </button>
+          <p class="field-hint" style="margin-top:8px;">Mã nhân viên được tạo tự động theo tên (VD: Gia Phát → GIAPHAT).
+          </p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Confirm modal -->
+  <div class="modal-overlay" id="confirm-overlay" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h3 id="confirm-title">Xác nhận lưu thay đổi</h3>
+      <p id="confirm-message">Bạn có chắc muốn lưu thay đổi này không?</p>
+      <div class="modal-warning" id="confirm-warning" hidden></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="confirm-cancel" type="button">Hủy</button>
+        <button class="btn btn-primary" id="confirm-ok" type="button">Xác nhận &amp; Lưu</button>
+      </div>
     </div>
   </div>
 
-  <div class="drawer-foot">
-    <button class="btn btn-ghost" id="btn-cancel-drawer" type="button">Huỷ</button>
-    <button class="btn btn-primary" id="btn-save-drawer" type="button">Lưu thay đổi</button>
-  </div>
-</aside>
+  <div class="toast" id="toast" hidden></div>
 
-<!-- ===== Employee manager drawer ===== -->
-<aside class="drawer" id="employee-drawer" hidden aria-label="Quản lý nhân viên">
-  <div class="drawer-head">
-    <div>
-      <p class="drawer-eyebrow" id="emp-drawer-eyebrow">QUÁN 5</p>
-      <h2>Nhân viên</h2>
-    </div>
-    <button class="icon-btn" id="emp-drawer-close" aria-label="Đóng" type="button">✕</button>
-  </div>
-  <div class="drawer-body">
-    <ul class="employee-list" id="employee-list"></ul>
-    <h3 class="drawer-section-title">Thêm nhân viên</h3>
-    <div class="time-row">
-      <label class="time-field grow">
-        <span>Tên nhân viên</span>
-        <input type="text" id="input-new-emp" placeholder="Ví dụ: Lan Anh" maxlength="40">
-      </label>
-      <button class="btn btn-secondary" id="btn-add-emp" type="button">Thêm</button>
-    </div>
-    <p class="field-hint">Mã nhân viên được cấp tự động (VD: NV01, NV02…).</p>
-  </div>
-</aside>
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      var REG_KEY = 'cfhm-schedule-v1';
+      var CORE_KEY = 'lich-lam-viec:data:v2';
+      var DAYS = [{ key: 'T2', label: 'Thứ 2' }, { key: 'T3', label: 'Thứ 3' }, { key: 'T4', label: 'Thứ 4' }, { key: 'T5', label: 'Thứ 5' }, { key: 'T6', label: 'Thứ 6' }, { key: 'T7', label: 'Thứ 7' }, { key: 'CN', label: 'Chủ Nhật' }];
+      function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] }); }
 
-<!-- ===== Confirm modal ===== -->
-<div class="modal-overlay" id="confirm-overlay" hidden>
-  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
-    <h3 id="confirm-title">Xác nhận lưu thay đổi</h3>
-    <p id="confirm-message">Bạn có chắc muốn lưu thay đổi này không?</p>
-    <div class="modal-warning" id="confirm-warning" hidden></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" id="confirm-cancel" type="button">Huỷ</button>
-      <button class="btn btn-primary" id="confirm-ok" type="button">Xác nhận & Lưu</button>
-    </div>
-  </div>
-</div>
+      // Load/Save đăng ký ca — đồng bộ qua server file
+      function loadRegs() {
+        try { return JSON.parse(localStorage.getItem(REG_KEY)) || []; } catch (e) { return []; }
+      }
+      function saveRegs(arr) {
+        localStorage.setItem(REG_KEY, JSON.stringify(arr));
+        fetch('/data/employee_registrations.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(arr)
+        }).catch(function(e) { console.warn('Không lưu được registrations:', e); });
+      }
+      // Lấy registrations mới nhất từ server khi tải trang
+      fetch('/data/employee_registrations.json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (Array.isArray(data) && data.length) {
+            localStorage.setItem(REG_KEY, JSON.stringify(data));
+            if (typeof renderAdminTable === 'function') renderAdminTable();
+          }
+        }).catch(function(){});
 
-<!-- ===== Toast ===== -->
-<div class="toast" id="toast" hidden></div>
+      // Build empCode -> empName map from system data (try both v1 and v2)
+      var empNameMap = {};
+      function buildNameMap(key) {
+        try {
+          var raw = localStorage.getItem(key);
+          if (!raw) return;
+          var d = JSON.parse(raw);
+          if (d && d.locations) d.locations.forEach(function (loc) {
+            if (loc.employees) loc.employees.forEach(function (emp) {
+              // Only set if not already mapped (v2 takes priority, loaded last)
+              empNameMap[emp.code] = emp.name;
+            });
+          });
+        } catch (e) { }
+      }
+      buildNameMap('lich-lam-viec:data:v1'); // fallback for old NV01-style codes
+      buildNameMap('lich-lam-viec:data:v2'); // new name-based codes take priority
+      // Cũng nạp từ server để có empNameMap đầy đủ
+      fetch('/data/admin_schedule.json')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d && d.locations) d.locations.forEach(function(loc) {
+            if (loc.employees) loc.employees.forEach(function(emp) { empNameMap[emp.code] = emp.name; });
+          });
+        }).catch(function(){});
 
-<!-- Add-location control, placed via JS into loc-tabs -->
-<script src="app.js"></script>
+      function getEmpName(code) { return empNameMap[code] || code; }
+
+      // Per-employee color palette (distinct, readable with white text)
+      var EMP_COLORS = ['#0E7C66', '#3A4DB0', '#C0392B', '#8E44AD', '#D35400', '#16A085', '#2980B9', '#7D3C98', '#B7950B', '#1F618D', '#117A65', '#943126', '#6C3483', '#1A5276', '#148F77'];
+      var _empColorCache = {};
+      var _empColorIdx = 0;
+      function getEmpColor(code) {
+        if (!_empColorCache[code]) { _empColorCache[code] = EMP_COLORS[_empColorIdx % EMP_COLORS.length]; _empColorIdx++; }
+        return _empColorCache[code];
+      }
+
+      // Tab switching
+      var panels = { 'schedule': document.getElementById('panel-schedule'), 'weekly-reg': document.getElementById('panel-weekly-reg'), 'admin': document.getElementById('panel-admin') };
+      document.querySelectorAll('.main-tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.dataset.maintab;
+          document.querySelectorAll('.main-tab-btn').forEach(function (b) { b.classList.toggle('active', b === btn); });
+          Object.keys(panels).forEach(function (k) { panels[k].hidden = (k !== key); });
+          if (key === 'weekly-reg') renderWeeklyReg();
+          if (key === 'admin') { populateDropdown(); renderAdminReg(); }
+        });
+      });
+
+      // Weekly reg — each employee gets a unique color chip, sorted chronologically by shift start time
+      function renderWeeklyReg() {
+        var regs = loadRegs();
+        document.getElementById('reg-weekly-total').textContent = regs.length + ' ca';
+        var body = document.getElementById('reg-weekly-body');
+        if (!regs.length) { body.innerHTML = '<tr><td colspan="2" class="reg-empty">Chưa có ca đăng ký nào. <a class="reg-link" href="schedule-system.html" target="_blank">Mở trang đăng ký</a></td></tr>'; return; }
+        var byDay = {}; DAYS.forEach(function (d) { byDay[d.key] = []; });
+        regs.forEach(function (r) { if (byDay[r.day]) byDay[r.day].push(r); });
+        body.innerHTML = DAYS.map(function (d, i) {
+          var dayRegs = byDay[d.key];
+          var bg = i % 2 === 0 ? '' : 'style="background:var(--surface-sunken)"';
+          if (!dayRegs.length) return '<tr ' + bg + '><td class="day-col">' + esc(d.label) + '</td><td style="color:var(--ink-faint);font-style:italic;font-size:12.5px;">-- trống --</td></tr>';
+
+          // Sắp xếp các ca theo giờ bắt đầu của ca đầu tiên trong ngày
+          dayRegs.sort(function (a, b) {
+            var getFirstStart = function (r) {
+              if (!r.timeRanges || !r.timeRanges.length) return '23:59';
+              // Lấy timeRanges đã sắp xếp và trả về giờ bắt đầu nhỏ nhất
+              var sortedRanges = r.timeRanges.slice().sort(function (x, y) { return x.start.localeCompare(y.start); });
+              return sortedRanges[0].start;
+            };
+            return getFirstStart(a).localeCompare(getFirstStart(b));
+          });
+
+          var chips = dayRegs.map(function (r) {
+            var name = getEmpName(r.empCode);
+            var times = r.timeRanges.map(function (t) { return t.start + '–' + t.end; }).join(', ');
+            var color = getEmpColor(r.empCode);
+            return '<span class="reg-chip" style="background:' + color + ';color:#fff;"><span class="chip-name">' + esc(name) + '</span><span class="chip-time">' + esc(times) + '</span></span>';
+          }).join('');
+          return '<tr ' + bg + '><td class="day-col">' + esc(d.label) + '</td><td style="padding-top:8px;padding-bottom:8px;">' + chips + '</td></tr>';
+        }).join('');
+      }
+
+      // Admin dropdown — show names
+      function populateDropdown() {
+        var sel = document.getElementById('reg-dropdown');
+        var cur = sel.value;
+        var codes = [...new Set(loadRegs().map(function (r) { return r.empCode; }))].sort();
+        sel.innerHTML = '<option value="">Tất cả nhân viên</option>' + codes.map(function (c) {
+          var name = getEmpName(c);
+          return '<option value="' + esc(c) + '"' + (c === cur ? ' selected' : '') + '>' + esc(name) + ' (' + esc(c) + ')</option>';
+        }).join('');
+      }
+
+      // Admin — render grouped by employee (card view)
+      function renderAdminReg() {
+        var regs = loadRegs();
+        var search = document.getElementById('reg-search').value.trim().toUpperCase();
+        var dropdown = document.getElementById('reg-dropdown').value.toUpperCase();
+        var filter = dropdown || search;
+        var filtered = filter ? regs.filter(function (r) {
+          var name = getEmpName(r.empCode).toUpperCase();
+          return r.empCode.toUpperCase().includes(filter) || name.includes(filter);
+        }) : regs.slice();
+
+        var cards = document.getElementById('reg-admin-cards');
+        var empty = document.getElementById('reg-admin-empty');
+
+        if (!filtered.length) { cards.innerHTML = ''; empty.hidden = false; document.getElementById('reg-count').textContent = '0 kết quả'; return; }
+        empty.hidden = true;
+
+        // Group by empCode
+        var groups = {};
+        filtered.forEach(function (r) {
+          if (!groups[r.empCode]) groups[r.empCode] = { empCode: r.empCode, regs: [] };
+          groups[r.empCode].regs.push(r);
+        });
+
+        var dayOrder = { T2: 1, T3: 2, T4: 3, T5: 4, T6: 5, T7: 6, CN: 7 };
+        var sortedCodes = Object.keys(groups).sort(function (a, b) { return getEmpName(a).localeCompare(getEmpName(b)); });
+
+        document.getElementById('reg-count').textContent = sortedCodes.length + ' nhân viên, ' + filtered.length + ' ca';
+
+        cards.innerHTML = '';
+        sortedCodes.forEach(function (code) {
+          var group = groups[code];
+          var name = getEmpName(code);
+          var color = getEmpColor(code);
+          var shiftCount = group.regs.length;
+
+          var totalHours = 0;
+          group.regs.forEach(function (r) {
+            r.timeRanges.forEach(function (t) {
+              var s = t.start.split(':');
+              var e = t.end.split(':');
+              var m = (parseInt(e[0], 10) * 60 + parseInt(e[1], 10)) - (parseInt(s[0], 10) * 60 + parseInt(s[1], 10));
+              if (m < 0) m += 24 * 60;
+              totalHours += m / 60;
+            });
+          });
+          var totalHoursStr = (totalHours % 1 === 0) ? totalHours : totalHours.toFixed(1);
+
+          // Sort shifts by day order
+          var sortedRegs = group.regs.slice().sort(function (a, b) {
+            return (dayOrder[a.day] || 9) - (dayOrder[b.day] || 9);
+          });
+
+          // Build card
+          var card = document.createElement('div');
+          card.style.cssText = 'background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column;';
+
+          // Card header
+          var header = document.createElement('div');
+          header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);background:' + color + '18;';
+          header.innerHTML = '<div style="display:flex;align-items:center;gap:10px;">'
+            + '<span style="background:' + color + ';color:#fff;font-weight:700;font-size:13px;padding:4px 12px;border-radius:6px;letter-spacing:.02em;">' + esc(name) + '</span>'
+            + '<span style="font-family:var(--font-mono);font-size:11px;font-weight:700;background:' + color + ';color:#fff;opacity:.75;padding:2px 8px;border-radius:20px;">' + shiftCount + ' ca • ' + totalHoursStr + 'h</span>'
+            + '</div>';
+
+          // Delete all button for this employee
+          var delAllBtn = document.createElement('button');
+          delAllBtn.className = 'reg-del-btn';
+          delAllBtn.title = 'Xóa tất cả ca của ' + name;
+          delAllBtn.innerHTML = '&#128465; Tất cả';
+          delAllBtn.style.cssText = 'font-size:11px;padding:4px 8px;width:auto;height:auto;opacity:1;color:var(--danger);border:1px solid var(--danger-tint);border-radius:5px;display:flex;align-items:center;gap:4px;';
+          delAllBtn.addEventListener('click', function () {
+            if (!confirm('Xóa tất cả ' + shiftCount + ' ca của ' + name + '?')) return;
+            var regs2 = loadRegs().filter(function (x) { return x.empCode !== code; });
+            saveRegs(regs2); populateDropdown(); renderAdminReg();
+          });
+          header.appendChild(delAllBtn);
+          card.appendChild(header);
+
+          // Shift rows
+          var body = document.createElement('div');
+          body.style.cssText = 'padding:8px 0;';
+          sortedRegs.forEach(function (r) {
+            var dl = DAYS.find(function (d) { return d.key === r.day; }); dl = dl ? dl.label : r.day;
+            var times = r.timeRanges.map(function (t) { return t.start + '–' + t.end; }).join(', ');
+            var ts = r.submittedAt ? new Date(r.submittedAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : '--';
+
+            var row = document.createElement('div');
+            row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:7px 16px;border-bottom:1px solid var(--line);font-size:12.5px;';
+            row.innerHTML = '<div style="display:flex;align-items:center;gap:10px;">'
+              + '<span style="font-weight:700;color:var(--ink);min-width:58px;">' + esc(dl) + '</span>'
+              + '<span style="font-family:var(--font-mono);font-size:11.5px;font-weight:600;background:var(--surface-sunken);color:var(--ink);padding:3px 8px;border-radius:5px;border:1px solid var(--line);">' + esc(times) + '</span>'
+              + '</div>'
+              + '<div style="display:flex;align-items:center;gap:8px;">'
+              + '<span style="font-size:11px;color:var(--ink-faint);font-family:var(--font-mono);">' + ts + '</span>'
+              + '<button class="reg-del-btn" data-id="' + r.id + '" title="Xóa ca này" style="opacity:1;font-size:14px;">&#128465;</button>'
+              + '</div>';
+
+            row.querySelector('.reg-del-btn').addEventListener('click', function () {
+              if (!confirm('Xóa ca ' + dl + ' của ' + name + '?')) return;
+              var regs2 = loadRegs().filter(function (x) { return x.id !== r.id; });
+              saveRegs(regs2); populateDropdown(); renderAdminReg();
+            });
+            body.appendChild(row);
+          });
+
+          card.appendChild(body);
+          cards.appendChild(card);
+        });
+      }
+
+      document.getElementById('reg-search').addEventListener('input', function () { document.getElementById('reg-dropdown').value = ''; renderAdminReg(); });
+      document.getElementById('reg-dropdown').addEventListener('change', function () { document.getElementById('reg-search').value = ''; renderAdminReg(); });
+      document.getElementById('btn-refresh-weekly').addEventListener('click', function () { renderWeeklyReg(); });
+      document.getElementById('btn-refresh-admin').addEventListener('click', function () { populateDropdown(); renderAdminReg(); });
+
+      /* ====== Xóa tất cả lịch đăng ký ====== */
+      var AUTO_CLEAR_KEY = 'cfhm-auto-clear-enabled';
+      var _autoClearTimer = null;
+
+      function clearAllRegs() {
+        saveRegs([]);
+        populateDropdown();
+        renderAdminReg();
+        renderWeeklyReg();
+      }
+
+      function updateAutoClearUI() {
+        var enabled = localStorage.getItem(AUTO_CLEAR_KEY) === '1';
+        var toggle = document.getElementById('auto-clear-toggle');
+        var status = document.getElementById('auto-clear-status');
+        var label = document.getElementById('auto-clear-label');
+        if (toggle) toggle.checked = enabled;
+        if (status) {
+          status.textContent = enabled ? 'Bật' : 'Tắt';
+          status.style.background = enabled ? '#d1fae5' : '#e5e5e5';
+          status.style.color = enabled ? '#065f46' : '#888';
+        }
+        if (label) label.style.borderColor = enabled ? 'var(--primary)' : 'var(--line)';
+      }
+
+      function scheduleAutoClear() {
+        if (_autoClearTimer) { clearTimeout(_autoClearTimer); _autoClearTimer = null; }
+        if (localStorage.getItem(AUTO_CLEAR_KEY) !== '1') return;
+
+        var now = new Date();
+        // Next Saturday 23:59:00
+        var nextSat = new Date(now);
+        var dow = nextSat.getDay(); // 0=Sun, 6=Sat
+        var daysUntilSat = (6 - dow + 7) % 7;
+        if (daysUntilSat === 0 && (now.getHours() > 23 || (now.getHours() === 23 && now.getMinutes() >= 59))) {
+          daysUntilSat = 7; // already past 23:59 today (Sat), schedule next week
+        }
+        nextSat.setDate(nextSat.getDate() + daysUntilSat);
+        nextSat.setHours(23, 59, 0, 0);
+
+        var msUntil = nextSat - now;
+        _autoClearTimer = setTimeout(function () {
+          if (localStorage.getItem(AUTO_CLEAR_KEY) === '1') {
+            clearAllRegs();
+            showAutoClearToast();
+          }
+          scheduleAutoClear(); // reschedule for next week
+        }, msUntil);
+      }
+
+      function showAutoClearToast() {
+        var toast = document.createElement('div');
+        toast.textContent = '✅ Đã tự động xóa toàn bộ lịch đăng ký lúc 23:59 thứ 7.';
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#065f46;color:#fff;padding:12px 24px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.18);';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.remove(); }, 5000);
+      }
+
+      // Wire up buttons
+      document.getElementById('btn-clear-all').addEventListener('click', function () {
+        var total = loadRegs().length;
+        if (!total) { alert('Không có lịch đăng ký nào cả.'); return; }
+        if (!confirm('⚠️ Xóa toàn bộ ' + total + ' ca đăng ký? Hành động này không thể hoàn tác!')) return;
+        clearAllRegs();
+      });
+
+      document.getElementById('auto-clear-toggle').addEventListener('change', function () {
+        localStorage.setItem(AUTO_CLEAR_KEY, this.checked ? '1' : '0');
+        updateAutoClearUI();
+        scheduleAutoClear();
+        if (this.checked) {
+          var now = new Date();
+          var dow = now.getDay(); var daysUntilSat = (6 - dow + 7) % 7;
+          if (daysUntilSat === 0 && !(now.getHours() === 23 && now.getMinutes() >= 59)) daysUntilSat = 0;
+          var nextSat = new Date(now); nextSat.setDate(nextSat.getDate() + daysUntilSat); nextSat.setHours(23, 59, 0, 0);
+          alert('✅ Tự động xóa được BẬT. Hệ thống sẽ tự xóa lúc 23:59 Thứ 7, ' + nextSat.toLocaleDateString('vi-VN') + '.');
+        }
+      });
+
+      /* ====== Khóa đăng ký lịch làm ====== */
+      var LOCK_REG_KEY = 'cfhm-registration-lock-config';
+
+      function getLockConfig() {
+        try {
+          var raw = localStorage.getItem(LOCK_REG_KEY);
+          return raw ? JSON.parse(raw) : { enabled: false, startDay: 'CN', startTime: '00:00', endDay: 'CN', endTime: '12:00' };
+        } catch (e) {
+          return { enabled: false, startDay: 'CN', startTime: '00:00', endDay: 'CN', endTime: '12:00' };
+        }
+      }
+
+      function saveLockConfig(cfg) {
+        localStorage.setItem(LOCK_REG_KEY, JSON.stringify(cfg));
+        // Lưu vào server file để đồng bộ tất cả thiết bị
+        fetch('/data/lock_config.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cfg)
+        }).catch(function(e) { console.warn('Không lưu lock config:', e); });
+      }
+      // Nạp lock config từ server khi tải trang
+      fetch('/data/lock_config.json')
+        .then(function(r) { return r.json(); })
+        .then(function(cfg) {
+          if (cfg && typeof cfg === 'object') {
+            localStorage.setItem(LOCK_REG_KEY, JSON.stringify(cfg));
+            updateLockUI();
+          }
+        }).catch(function(){});
+
+      function updateLockUI() {
+        var cfg = getLockConfig();
+        var toggle = document.getElementById('lock-reg-toggle');
+        var status = document.getElementById('lock-reg-status');
+        var label = document.getElementById('lock-reg-label');
+        var settingsRow = document.getElementById('lock-reg-settings-row');
+
+        if (toggle) toggle.checked = cfg.enabled;
+        if (status) {
+          status.textContent = cfg.enabled ? 'Bật' : 'Tắt';
+          status.style.background = cfg.enabled ? '#fee2e2' : '#e5e5e5';
+          status.style.color = cfg.enabled ? '#991b1b' : '#888';
+        }
+        if (label) label.style.borderColor = cfg.enabled ? 'var(--danger)' : 'var(--line)';
+
+        if (settingsRow) {
+          settingsRow.style.display = cfg.enabled ? 'flex' : 'none';
+        }
+
+        document.getElementById('lock-start-day').value = cfg.startDay;
+        document.getElementById('lock-start-time').value = cfg.startTime;
+        document.getElementById('lock-end-day').value = cfg.endDay;
+        document.getElementById('lock-end-time').value = cfg.endTime;
+      }
+
+      document.getElementById('lock-reg-toggle').addEventListener('change', function () {
+        var cfg = getLockConfig();
+        cfg.enabled = this.checked;
+        saveLockConfig(cfg);
+        updateLockUI();
+        var msg = this.checked ? 'Đã BẬT giới hạn giờ đăng ký lịch.' : 'Đã TẮT giới hạn giờ đăng ký lịch (nhân viên có thể đăng ký tự do).';
+        alert('✅ ' + msg);
+      });
+
+      document.getElementById('btn-save-lock-config').addEventListener('click', function () {
+        var cfg = getLockConfig();
+        cfg.startDay = document.getElementById('lock-start-day').value;
+        cfg.startTime = document.getElementById('lock-start-time').value;
+        cfg.endDay = document.getElementById('lock-end-day').value;
+        cfg.endTime = document.getElementById('lock-end-time').value;
+        saveLockConfig(cfg);
+        alert('✅ Đã lưu cấu hình thời gian mở đăng ký!');
+      });
+
+      // Init
+      updateAutoClearUI();
+      scheduleAutoClear();
+      updateLockUI();
+    })();
+  </script>
+
 </body>
+
 </html>

@@ -1,0 +1,274 @@
+{
+  "locations": [
+    {
+      "id": "loc-quan5",
+      "name": "QUÁN 5",
+      "nextEmpNum": 1,
+      "require3Before9": true,
+      "employees": [
+        {
+          "id": "emp-101",
+          "code": "TANH",
+          "name": "Tánh"
+        },
+        {
+          "id": "emp-102",
+          "code": "AIVY",
+          "name": "Ái Vy"
+        },
+        {
+          "id": "emp-103",
+          "code": "HAVY",
+          "name": "Hà Vy"
+        },
+        {
+          "id": "emp-104",
+          "code": "MUOI",
+          "name": "Muội"
+        },
+        {
+          "id": "emp-105",
+          "code": "LANANH",
+          "name": "Lan Anh"
+        },
+        {
+          "id": "emp-106",
+          "code": "THUYANH",
+          "name": "Thuý Anh"
+        },
+        {
+          "id": "emp-107",
+          "code": "NGOCTHAO",
+          "name": "Ngọc Thảo"
+        },
+        {
+          "id": "emp-108",
+          "code": "HUONG",
+          "name": "Hương"
+        },
+        {
+          "id": "emp-109",
+          "code": "DIMY",
+          "name": "Dì My"
+        }
+      ],
+      "schedule": {
+        "T2": {
+          "emp-101": [
+            {
+              "s": 300,
+              "e": 480
+            }
+          ],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        },
+        "T3": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        },
+        "T4": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        },
+        "T5": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        },
+        "T6": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        },
+        "T7": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        },
+        "CN": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": []
+        }
+      }
+    },
+    {
+      "id": "loc-quan2",
+      "name": "QUÁN 2",
+      "nextEmpNum": 1,
+      "require3Before9": true,
+      "employees": [
+        {
+          "id": "emp-201",
+          "code": "HOA",
+          "name": "Hoa"
+        },
+        {
+          "id": "emp-202",
+          "code": "CHI",
+          "name": "Chi"
+        },
+        {
+          "id": "emp-203",
+          "code": "HAVY",
+          "name": "Hà Vy"
+        },
+        {
+          "id": "emp-204",
+          "code": "MUOI",
+          "name": "Muội"
+        },
+        {
+          "id": "emp-205",
+          "code": "HIEN",
+          "name": "Hiền"
+        },
+        {
+          "id": "emp-206",
+          "code": "NGOCTHAO",
+          "name": "Ngọc Thảo"
+        },
+        {
+          "id": "emp-207",
+          "code": "GIAPHAT",
+          "name": "Gia Phát"
+        },
+        {
+          "id": "emp-208",
+          "code": "DIMY",
+          "name": "Dì My"
+        },
+        {
+          "id": "emp-209",
+          "code": "HUONG",
+          "name": "Hương"
+        }
+      ],
+      "schedule": {
+        "T2": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        },
+        "T3": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        },
+        "T4": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        },
+        "T5": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        },
+        "T6": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        },
+        "T7": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        },
+        "CN": {
+          "emp-201": [],
+          "emp-202": [],
+          "emp-203": [],
+          "emp-204": [],
+          "emp-205": [],
+          "emp-206": [],
+          "emp-207": [],
+          "emp-208": [],
+          "emp-209": []
+        }
+      }
+    }
+  ],
+  "activeLocationId": "loc-quan2"
+}

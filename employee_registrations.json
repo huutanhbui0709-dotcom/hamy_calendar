@@ -1,0 +1,462 @@
+[
+  {
+    "id": "n49jb30k8s7",
+    "empCode": "AIVY",
+    "day": "T2",
+    "timeRanges": [
+      {
+        "start": "08:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:23.383Z"
+  },
+  {
+    "id": "uyneoesk8s7",
+    "empCode": "AIVY",
+    "day": "T3",
+    "timeRanges": [
+      {
+        "start": "08:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:23.383Z"
+  },
+  {
+    "id": "eh8m6btk8s7",
+    "empCode": "AIVY",
+    "day": "T4",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:23.383Z"
+  },
+  {
+    "id": "ujf7nw1k8s7",
+    "empCode": "AIVY",
+    "day": "T5",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:23.383Z"
+  },
+  {
+    "id": "nmd0og4k8s7",
+    "empCode": "AIVY",
+    "day": "T6",
+    "timeRanges": [
+      {
+        "start": "08:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:23.383Z"
+  },
+  {
+    "id": "pnraki2k8s7",
+    "empCode": "AIVY",
+    "day": "CN",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:23.383Z"
+  },
+  {
+    "id": "ox8vv5dkzrj",
+    "empCode": "TANH",
+    "day": "T2",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "c1um05ckzrj",
+    "empCode": "TANH",
+    "day": "T3",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "t9qs68ukzrj",
+    "empCode": "TANH",
+    "day": "T4",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "6t9ds1ukzrj",
+    "empCode": "TANH",
+    "day": "T5",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "szor2i3kzrj",
+    "empCode": "TANH",
+    "day": "T6",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "zn0g78vkzrj",
+    "empCode": "TANH",
+    "day": "T7",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "rrnpswzkzrj",
+    "empCode": "TANH",
+    "day": "CN",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:55:58.351Z"
+  },
+  {
+    "id": "shw1c0rmzlf",
+    "empCode": "LANANH",
+    "day": "T2",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:57:31.443Z"
+  },
+  {
+    "id": "xnfdzohmzlf",
+    "empCode": "LANANH",
+    "day": "T3",
+    "timeRanges": [
+      {
+        "start": "17:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:57:31.443Z"
+  },
+  {
+    "id": "783ffpvmzlf",
+    "empCode": "LANANH",
+    "day": "T5",
+    "timeRanges": [
+      {
+        "start": "17:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:57:31.443Z"
+  },
+  {
+    "id": "j9amx44mzlf",
+    "empCode": "LANANH",
+    "day": "T6",
+    "timeRanges": [
+      {
+        "start": "15:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:57:31.443Z"
+  },
+  {
+    "id": "2ueztsymzlf",
+    "empCode": "LANANH",
+    "day": "T7",
+    "timeRanges": [
+      {
+        "start": "15:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:57:31.443Z"
+  },
+  {
+    "id": "ymyzeebmzlf",
+    "empCode": "LANANH",
+    "day": "CN",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:57:31.443Z"
+  },
+  {
+    "id": "7g79c0fovjy",
+    "empCode": "THUYANH",
+    "day": "T2",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "x9flbzuovjy",
+    "empCode": "THUYANH",
+    "day": "T3",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "3y27h5tovjy",
+    "empCode": "THUYANH",
+    "day": "T4",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "ci7apkeovjy",
+    "empCode": "THUYANH",
+    "day": "T5",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "citmhh0ovjy",
+    "empCode": "THUYANH",
+    "day": "T6",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "1vqo0gwovjy",
+    "empCode": "THUYANH",
+    "day": "T7",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "ag2xmqqovjy",
+    "empCode": "THUYANH",
+    "day": "CN",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T01:58:59.518Z"
+  },
+  {
+    "id": "7ikbaraqgdu",
+    "empCode": "HAVY",
+    "day": "T2",
+    "timeRanges": [
+      {
+        "start": "05:00",
+        "end": "08:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:00:13.170Z"
+  },
+  {
+    "id": "goy32oyqgdu",
+    "empCode": "HAVY",
+    "day": "T3",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      },
+      {
+        "start": "17:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:00:13.170Z"
+  },
+  {
+    "id": "9y0ofpoqgdu",
+    "empCode": "HAVY",
+    "day": "T4",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:00:13.170Z"
+  },
+  {
+    "id": "17t5xbaqgdu",
+    "empCode": "HAVY",
+    "day": "T6",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:00:13.170Z"
+  },
+  {
+    "id": "dcv4ycdqgdu",
+    "empCode": "HAVY",
+    "day": "T7",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:00:13.170Z"
+  },
+  {
+    "id": "n7ekoamqgdu",
+    "empCode": "HAVY",
+    "day": "CN",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:00:13.170Z"
+  },
+  {
+    "id": "y736w8ssi6k",
+    "empCode": "MUOI",
+    "day": "T2",
+    "timeRanges": [
+      {
+        "start": "17:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:01:48.813Z"
+  },
+  {
+    "id": "r68qhrnsi6l",
+    "empCode": "MUOI",
+    "day": "T3",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "17:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:01:48.813Z"
+  },
+  {
+    "id": "xzlxntwsi6l",
+    "empCode": "MUOI",
+    "day": "T4",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:01:48.813Z"
+  },
+  {
+    "id": "3glnn04si6l",
+    "empCode": "MUOI",
+    "day": "T5",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:01:48.813Z"
+  },
+  {
+    "id": "tne7clwsi6l",
+    "empCode": "MUOI",
+    "day": "T7",
+    "timeRanges": [
+      {
+        "start": "05:30",
+        "end": "12:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:01:48.813Z"
+  },
+  {
+    "id": "bej9qabsi6l",
+    "empCode": "MUOI",
+    "day": "CN",
+    "timeRanges": [
+      {
+        "start": "12:00",
+        "end": "22:00"
+      }
+    ],
+    "submittedAt": "2026-07-22T02:01:48.813Z"
+  }
+]
