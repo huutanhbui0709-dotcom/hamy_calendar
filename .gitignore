@@ -3,6 +3,7 @@ admin_schedule.json
 published_schedule.json
 employee_registrations.json
 lock_config.json
+admin_users.json
 
 # === Dependencies ===
 node_modules/
