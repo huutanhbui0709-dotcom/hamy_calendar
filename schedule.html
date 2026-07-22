@@ -1040,8 +1040,8 @@
         if (raw) cfg = JSON.parse(raw);
       } catch (e) { }
 
-      // Fetch lock config từ server để đảm bảo mới nhất
-      fetch('/data/lock_config.json')
+      // Fetch lock config từ server để đảm bảo mới nhất (tránh cache CDN/Browser)
+      fetch('/data/lock_config.json?t=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.json(); })
         .then(function (data) {
           if (data && typeof data === 'object') {

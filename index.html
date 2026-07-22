@@ -1050,10 +1050,17 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(cfg)
-        }).catch(function (e) { console.warn('Không lưu lock config:', e); });
+        }).then(function (r) {
+          if (!r.ok) {
+            alert('❌ Lỗi: Không thể lưu cấu hình khóa lên máy chủ (Mã lỗi: ' + r.status + '). Hãy thử đăng nhập lại!');
+          }
+        }).catch(function (e) { 
+          console.warn('Không lưu lock config:', e); 
+          alert('❌ Lỗi kết nối mạng, không thể lưu cấu hình khóa.');
+        });
       }
-      // Nạp lock config từ server khi tải trang
-      fetch('/data/lock_config.json')
+      // Nạp lock config từ server khi tải trang (tránh cache)
+      fetch('/data/lock_config.json?t=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.json(); })
         .then(function (cfg) {
           if (cfg && typeof cfg === 'object') {

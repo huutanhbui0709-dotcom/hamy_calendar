@@ -4,5 +4,11 @@
     "username": "admin",
     "passwordHash": "c5a8c44ece816331b8df2af482225564:bf67696ad2cdc325e32f1b55f25ad39b7591a35f0eb65ab1b4dd12b3145bce8bc18de4003225ad5efee25d621ee1fa8bfcb3c183ca37e3ef30e4293a6d266f61",
     "role": "admin"
+  },
+  {
+    "id": "admin-p1lwjklmrvnbawi",
+    "username": "huutanh",
+    "passwordHash": "93d4fe6a825493b881c3e332fdbabba4:5899d1c73c20d614ed75b804e7ff97a66141f4061a291841d214e8d20d131e136bd7e6b9e620a3f12ee013e0206fc9d74372bf07b681f04afb0b01b542ac9fb1",
+    "role": "admin"
   }
 ]
