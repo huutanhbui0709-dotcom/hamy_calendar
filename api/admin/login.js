@@ -1,10 +1,25 @@
 import { put, list } from '@vercel/blob';
-import { genSalt, hash, compare } from 'bcryptjs';
+import crypto from 'crypto';
 import { SignJWT } from 'jose';
 
 const BLOB_PREFIX = 'cfhm/';
 const BLOB_KEY = `${BLOB_PREFIX}admin-users.json`;
 const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
+
+// Hàm băm mật khẩu bằng PBKDF2 của Node crypto
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return `${salt}:${hash}`;
+}
+
+// Hàm kiểm tra mật khẩu
+function verifyPassword(password, storedHash) {
+  if (!storedHash || !storedHash.includes(':')) return false;
+  const [salt, originalHash] = storedHash.split(':');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return hash === originalHash;
+}
 
 async function fetchBlobJson(url) {
   const res = await fetch(url);
@@ -48,8 +63,7 @@ export default async function handler(req, res) {
       const users = await getAdminUsers();
       if (users.length === 0) {
         // Tạo tài khoản admin mặc định: admin / admin123
-        const salt = await genSalt(10);
-        const passwordHash = await hash('admin123', salt);
+        const passwordHash = hashPassword('admin123');
         const rootAdmin = {
           id: 'root-admin-id',
           username: 'admin',
@@ -84,7 +98,7 @@ export default async function handler(req, res) {
         return;
       }
 
-      const isMatch = await compare(password, user.passwordHash);
+      const isMatch = verifyPassword(password, user.passwordHash);
       if (!isMatch) {
         res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu không chính xác.' });
         return;

@@ -1,10 +1,17 @@
 import { put, list } from '@vercel/blob';
-import { genSalt, hash } from 'bcryptjs';
+import crypto from 'crypto';
 import { jwtVerify } from 'jose';
 
 const BLOB_PREFIX = 'cfhm/';
 const BLOB_KEY = `${BLOB_PREFIX}admin-users.json`;
 const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
+
+// Hàm băm mật khẩu bằng PBKDF2 của Node crypto
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return `${salt}:${hash}`;
+}
 
 async function fetchBlobJson(url) {
   const res = await fetch(url);
@@ -92,8 +99,7 @@ export default async function handler(req, res) {
         return;
       }
 
-      const salt = await genSalt(10);
-      const passwordHash = await hash(password, salt);
+      const passwordHash = hashPassword(password);
       const newAdmin = {
         id: 'admin-' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
         username,
@@ -126,8 +132,7 @@ export default async function handler(req, res) {
         return;
       }
 
-      const salt = await genSalt(10);
-      const passwordHash = await hash(newPassword, salt);
+      const passwordHash = hashPassword(newPassword);
       users[userIndex].passwordHash = passwordHash;
 
       await saveAdminUsers(users);

@@ -9,8 +9,23 @@ const fs   = require('fs');
 const path = require('path');
 const url  = require('url');
 const os   = require('os');
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jose = require('jose');
+
+// Hàm băm mật khẩu bằng PBKDF2 của Node crypto
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return `${salt}:${hash}`;
+}
+
+// Hàm kiểm tra mật khẩu
+function verifyPassword(password, storedHash) {
+  if (!storedHash || !storedHash.includes(':')) return false;
+  const [salt, originalHash] = storedHash.split(':');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return hash === originalHash;
+}
 
 const PORT = 3000;
 const ROOT = __dirname;
@@ -53,8 +68,7 @@ function getLocalAdminUsers() {
   try {
     if (!fs.existsSync(filePath)) {
       // Tự khởi tạo admin/admin123 nếu file chưa tồn tại
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync('admin123', salt);
+      const hash = hashPassword('admin123');
       const defaultUsers = [{
         id: 'root-admin-id',
         username: 'admin',
@@ -136,7 +150,7 @@ const server = http.createServer(async (req, res) => {
       }
       const users = getLocalAdminUsers();
       const user = users.find(u => u.username === username);
-      if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+      if (!user || !verifyPassword(password, user.passwordHash)) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Username hoặc Password không đúng.' }));
         return;
@@ -191,8 +205,7 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: 'Tên đăng nhập đã tồn tại' }));
         return;
       }
-      const salt = bcrypt.genSaltSync(10);
-      const passwordHash = bcrypt.hashSync(password, salt);
+      const passwordHash = hashPassword(password);
       const newAdmin = {
         id: 'admin-' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
         username,
@@ -219,8 +232,7 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: 'Không tìm thấy user' }));
         return;
       }
-      const salt = bcrypt.genSaltSync(10);
-      users[userIndex].passwordHash = bcrypt.hashSync(newPassword, salt);
+      users[userIndex].passwordHash = hashPassword(newPassword);
       saveLocalAdminUsers(users);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true }));
