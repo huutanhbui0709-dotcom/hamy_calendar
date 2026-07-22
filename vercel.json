@@ -2,5 +2,8 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/data/:file", "destination": "/api/data/:file" }
+  ]
 }

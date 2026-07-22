@@ -1,0 +1,15 @@
+# === Data files (local development only, không commit lên Git) ===
+admin_schedule.json
+published_schedule.json
+employee_registrations.json
+lock_config.json
+
+# === Dependencies ===
+node_modules/
+
+# === Environment variables ===
+.env.local
+.env*.local
+
+# === Vercel ===
+.vercel/
