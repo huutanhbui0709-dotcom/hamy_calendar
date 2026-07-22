@@ -1,5 +1,5 @@
 import { put, list } from '@vercel/blob';
-import crypto from 'crypto';
+import { randomBytes, pbkdf2Sync } from 'crypto';
 import { jwtVerify } from 'jose';
 
 const BLOB_PREFIX = 'cfhm/';
@@ -8,8 +8,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-123
 
 // Hàm băm mật khẩu bằng PBKDF2 của Node crypto
 function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  const salt = randomBytes(16).toString('hex');
+  const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
   return `${salt}:${hash}`;
 }
 
