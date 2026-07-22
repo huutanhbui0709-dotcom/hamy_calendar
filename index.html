@@ -703,7 +703,7 @@
       // Kiểm tra đăng nhập tức thì (Lớp 2 - Client Guard)
       fetch('/api/admin/users')
         .then(function (r) {
-          if (r.status === 401) {
+          if (!r.ok) {
             window.location.href = '/admin/login';
             return;
           }
