@@ -155,8 +155,24 @@ function saveData() {
   fetch('/data/admin_schedule.json', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(state.data)
-  }).catch(e => console.warn('Không lưu được vào server:', e));
+    body: JSON.stringify(state.data),
+    credentials: 'same-origin' // Đảm bảo gửi kèm cookie admin_token
+  })
+  .then(res => {
+    if (!res.ok) {
+      if (res.status === 401) {
+        showToast('❌ Lỗi: Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!', 'error');
+      } else {
+        showToast('❌ Lỗi: Không thể lưu lên máy chủ (Mã: ' + res.status + ')', 'error');
+      }
+    } else {
+      showToast('✅ Đã lưu thay đổi vào hệ thống!');
+    }
+  })
+  .catch(e => {
+    console.warn('Không lưu được vào server:', e);
+    showToast('❌ Lỗi kết nối mạng, không thể lưu dữ liệu.', 'error');
+  });
 }
 
 const state = {
