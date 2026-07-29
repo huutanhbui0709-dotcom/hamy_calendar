@@ -632,7 +632,20 @@ const server = http.createServer(async (req, res) => {
           });
         });
 
-        const options = { challenge, allowCredentials, userVerification: 'preferred', timeout: 60000 };
+        const host = req.headers.host || 'localhost';
+        const cleanHost = host.split(':')[0];
+
+        const options = {
+          challenge,
+          rpId: cleanHost,
+          userVerification: 'preferred',
+          timeout: 60000
+        };
+
+        if (allowCredentials.length > 0) {
+          options.allowCredentials = allowCredentials;
+        }
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ ok: true, options }));
       }

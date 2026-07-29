@@ -136,12 +136,21 @@ export default async function handler(req, res) {
         });
       }
 
+      // Lấy rpId từ host header
+      const host = req.headers.host || 'hamy-calendar.vercel.app';
+      const cleanHost = host.split(':')[0]; // Loại bỏ port nếu chạy local
+
       const options = {
         challenge,
-        allowCredentials,
+        rpId: cleanHost,
         userVerification: 'preferred',
         timeout: 60000
       };
+
+      // Chỉ gửi allowCredentials nếu danh sách không trống
+      if (allowCredentials.length > 0) {
+        options.allowCredentials = allowCredentials;
+      }
 
       res.status(200).json({ ok: true, options });
       return;
