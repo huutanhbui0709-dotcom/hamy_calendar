@@ -107,6 +107,7 @@ export default async function handler(req, res) {
         from: `"Cà phê Hà My" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Mã OTP xác minh thiết bị - Cà phê Hà My',
+        text: `Chào bạn ${targetEmployee.name},\n\nBạn đang yêu cầu liên kết thiết bị đăng ký ca làm mới. Vui lòng sử dụng mã OTP dưới đây để xác thực:\n\n${otp}\n\nLưu ý: Mã OTP này có giá trị trong vòng 5 phút.\n\nNếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email hoặc liên hệ Admin.`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
             <div style="text-align: center; margin-bottom: 20px;">
