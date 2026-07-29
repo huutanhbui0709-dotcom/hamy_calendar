@@ -1276,32 +1276,52 @@
           showEmailSection('');
         } else if (data.status === 'otp_required') {
           deviceVerified = false;
-          
-          var modal = document.getElementById('confirm-link-modal');
-          document.getElementById('confirm-masked-email').textContent = data.maskedEmail;
-          modal.classList.remove('hidden');
-          
-          var confirmBtn = document.getElementById('btn-confirm-link');
-          var cancelBtn = document.getElementById('btn-cancel-link');
-          
-          var newConfirmBtn = confirmBtn.cloneNode(true);
-          confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-          var newCancelBtn = cancelBtn.cloneNode(true);
-          cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-          
-          newConfirmBtn.addEventListener('click', function() {
-            modal.classList.add('hidden');
-            sendOTPCode(empCode, visitorId, data.maskedEmail);
-          });
-          
-          newCancelBtn.addEventListener('click', function() {
-            modal.classList.add('hidden');
-            selectEmp.value = '';
-            selectEmpText.textContent = '— Chọn nhân viên —';
-            selectEmpText.classList.remove('text-gray-900');
-            selectEmpText.classList.add('text-gray-500');
-            showEmailSection('');
-          });
+
+          function _showOtpModal(maskedEmail) {
+            var modal = document.getElementById('confirm-link-modal');
+            document.getElementById('confirm-masked-email').textContent = maskedEmail;
+            modal.classList.remove('hidden');
+            
+            var confirmBtn = document.getElementById('btn-confirm-link');
+            var cancelBtn = document.getElementById('btn-cancel-link');
+            
+            var newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            var newCancelBtn = cancelBtn.cloneNode(true);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+            
+            newConfirmBtn.addEventListener('click', function() {
+              modal.classList.add('hidden');
+              sendOTPCode(empCode, visitorId, maskedEmail);
+            });
+            
+            newCancelBtn.addEventListener('click', function() {
+              modal.classList.add('hidden');
+              selectEmp.value = '';
+              selectEmpText.textContent = '— Chọn nhân viên —';
+              selectEmpText.classList.remove('text-gray-900');
+              selectEmpText.classList.add('text-gray-500');
+              showEmailSection('');
+            });
+          }
+
+          // Thử dùng Passkey xác thực trước
+          if (window.PublicKeyCredential) {
+            tryPasskeyAuth(empCode)
+              .then(function (resData) {
+                if (resData && resData.ok && resData.status === 'verified') {
+                  deviceVerified = true;
+                  showToast('🔑 Nhận diện thành công qua Face ID/Vân tay. Thiết bị hợp lệ!');
+                } else {
+                  _showOtpModal(data.maskedEmail);
+                }
+              })
+              .catch(function () {
+                _showOtpModal(data.maskedEmail);
+              });
+          } else {
+            _showOtpModal(data.maskedEmail);
+          }
         }
       })
       .catch(function () {
