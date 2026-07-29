@@ -1067,8 +1067,16 @@
           showEmailSection('');
         } else if (data.status === 'otp_required') {
           deviceVerified = false;
-          // Tự động kích hoạt gửi mã OTP và hiện modal
-          sendOTPCode(empCode, visitorId, data.maskedEmail);
+          if (confirm('Thiết bị này chưa được liên kết với tài khoản của bạn.\nBạn có muốn nhận mã OTP qua email (' + data.maskedEmail + ') để liên kết thiết bị không?')) {
+            sendOTPCode(empCode, visitorId, data.maskedEmail);
+          } else {
+            // Hủy đăng nhập thiết bị
+            selectEmp.value = '';
+            selectEmpText.textContent = '— Chọn nhân viên —';
+            selectEmpText.classList.remove('text-gray-900');
+            selectEmpText.classList.add('text-gray-500');
+            showEmailSection('');
+          }
         }
       })
       .catch(function () {
