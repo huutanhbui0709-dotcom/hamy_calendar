@@ -1151,12 +1151,14 @@
         if (data.ok) {
           showToast('🔑 Đã đăng ký nhận diện thiết bị thành công! Lần sau tự động đăng nhập.');
         } else {
+          showToast('Lỗi lưu Passkey: ' + data.error, 'error');
           console.warn('[Passkey Register]', data.error);
         }
       })
       .catch(function (err) {
         // Người dùng huỷ → không báo lỗi
         if (err.name !== 'NotAllowedError') {
+          showToast('Lỗi tạo Passkey: ' + err.message, 'error');
           console.warn('[Passkey Register Error]', err.message);
         }
       });

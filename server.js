@@ -567,9 +567,195 @@ const server = http.createServer(async (req, res) => {
         fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true, message: 'Xác thực thiết bị thành công!' }));
-        return;
       }
     }
+
+    // --- WebAuthn Passkeys Endpoints (Local) ---
+    if (!global.localWebauthnChallenges) global.localWebauthnChallenges = {};
+
+    function toBase64Url(buf) {
+      return Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    }
+
+    if (pathname === '/api/auth/webauthn-challenge' && req.method === 'POST') {
+      const { empCode, visitorId, action } = await readBody(req);
+      if (!empCode && action === 'begin-registration') {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Thiếu mã nhân viên.' }));
+      }
+      const challengeBuf = crypto.randomBytes(32);
+      const challenge = toBase64Url(challengeBuf);
+
+      if (action === 'begin-registration') {
+        global.localWebauthnChallenges[`reg:${empCode}`] = {
+          challenge, empCode, visitorId: visitorId || null, expiresAt: Date.now() + 5 * 60 * 1000
+        };
+
+        const dataPath = path.join(__dirname, 'admin_schedule.json');
+        let sysData = { locations: [] };
+        if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        let empName = empCode;
+        sysData.locations.forEach(loc => {
+          (loc.employees || []).forEach(emp => { if (emp.code === empCode) empName = emp.name; });
+        });
+
+        const options = {
+          challenge,
+          rp: { name: 'CFHM Lịch Làm Việc' },
+          user: { id: toBase64Url(Buffer.from(empCode, 'utf8')), name: empCode, displayName: empName },
+          pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+          authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'preferred', residentKey: 'preferred' },
+          timeout: 60000,
+          attestation: 'none'
+        };
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ ok: true, options }));
+      }
+
+      if (action === 'begin-authentication') {
+        const key = empCode ? `auth:${empCode}` : `auth:${visitorId}`;
+        global.localWebauthnChallenges[key] = {
+          challenge, empCode: empCode || null, expiresAt: Date.now() + 5 * 60 * 1000
+        };
+
+        const allowCredentials = [];
+        const dataPath = path.join(__dirname, 'admin_schedule.json');
+        let sysData = { locations: [] };
+        if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        sysData.locations.forEach(loc => {
+          (loc.employees || []).forEach(emp => {
+            if (!empCode || emp.code === empCode) {
+              (emp.passkeyCredentials || []).forEach(cred => {
+                allowCredentials.push({ id: cred.credentialId, type: 'public-key', transports: cred.transports || ['internal'] });
+              });
+            }
+          });
+        });
+
+        const options = { challenge, allowCredentials, userVerification: 'preferred', timeout: 60000 };
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ ok: true, options }));
+      }
+
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: `Action không hợp lệ: ${action}` }));
+    }
+
+    if (pathname === '/api/auth/webauthn-register' && req.method === 'POST') {
+      const { empCode, credentialId, clientDataJSON, attestationObject, transports, deviceName } = await readBody(req);
+      if (!empCode || !credentialId || !clientDataJSON) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Thiếu thông tin đăng ký Passkey.' }));
+      }
+      const stored = global.localWebauthnChallenges[`reg:${empCode}`];
+      if (!stored || Date.now() > stored.expiresAt) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Challenge không tồn tại hoặc đã hết hạn.' }));
+      }
+      try {
+        const decoded = Buffer.from(clientDataJSON, 'base64').toString('utf8');
+        const clientData = JSON.parse(decoded);
+        if (clientData.type !== 'webauthn.create' || clientData.challenge !== stored.challenge) {
+          throw new Error('Challenge không khớp.');
+        }
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'clientDataJSON không hợp lệ.' }));
+      }
+      delete global.localWebauthnChallenges[`reg:${empCode}`];
+
+      const dataPath = path.join(__dirname, 'admin_schedule.json');
+      let sysData = { locations: [] };
+      if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      let updated = false;
+      let empName = empCode;
+
+      sysData.locations.forEach(loc => {
+        (loc.employees || []).forEach(emp => {
+          if (emp.code === empCode) {
+            empName = emp.name;
+            if (!emp.passkeyCredentials) emp.passkeyCredentials = [];
+            const alreadyExists = emp.passkeyCredentials.some(c => c.credentialId === credentialId);
+            if (!alreadyExists) {
+              emp.passkeyCredentials.push({
+                credentialId, attestationObject: attestationObject || null,
+                transports: transports || ['internal'], signCount: 0,
+                addedAt: new Date().toISOString(), deviceName: (deviceName || 'Thiết bị của ' + emp.name).trim()
+              });
+              updated = true;
+            } else {
+              updated = true;
+            }
+          }
+        });
+      });
+
+      if (!updated) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Không tìm thấy nhân viên.' }));
+      }
+      fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ ok: true, message: `✅ Đã đăng ký Passkey thành công cho ${empName}!` }));
+    }
+
+    if (pathname === '/api/auth/webauthn-verify' && req.method === 'POST') {
+      const { empCode, credentialId, clientDataJSON, authenticatorData, signature } = await readBody(req);
+      if (!credentialId || !clientDataJSON) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Thiếu thông tin xác thực.' }));
+      }
+      
+      const challengeKey = empCode ? `auth:${empCode}` : Object.keys(global.localWebauthnChallenges).find(k => k.startsWith('auth:'));
+      const stored = global.localWebauthnChallenges[challengeKey];
+      if (!stored || Date.now() > stored.expiresAt) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Challenge không tồn tại hoặc hết hạn.' }));
+      }
+      try {
+        const decoded = Buffer.from(clientDataJSON, 'base64').toString('utf8');
+        const clientData = JSON.parse(decoded);
+        if (clientData.type !== 'webauthn.get' || clientData.challenge !== stored.challenge) {
+          throw new Error('Challenge không khớp.');
+        }
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'clientData không hợp lệ.' }));
+      }
+      delete global.localWebauthnChallenges[challengeKey];
+
+      const dataPath = path.join(__dirname, 'admin_schedule.json');
+      let sysData = { locations: [] };
+      if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      let matchedEmp = null;
+      let matchedCredential = null;
+
+      sysData.locations.forEach(loc => {
+        (loc.employees || []).forEach(emp => {
+          (emp.passkeyCredentials || []).forEach(cred => {
+            if (cred.credentialId === credentialId) {
+              if (!empCode || emp.code === empCode) {
+                matchedEmp = emp;
+                matchedCredential = cred;
+              }
+            }
+          });
+        });
+      });
+
+      if (!matchedEmp || !matchedCredential) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ status: 'unrecognized', error: 'Chưa đăng ký Passkey hoặc không khớp tài khoản.' }));
+      }
+
+      matchedCredential.signCount = (matchedCredential.signCount || 0) + 1;
+      matchedCredential.lastUsedAt = new Date().toISOString();
+      fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ ok: true, status: 'verified', empCode: matchedEmp.code, empName: matchedEmp.name }));
+    }
+
 
     // ─── API: đọc/ghi data files ────────────────────────────────────────────
     if (pathname.startsWith('/data/')) {
