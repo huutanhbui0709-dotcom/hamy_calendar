@@ -167,6 +167,8 @@ function saveData() {
       }
     } else {
       showToast('✅ Đã lưu thay đổi vào hệ thống!');
+      if (typeof renderAll === 'function') renderAll();
+      if (typeof window.renderDeviceManagement === 'function') window.renderDeviceManagement();
     }
   })
   .catch(e => {
