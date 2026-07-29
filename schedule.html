@@ -1068,8 +1068,34 @@
           fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
             .then(function (r) { return r.json(); })
             .then(function (data) {
-              if (data && data.locations) sysData = data;
+              if (data && data.locations) {
+                sysData = data;
+                rebuildEmpDropdown();
+              }
             });
+          
+          // === Mời đăng ký Passkey để nhận diện thiết bị trên mọi trình duyệt ===
+          if (window.PublicKeyCredential) {
+            // Kiểm tra platform authenticator có sẵn không (Face ID / Touch ID / Windows Hello)
+            window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+              .then(function (available) {
+                if (!available) return; // Không có → bỏ qua
+                
+                // Hỏi nhân viên có muốn đăng ký Passkey không
+                setTimeout(function () {
+                  var wantPasskey = confirm(
+                    '🔑 Đăng ký nhận diện thiết bị tự động?\n\n' +
+                    'Từ lần sau, dù bạn dùng Chrome, Safari hay bất kỳ trình duyệt nào trên thiết bị này, ' +
+                    'hệ thống sẽ TỰ ĐỘNG nhận ra bạn mà không cần nhập OTP lại.\n\n' +
+                    '(Sử dụng Face ID / Touch ID / Windows Hello)'
+                  );
+                  if (wantPasskey) {
+                    registerPasskey(selectEmp.value);
+                  }
+                }, 1000);
+              })
+              .catch(function () {}); // browser không hỗ trợ → bỏ qua
+          }
         } else {
           errDiv.textContent = res.data.error || 'Mã OTP không chính xác.';
           errDiv.classList.remove('hidden');
@@ -1084,6 +1110,137 @@
         btnVerify.textContent = 'Xác minh & Liên kết';
       });
     });
+
+    // === WebAuthn: Đăng ký Passkey ===
+    function registerPasskey(empCode) {
+      fetch('/api/auth/webauthn-challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ empCode: empCode, action: 'begin-registration' })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.ok || !data.options) throw new Error(data.error || 'Không lấy được challenge.');
+        
+        var opts = data.options;
+        // Chuyển base64url → Uint8Array cho challenge và user.id
+        opts.challenge = base64urlToUint8Array(opts.challenge);
+        opts.user.id = base64urlToUint8Array(opts.user.id);
+        
+        return navigator.credentials.create({ publicKey: opts });
+      })
+      .then(function (credential) {
+        if (!credential) throw new Error('Không tạo được credential.');
+        
+        var response = credential.response;
+        return fetch('/api/auth/webauthn-register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            empCode: empCode,
+            credentialId: credential.id,
+            clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
+            attestationObject: arrayBufferToBase64(response.attestationObject),
+            transports: response.getTransports ? response.getTransports() : ['internal'],
+            deviceName: getDeviceName()
+          })
+        });
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          showToast('🔑 Đã đăng ký nhận diện thiết bị thành công! Lần sau tự động đăng nhập.');
+        } else {
+          console.warn('[Passkey Register]', data.error);
+        }
+      })
+      .catch(function (err) {
+        // Người dùng huỷ → không báo lỗi
+        if (err.name !== 'NotAllowedError') {
+          console.warn('[Passkey Register Error]', err.message);
+        }
+      });
+    }
+
+    // === WebAuthn: Xác thực Passkey (cross-browser recognition) ===
+    function tryPasskeyAuth() {
+      return new Promise(function (resolve, reject) {
+        if (!window.PublicKeyCredential) { reject(new Error('WebAuthn not supported')); return; }
+        
+        fetch('/api/auth/webauthn-challenge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'begin-authentication' })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok || !data.options) throw new Error(data.error || 'Không lấy được challenge.');
+          
+          var opts = data.options;
+          opts.challenge = base64urlToUint8Array(opts.challenge);
+          if (opts.allowCredentials) {
+            opts.allowCredentials = opts.allowCredentials.map(function (c) {
+              return { id: base64urlToUint8Array(c.id), type: c.type, transports: c.transports };
+            });
+          }
+          
+          return navigator.credentials.get({ publicKey: opts });
+        })
+        .then(function (assertion) {
+          if (!assertion) throw new Error('Xác thực thất bại.');
+          
+          var response = assertion.response;
+          return fetch('/api/auth/webauthn-verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              credentialId: assertion.id,
+              clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
+              authenticatorData: arrayBufferToBase64(response.authenticatorData),
+              signature: arrayBufferToBase64(response.signature)
+            })
+          });
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.ok && data.empCode) {
+            resolve(data); // { empCode, empName }
+          } else {
+            reject(new Error(data.error || 'Không xác thực được.'));
+          }
+        })
+        .catch(reject);
+      });
+    }
+
+    // === Helper: Tên thiết bị tự động ===
+    function getDeviceName() {
+      var ua = navigator.userAgent;
+      if (/iPhone/.test(ua)) return 'iPhone của ' + (empMap[selectEmp.value] || selectEmp.value);
+      if (/iPad/.test(ua)) return 'iPad của ' + (empMap[selectEmp.value] || selectEmp.value);
+      if (/Android/.test(ua)) return 'Android của ' + (empMap[selectEmp.value] || selectEmp.value);
+      if (/Macintosh/.test(ua)) return 'Macbook của ' + (empMap[selectEmp.value] || selectEmp.value);
+      if (/Windows/.test(ua)) return 'Windows của ' + (empMap[selectEmp.value] || selectEmp.value);
+      return 'Thiết bị của ' + (empMap[selectEmp.value] || selectEmp.value);
+    }
+
+    // === Helpers: base64url <-> ArrayBuffer ===
+    function base64urlToUint8Array(base64url) {
+      var base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4) base64 += '=';
+      var binary = atob(base64);
+      var bytes = new Uint8Array(binary.length);
+      for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+    function arrayBufferToBase64(buffer) {
+      var bytes = new Uint8Array(buffer);
+      var binary = '';
+      for (var i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    }
+
+
 
     // Trigger email & device section check when employee is chosen
     selectEmp.addEventListener('change', function () {
@@ -1419,6 +1576,50 @@
     }
     renderRecentList();
     renderPublishedSchedule();
+
+    /* ====== WebAuthn Auto-Login khi tải trang ====== */
+    // Chạy ngay khi load — nếu thiết bị đã đăng ký Passkey thì tự nhận diện
+    // kể cả khi nhân viên mở bằng trình duyệt khác
+    (function tryPasskeyAutoLogin() {
+      if (!window.PublicKeyCredential) return; // Browser không hỗ trợ → bỏ qua
+
+      // Chỉ chạy nếu chưa có ai được chọn
+      if (selectEmp && selectEmp.value) return;
+
+      // Kiểm tra nhanh không cần user interaction (silent)
+      window.PublicKeyCredential.isConditionalMediationAvailable
+        ? window.PublicKeyCredential.isConditionalMediationAvailable()
+            .then(function(available) { if (available) _doPasskeyAutoSilent(); else _doPasskeyAutoActive(); })
+            .catch(function() { _doPasskeyAutoActive(); })
+        : _doPasskeyAutoActive();
+
+      // Active mode: gọi navigator.credentials.get với mediation: 'optional'
+      function _doPasskeyAutoActive() {
+        tryPasskeyAuth()
+          .then(function(data) {
+            if (!data.empCode) return;
+            // Tìm và auto-chọn nhân viên trong dropdown
+            if (empMap[data.empCode]) {
+              selectEmp.value = data.empCode;
+              selectEmpText.textContent = empMap[data.empCode] + ' (' + data.empCode + ')';
+              selectEmpText.classList.remove('text-gray-500');
+              selectEmpText.classList.add('text-gray-900');
+              deviceVerified = true;
+              selectEmp.dispatchEvent(new Event('change'));
+              showToast('🔑 Nhận diện thành công: ' + data.empName + '. Thiết bị hợp lệ!');
+            }
+          })
+          .catch(function() {
+            // Thất bại → không làm gì, nhân viên chọn tay bình thường
+          });
+      }
+
+      // Silent conditional mode (Chrome 108+ trên desktop)
+      function _doPasskeyAutoSilent() {
+        // Conditional UI — browser tự quyết khi nào hỏi, không block UI
+        _doPasskeyAutoActive(); // fallback luôn vì thiết bị mobile không cần conditional
+      }
+    })();
 
     /* ====== Kiểm tra khóa đăng ký ====== */
     function checkRegistrationLock() {

@@ -4,6 +4,9 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/data/:file", "destination": "/api/data/:file" }
+    { "source": "/data/:file", "destination": "/api/data/:file" },
+    { "source": "/api/auth/webauthn-challenge", "destination": "/api/auth/webauthn-challenge" },
+    { "source": "/api/auth/webauthn-register", "destination": "/api/auth/webauthn-register" },
+    { "source": "/api/auth/webauthn-verify", "destination": "/api/auth/webauthn-verify" }
   ]
 }
