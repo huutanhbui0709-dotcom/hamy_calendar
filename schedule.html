@@ -749,11 +749,22 @@
 
     function rebuildEmpDropdown() {
       empMap = {};
+      var linkedEmpCode = null;
+      var currentVisitorId = getVisitorId();
+
       if (sysData.locations && sysData.locations.length) {
         sysData.locations.forEach(function (loc) {
           if (loc.employees && loc.employees.length) {
             loc.employees.forEach(function (emp) {
               empMap[emp.code] = emp.name;
+              // Kiểm tra xem thiết bị này đã liên kết với nhân viên nào chưa
+              if (emp.registeredDevices && emp.registeredDevices.length) {
+                emp.registeredDevices.forEach(function (dev) {
+                  if (dev.visitorId === currentVisitorId) {
+                    linkedEmpCode = emp.code;
+                  }
+                });
+              }
             });
           }
         });
@@ -776,6 +787,18 @@
         };
         selectEmpList.appendChild(btn);
       });
+
+      // Tự động chọn nhân viên nếu thiết bị đã được liên kết
+      if (linkedEmpCode && empMap[linkedEmpCode]) {
+        // Chỉ auto-select nếu chưa có ai được chọn (tránh ghi đè khi người dùng đang chọn lại)
+        if (!selectEmp.value) {
+          selectEmp.value = linkedEmpCode;
+          selectEmpText.textContent = empMap[linkedEmpCode] + ' (' + linkedEmpCode + ')';
+          selectEmpText.classList.remove('text-gray-500');
+          selectEmpText.classList.add('text-gray-900');
+          selectEmp.dispatchEvent(new Event('change'));
+        }
+      }
     }
     rebuildEmpDropdown();
 
