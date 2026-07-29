@@ -1199,6 +1199,21 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btn-copy').addEventListener('click', copyTable);
   $('#btn-download').addEventListener('click', downloadCSV);
 
+  const btnRefreshDev = $('#btn-refresh-devices');
+  if (btnRefreshDev) {
+    btnRefreshDev.addEventListener('click', () => {
+      fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.locations) {
+            state.data = data;
+            window.renderDeviceManagement();
+            showToast('✅ Đã làm mới danh sách thiết bị!');
+          }
+        });
+    });
+  }
+
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       if (!$('#confirm-overlay').hidden) closeConfirm(false);
@@ -1206,3 +1221,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+window.renderDeviceManagement = function() {
+  const tbody = $('#devices-table-body');
+  const emptyDiv = $('#devices-empty');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  let count = 0;
+
+  if (state.data && state.data.locations) {
+    state.data.locations.forEach(loc => {
+      if (loc.employees) {
+        loc.employees.forEach(emp => {
+          const devices = emp.registeredDevices || [];
+          devices.forEach(dev => {
+            count++;
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid var(--line)';
+            tr.innerHTML = `
+              <td style="padding: 12px 16px; font-weight: 700; color: var(--ink-dark);">
+                ${escapeHtml(emp.name)} <span style="font-size:11px; color: var(--ink-soft); font-weight:500;">(${emp.code})</span>
+                <div style="font-size: 11px; color: var(--primary); font-weight: 500; margin-top: 2px;">${escapeHtml(loc.name)}</div>
+              </td>
+              <td style="padding: 12px 16px; font-weight: 600; color: #475569;">
+                📱 ${escapeHtml(dev.deviceName || 'Thiết bị không tên')}
+              </td>
+              <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; color: #64748b; letter-spacing: 0.5px;">
+                ${escapeHtml(dev.visitorId)}
+              </td>
+              <td style="padding: 12px 16px; color: #64748b;">
+                ${new Date(dev.addedAt).toLocaleString('vi-VN')}
+              </td>
+              <td style="padding: 12px 16px; text-align: center;">
+                <button class="btn" style="padding: 4px 10px; font-size: 11.5px; background: var(--danger); color: #fff; border: none; cursor: pointer; display: inline-flex; items-center; gap: 4px;"
+                  onclick="unlinkDevice('${emp.code}', '${dev.visitorId}')">
+                  <i class="fa-solid fa-link-slash"></i> Hủy liên kết
+                </button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        });
+      }
+    });
+  }
+
+  emptyDiv.hidden = count > 0;
+};
+
+window.unlinkDevice = function(empCode, visitorId) {
+  showConfirm({
+    title: 'Hủy liên kết thiết bị',
+    message: `Bạn có chắc chắn muốn hủy liên kết thiết bị này? Nhân viên sẽ phải xác thực lại OTP trên thiết bị này lần sau.`,
+    warningText: 'Hành động này có thể thực hiện lại sau.',
+    onConfirm: () => {
+      let updated = false;
+      if (state.data && state.data.locations) {
+        state.data.locations.forEach(loc => {
+          if (loc.employees) {
+            loc.employees.forEach(emp => {
+              if (emp.code === empCode && emp.registeredDevices) {
+                const idx = emp.registeredDevices.findIndex(d => d.visitorId === visitorId);
+                if (idx !== -1) {
+                  emp.registeredDevices.splice(idx, 1);
+                  updated = true;
+                }
+              }
+            });
+          }
+        });
+      }
+      if (updated) {
+        saveData();
+        showToast('✅ Đã hủy liên kết thiết bị thành công!');
+        window.renderDeviceManagement();
+      }
+    }
+  });
+};
