@@ -1474,6 +1474,17 @@
                   // Passkey xác thực thành công
                   deviceVerified = true;
                   showToast('🔑 Nhận diện thành công qua Face ID/Vân tay. Thiết bị hợp lệ!');
+                  
+                  // Reload sysData để đồng bộ thiết bị vừa liên kết qua Passkey
+                  fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                      if (data && data.locations) {
+                        sysData = data;
+                        localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
+                        rebuildEmpDropdown();
+                      }
+                    }).catch(function() {});
                 } else {
                   _showOtpModal(data.maskedEmail);
                 }
@@ -1868,8 +1879,18 @@
               selectEmpText.classList.remove('text-gray-500');
               selectEmpText.classList.add('text-gray-900');
               deviceVerified = true;
-              selectEmp.dispatchEvent(new Event('change'));
-              showToast('🔑 Nhận diện thành công: ' + data.empName + '. Thiết bị hợp lệ!');
+              // Reload sysData để đồng bộ thiết bị vừa liên kết qua Passkey Auto-login
+              fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                  if (d && d.locations) {
+                    sysData = d;
+                    localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(d));
+                    rebuildEmpDropdown();
+                    selectEmp.dispatchEvent(new Event('change'));
+                    showToast('🔑 Nhận diện thành công: ' + data.empName + '. Thiết bị hợp lệ!');
+                  }
+                }).catch(function() {});
             }
           })
           .catch(function() {
