@@ -1244,12 +1244,11 @@
     function tryPasskeyAuth(empCode) {
       return new Promise(function (resolve, reject) {
         if (!window.PublicKeyCredential) { reject(new Error('WebAuthn not supported')); return; }
-        if (!empCode) { reject(new Error('Thiếu mã nhân viên.')); return; }
         
         fetch('/api/auth/webauthn-challenge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'begin-authentication', empCode: empCode })
+          body: JSON.stringify({ action: 'begin-authentication', empCode: empCode || null, visitorId: getVisitorId() })
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {
@@ -1257,10 +1256,13 @@
           
           var opts = data.options;
           opts.challenge = base64urlToUint8Array(opts.challenge);
-          if (opts.allowCredentials) {
+          if (opts.allowCredentials && opts.allowCredentials.length > 0) {
             opts.allowCredentials = opts.allowCredentials.map(function (c) {
               return { id: base64urlToUint8Array(c.id), type: c.type, transports: c.transports };
             });
+          } else {
+            // Không có Passkey nào được đăng ký cho user này
+            throw new Error('Chưa đăng ký Passkey.');
           }
           
           return navigator.credentials.get({ publicKey: opts });
@@ -1394,11 +1396,12 @@
             });
           }
 
-          // Thử dùng Passkey xác thực trước
+          // Thử dùng Passkey xác thực trước (cross-browser recognition)
           if (window.PublicKeyCredential) {
             tryPasskeyAuth(empCode)
               .then(function (resData) {
-                if (resData && resData.ok && resData.status === 'verified') {
+                if (resData && resData.ok && resData.empCode) {
+                  // Passkey xác thực thành công
                   deviceVerified = true;
                   showToast('🔑 Nhận diện thành công qua Face ID/Vân tay. Thiết bị hợp lệ!');
                 } else {
@@ -1406,10 +1409,7 @@
                 }
               })
               .catch(function (err) {
-                // Nếu không phải lỗi do người dùng bấm hủy (NotAllowedError)
-                if (err.name !== 'NotAllowedError') {
-                  showToast('Lỗi nhận diện Passkey: ' + err.message, 'warn');
-                }
+                // Chưa đăng ký Passkey hoặc lỗi → fallback OTP (không hiển thị lỗi gây khó chịu)
                 _showOtpModal(data.maskedEmail);
               });
           } else {

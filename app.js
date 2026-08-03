@@ -99,9 +99,10 @@ function ensureScheduleShape(loc) {
     if (!loc.schedule[d.key]) loc.schedule[d.key] = {};
     loc.employees.forEach(emp => {
       if (!loc.schedule[d.key][emp.id]) loc.schedule[d.key][emp.id] = [];
-      // Đảm bảo các field device luôn tồn tại để API merge hoạt động đúng
-      if (!Object.prototype.hasOwnProperty.call(emp, 'registeredDevices')) emp.registeredDevices = [];
-      if (!Object.prototype.hasOwnProperty.call(emp, 'passkeyCredentials')) emp.passkeyCredentials = [];
+      // Lưu ý: KHÔNG khởi tạo registeredDevices / passkeyCredentials ở đây.
+      // Nếu thêm [] mặc định → khi saveData() gửi lên API, hasOwnProperty = true
+      // → API merge sẽ không fill từ R2 → xóa sạch device thực.
+      // Để trống: merge API sẽ tự fill từ R2 khi field không tồn tại.
     });
   });
 }
