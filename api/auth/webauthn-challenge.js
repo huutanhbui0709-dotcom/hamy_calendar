@@ -28,9 +28,9 @@ export default async function handler(req, res) {
 
   try {
     const { empCode, visitorId, action } = req.body || {};
-    if (!empCode) { res.status(400).json({ error: 'Thiếu mã nhân viên.' }); return; }
 
     if (action === 'begin-registration') {
+      if (!empCode) { res.status(400).json({ error: 'Thiếu mã nhân viên.' }); return; }
       const challenge = toBase64Url(randomBytes(32));
       const challenges = await loadChallenges();
       challenges[`reg:${empCode}`] = {
