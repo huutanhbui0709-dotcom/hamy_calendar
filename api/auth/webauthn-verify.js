@@ -40,7 +40,9 @@ export default async function handler(req, res) {
       credentialId,    // base64url từ browser
       clientDataJSON,  // base64url
       authenticatorData, // base64url
-      signature        // base64url
+      signature,        // base64url
+      visitorId,
+      deviceName
     } = req.body || {};
 
     if (!credentialId || !clientDataJSON) {
@@ -117,6 +119,20 @@ export default async function handler(req, res) {
     // 6. Cập nhật signCount
     matchedCredential.signCount = (matchedCredential.signCount || 0) + 1;
     matchedCredential.lastUsedAt = new Date().toISOString();
+
+    // [QUAN TRỌNG] Đăng ký visitorId của trình duyệt hiện tại vào registeredDevices
+    // Điều này giúp trình duyệt này được nhận diện tự động ở các lần tải trang sau
+    if (visitorId) {
+      if (!matchedEmp.registeredDevices) matchedEmp.registeredDevices = [];
+      if (!matchedEmp.registeredDevices.some(d => d.visitorId === visitorId)) {
+        matchedEmp.registeredDevices.push({
+          visitorId: visitorId,
+          addedAt: new Date().toISOString(),
+          deviceName: (deviceName || 'Trình duyệt từ Passkey').trim()
+        });
+      }
+    }
+
     await saveBlob(SCHEDULE_KEY, sysData);
 
     res.status(200).json({

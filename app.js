@@ -1288,10 +1288,12 @@ window.renderDeviceManagement = function() {
   emptyDiv.hidden = count > 0;
 };
 
-window.unlinkDevice = function(empCode, visitorId) {
+window.unlinkDevice = function(empCode, visitorId, type) {
   showConfirm({
     title: 'Hủy liên kết thiết bị',
-    message: `Bạn có chắc chắn muốn hủy liên kết thiết bị này? Nhân viên sẽ phải xác thực lại OTP trên thiết bị này lần sau.`,
+    message: type === 'Passkey' 
+      ? 'Bạn có chắc chắn muốn hủy Passkey này? Nhân viên sẽ không thể đăng nhập tự động bằng thiết bị này nữa.'
+      : 'Bạn có chắc chắn muốn hủy liên kết thiết bị này? Nhân viên sẽ phải xác thực lại OTP trên thiết bị này lần sau.',
     warningText: 'Hành động này có thể thực hiện lại sau.',
     onConfirm: () => {
       let updated = false;
@@ -1299,11 +1301,19 @@ window.unlinkDevice = function(empCode, visitorId) {
         state.data.locations.forEach(loc => {
           if (loc.employees) {
             loc.employees.forEach(emp => {
-              if (emp.code === empCode && emp.registeredDevices) {
-                const idx = emp.registeredDevices.findIndex(d => d.visitorId === visitorId);
-                if (idx !== -1) {
-                  emp.registeredDevices.splice(idx, 1);
-                  updated = true;
+              if (emp.code === empCode) {
+                if (type === 'Passkey' && emp.passkeyCredentials) {
+                  const idx = emp.passkeyCredentials.findIndex(c => c.credentialId === visitorId);
+                  if (idx !== -1) {
+                    emp.passkeyCredentials.splice(idx, 1);
+                    updated = true;
+                  }
+                } else if (type === 'OTP' && emp.registeredDevices) {
+                  const idx = emp.registeredDevices.findIndex(d => d.visitorId === visitorId);
+                  if (idx !== -1) {
+                    emp.registeredDevices.splice(idx, 1);
+                    updated = true;
+                  }
                 }
               }
             });

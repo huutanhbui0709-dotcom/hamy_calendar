@@ -41,7 +41,8 @@ export default async function handler(req, res) {
       clientDataJSON,    // base64url
       attestationObject, // base64url
       transports,        // ['internal', 'hybrid', ...]
-      deviceName
+      deviceName,
+      visitorId
     } = req.body || {};
 
     if (!empCode || !credentialId || !clientDataJSON) {
@@ -110,6 +111,20 @@ export default async function handler(req, res) {
           } else {
             // Đã tồn tại → update transports nếu cần
             updated = true;
+          }
+
+          // [QUAN TRỌNG] Đảm bảo visitorId của trình duyệt hiện tại cũng được thêm vào registeredDevices
+          // Điều này giúp tránh lỗi race condition khi verify-otp và webauthn-register chạy quá gần nhau
+          if (visitorId) {
+            if (!emp.registeredDevices) emp.registeredDevices = [];
+            if (!emp.registeredDevices.some(d => d.visitorId === visitorId)) {
+              emp.registeredDevices.push({
+                visitorId: visitorId,
+                addedAt: new Date().toISOString(),
+                deviceName: (deviceName || 'Thiết bị của ' + emp.name).trim()
+              });
+              updated = true;
+            }
           }
         }
       });

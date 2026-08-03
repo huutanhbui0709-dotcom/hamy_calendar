@@ -1142,7 +1142,8 @@
             clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
             attestationObject: arrayBufferToBase64(response.attestationObject),
             transports: response.getTransports ? response.getTransports() : ['internal'],
-            deviceName: getDeviceName()
+            deviceName: getDeviceName(),
+            visitorId: getVisitorId()
           })
         });
       })
@@ -1196,10 +1197,13 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              empCode: empCode, // Đảm bảo khớp session với nhân viên được chọn
               credentialId: assertion.id,
               clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
               authenticatorData: arrayBufferToBase64(response.authenticatorData),
-              signature: arrayBufferToBase64(response.signature)
+              signature: arrayBufferToBase64(response.signature),
+              visitorId: getVisitorId(),
+              deviceName: getDeviceName()
             })
           });
         })
@@ -1208,10 +1212,12 @@
           if (data.ok && data.empCode) {
             resolve(data); // { empCode, empName }
           } else {
-            reject(new Error(data.error || 'Không xác thực được.'));
+            reject(new Error(data.error || 'Thiết bị này chưa được liên kết Passkey cho tài khoản của bạn.'));
           }
         })
-        .catch(reject);
+        .catch(function (err) {
+          reject(err);
+        });
       });
     }
 
@@ -1316,7 +1322,11 @@
                   _showOtpModal(data.maskedEmail);
                 }
               })
-              .catch(function () {
+              .catch(function (err) {
+                // Nếu không phải lỗi do người dùng bấm hủy (NotAllowedError)
+                if (err.name !== 'NotAllowedError') {
+                  showToast('Lỗi nhận diện Passkey: ' + err.message, 'warn');
+                }
                 _showOtpModal(data.maskedEmail);
               });
           } else {

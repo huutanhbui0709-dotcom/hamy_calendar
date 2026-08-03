@@ -113,10 +113,44 @@ export default async function handler(req, res) {
       }
 
       // Đọc body — Vercel tự parse JSON nếu Content-Type: application/json
-      const body = req.body;
+      let body = req.body;
       if (body === undefined || body === null) {
         res.status(400).json({ error: 'Body rỗng.' });
         return;
+      }
+
+      // Merge và bảo lưu danh sách thiết bị liên kết để tránh bị Admin ghi đè làm mất
+      if (fileName === 'admin_schedule.json') {
+        try {
+          const { blobs } = await list({ prefix: blobKey });
+          const existingBlob = blobs.find(b => b.pathname === blobKey);
+          if (existingBlob) {
+            const existingData = await fetchBlobJson(existingBlob.url);
+            if (existingData && existingData.locations && body.locations) {
+              const deviceMap = {};
+              const passkeyMap = {};
+              existingData.locations.forEach(loc => {
+                (loc.employees || []).forEach(emp => {
+                  if (emp.code) {
+                    deviceMap[emp.code] = emp.registeredDevices || [];
+                    passkeyMap[emp.code] = emp.passkeyCredentials || [];
+                  }
+                });
+              });
+
+              body.locations.forEach(loc => {
+                (loc.employees || []).forEach(emp => {
+                  if (emp.code) {
+                    emp.registeredDevices = deviceMap[emp.code] || [];
+                    emp.passkeyCredentials = passkeyMap[emp.code] || [];
+                  }
+                });
+              });
+            }
+          }
+        } catch (err) {
+          console.warn('[Merge Devices Warn]', err);
+        }
       }
 
       const { url } = await put(blobKey, JSON.stringify(body), {
