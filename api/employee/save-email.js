@@ -1,28 +1,14 @@
-import { put, list } from '@vercel/blob';
+import { loadJson, saveJson } from '../../../lib/r2.js';
 
-const BLOB_PREFIX = 'cfhm/';
-const BLOB_KEY = `${BLOB_PREFIX}admin_schedule.json`;
-
-async function fetchBlobJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Blob fetch failed: ${res.status}`);
-  return res.json();
-}
+const SCHEDULE_KEY = 'cfhm/admin_schedule.json';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method Not Allowed' });
-    return;
-  }
+  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'Method Not Allowed' }); return; }
 
   try {
     const { empCode, email } = req.body || {};
@@ -31,27 +17,21 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Load admin_schedule.json từ Vercel Blob
-    const { blobs } = await list({ prefix: BLOB_KEY });
-    const blob = blobs.find(b => b.pathname === BLOB_KEY);
-    if (!blob) {
+    const sysData = await loadJson(SCHEDULE_KEY);
+    if (!sysData) {
       res.status(404).json({ error: 'Không tìm thấy dữ liệu hệ thống.' });
       return;
     }
 
-    const sysData = await fetchBlobJson(blob.url);
     let updated = false;
-
-    if (sysData && sysData.locations) {
+    if (sysData.locations) {
       sysData.locations.forEach(loc => {
-        if (loc.employees) {
-          loc.employees.forEach(emp => {
-            if (emp.code === empCode) {
-              emp.email = email.trim();
-              updated = true;
-            }
-          });
-        }
+        (loc.employees || []).forEach(emp => {
+          if (emp.code === empCode) {
+            emp.email = email.trim();
+            updated = true;
+          }
+        });
       });
     }
 
@@ -60,13 +40,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Lưu lại vào Vercel Blob
-    await put(BLOB_KEY, JSON.stringify(sysData), {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType: 'application/json',
-    });
-
+    await saveJson(SCHEDULE_KEY, sysData);
     res.status(200).json({ ok: true, message: 'Đã lưu email nhân viên thành công.' });
   } catch (err) {
     res.status(500).json({ error: err.message });

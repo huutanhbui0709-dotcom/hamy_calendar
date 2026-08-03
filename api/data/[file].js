@@ -1,12 +1,12 @@
 /**
- * Vercel Serverless Function: /api/data/[file]
- * Đọc/ghi dữ liệu JSON lên Vercel Blob — thay thế cho server.js khi deploy production.
+ * /api/data/[file]
+ * Đọc/ghi dữ liệu JSON lên Cloudflare R2.
  *
- * GET  /data/admin_schedule.json          → đọc từ Blob (hoặc trả default data)
- * POST /data/admin_schedule.json  + body  → ghi đè lên Blob
+ * GET  /data/admin_schedule.json         → đọc từ R2 (hoặc trả default data)
+ * POST /data/admin_schedule.json + body  → ghi đè lên R2
  */
 
-import { put, list } from '@vercel/blob';
+import { loadJson, saveJson, getPublicUrl } from '../../../lib/r2.js';
 import { jwtVerify } from 'jose';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
@@ -20,7 +20,7 @@ async function checkAdminAuth(req) {
     const secret = new TextEncoder().encode(JWT_SECRET);
     await jwtVerify(token, secret);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
@@ -33,37 +33,24 @@ const ALLOWED_FILES = new Set([
   'lock_config.json',
 ]);
 
-/* ─── Prefix trên Blob Store ────────────────────────────────────────────── */
-const BLOB_PREFIX = 'cfhm/';
+const PREFIX = 'cfhm/';
 
-/* ─── Default data cho từng file khi chưa có trên Blob ─────────────────── */
+/* ─── Default data cho từng file khi chưa có trên R2 ─────────────────── */
 const DEFAULT_DATA = {
-  'admin_schedule.json': null,           // null → app.js tự dùng createDefaultData()
-  'published_schedule.json': {},         // chưa publish
-  'employee_registrations.json': [],     // chưa có đăng ký
+  'admin_schedule.json': null,
+  'published_schedule.json': {},
+  'employee_registrations.json': [],
   'lock_config.json': { enabled: false, openTime: '06:00', closeTime: '20:00' },
 };
 
-/* ─── Helper: đọc JSON từ một URL công khai ────────────────────────────── */
-async function fetchBlobJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Blob fetch failed: ${res.status}`);
-  return res.json();
-}
-
 /* ─── Handler chính ─────────────────────────────────────────────────────── */
 export default async function handler(req, res) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
-  }
+  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
 
-  // Lấy tên file từ URL: /data/admin_schedule.json → admin_schedule.json
   const fileName = (req.query.file || '').replace(/^\/+/, '');
 
   if (!ALLOWED_FILES.has(fileName)) {
@@ -71,17 +58,14 @@ export default async function handler(req, res) {
     return;
   }
 
-  const blobKey = `${BLOB_PREFIX}${fileName}`;
+  const r2Key = `${PREFIX}${fileName}`;
 
-  /* ── GET: Đọc từ Blob ───────────────────────────────────────────────── */
+  /* ── GET ───────────────────────────────────────────────────────────── */
   if (req.method === 'GET') {
     try {
-      // list() để tìm blob theo prefix chính xác
-      const { blobs } = await list({ prefix: blobKey });
-      const blob = blobs.find(b => b.pathname === blobKey);
+      const data = await loadJson(r2Key);
 
-      if (!blob) {
-        // Chưa có file → trả về default data
+      if (data === null) {
         const defaultVal = DEFAULT_DATA[fileName];
         res.setHeader('Cache-Control', 'no-store');
         res.status(defaultVal === null ? 404 : 200).json(
@@ -90,20 +74,18 @@ export default async function handler(req, res) {
         return;
       }
 
-      const data = await fetchBlobJson(blob.url);
       res.setHeader('Cache-Control', 'no-store');
       res.status(200).json(data);
     } catch (err) {
-      console.error('[GET]', fileName, err);
+      console.error('[GET]', fileName, err.message);
       res.status(500).json({ error: err.message });
     }
     return;
   }
 
-  /* ── POST: Ghi đè lên Blob ──────────────────────────────────────────── */
+  /* ── POST ──────────────────────────────────────────────────────────── */
   if (req.method === 'POST') {
     try {
-      // Bảo vệ các file cấu hình admin và lịch đã xuất bản
       if (fileName !== 'employee_registrations.json') {
         const isAuthorized = await checkAdminAuth(req);
         if (!isAuthorized) {
@@ -112,57 +94,46 @@ export default async function handler(req, res) {
         }
       }
 
-      // Đọc body — Vercel tự parse JSON nếu Content-Type: application/json
       let body = req.body;
       if (body === undefined || body === null) {
         res.status(400).json({ error: 'Body rỗng.' });
         return;
       }
 
-      // Merge và bảo lưu danh sách thiết bị liên kết để tránh bị Admin ghi đè làm mất
+      // Merge & bảo lưu danh sách thiết bị liên kết để Admin ghi đè không làm mất
       if (fileName === 'admin_schedule.json') {
         try {
-          const { blobs } = await list({ prefix: blobKey });
-          const existingBlob = blobs.find(b => b.pathname === blobKey);
-          if (existingBlob) {
-            const existingData = await fetchBlobJson(existingBlob.url);
-            if (existingData && existingData.locations && body.locations) {
-              const deviceMap = {};
-              const passkeyMap = {};
-              existingData.locations.forEach(loc => {
-                (loc.employees || []).forEach(emp => {
-                  if (emp.code) {
-                    deviceMap[emp.code] = emp.registeredDevices || [];
-                    passkeyMap[emp.code] = emp.passkeyCredentials || [];
-                  }
-                });
+          const existingData = await loadJson(r2Key);
+          if (existingData && existingData.locations && body.locations) {
+            const deviceMap = {};
+            const passkeyMap = {};
+            existingData.locations.forEach(loc => {
+              (loc.employees || []).forEach(emp => {
+                if (emp.code) {
+                  deviceMap[emp.code] = emp.registeredDevices || [];
+                  passkeyMap[emp.code] = emp.passkeyCredentials || [];
+                }
               });
-
-              body.locations.forEach(loc => {
-                (loc.employees || []).forEach(emp => {
-                  if (emp.code) {
-                    emp.registeredDevices = deviceMap[emp.code] || [];
-                    emp.passkeyCredentials = passkeyMap[emp.code] || [];
-                  }
-                });
+            });
+            body.locations.forEach(loc => {
+              (loc.employees || []).forEach(emp => {
+                if (emp.code) {
+                  emp.registeredDevices = deviceMap[emp.code] || [];
+                  emp.passkeyCredentials = passkeyMap[emp.code] || [];
+                }
               });
-            }
+            });
           }
-        } catch (err) {
-          console.warn('[Merge Devices Warn]', err);
+        } catch (mergeErr) {
+          console.warn('[Merge Devices Warn]', mergeErr.message);
         }
       }
 
-      const { url } = await put(blobKey, JSON.stringify(body), {
-        access: 'public',
-        addRandomSuffix: false,       // Ghi đè cùng key mỗi lần
-        contentType: 'application/json',
-      });
-
-      console.log(`💾 Blob saved: ${fileName} → ${url}`);
+      const url = await saveJson(r2Key, body);
+      console.log(`💾 R2 saved: ${fileName} → ${url}`);
       res.status(200).json({ ok: true, url });
     } catch (err) {
-      console.error('[POST]', fileName, err);
+      console.error('[POST]', fileName, err.message);
       res.status(500).json({ error: err.message });
     }
     return;

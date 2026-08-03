@@ -1,31 +1,11 @@
 /**
  * POST /api/auth/webauthn-verify
  * Xác thực Passkey khi nhân viên mở app từ trình duyệt mới (cross-browser recognition).
- * Nếu thành công → trả về empCode đã được liên kết với credential đó.
  */
-import { list, put } from '@vercel/blob';
+import { loadJson, saveJson } from '../../../lib/r2.js';
 
-const BLOB_PREFIX = 'cfhm/';
-const CHALLENGES_KEY = `${BLOB_PREFIX}webauthn_challenges.json`;
-const SCHEDULE_KEY = `${BLOB_PREFIX}admin_schedule.json`;
-
-async function fetchBlobJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  return res.json();
-}
-
-async function loadBlob(key) {
-  const { blobs } = await list({ prefix: key });
-  const b = blobs.find(x => x.pathname === key);
-  return b ? await fetchBlobJson(b.url) : null;
-}
-
-async function saveBlob(key, data) {
-  await put(key, JSON.stringify(data), {
-    access: 'public', addRandomSuffix: false, contentType: 'application/json'
-  });
-}
+const CHALLENGES_KEY = 'cfhm/webauthn_challenges.json';
+const SCHEDULE_KEY   = 'cfhm/admin_schedule.json';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -36,11 +16,11 @@ export default async function handler(req, res) {
 
   try {
     const {
-      empCode,         // optional — nếu có sẽ verify đúng nhân viên đó
-      credentialId,    // base64url từ browser
-      clientDataJSON,  // base64url
-      authenticatorData, // base64url
-      signature,        // base64url
+      empCode,
+      credentialId,
+      clientDataJSON,
+      authenticatorData,
+      signature,
       visitorId,
       deviceName
     } = req.body || {};
@@ -52,40 +32,29 @@ export default async function handler(req, res) {
     // 1. Parse clientDataJSON
     let clientData;
     try {
-      const decoded = Buffer.from(clientDataJSON, 'base64').toString('utf8');
-      clientData = JSON.parse(decoded);
+      clientData = JSON.parse(Buffer.from(clientDataJSON, 'base64').toString('utf8'));
     } catch {
       return res.status(400).json({ error: 'clientDataJSON không hợp lệ.' });
     }
 
-    if (clientData.type !== 'webauthn.get') {
-      return res.status(400).json({ error: 'Loại thao tác WebAuthn không hợp lệ.' });
-    }
+    if (clientData.type !== 'webauthn.get') return res.status(400).json({ error: 'Loại thao tác WebAuthn không hợp lệ.' });
 
     // 2. Xác minh challenge
-    const challenges = await loadBlob(CHALLENGES_KEY) || {};
+    const challenges = (await loadJson(CHALLENGES_KEY)) || {};
     const challengeKey = empCode ? `auth:${empCode}` : Object.keys(challenges).find(k => k.startsWith('auth:'));
     const stored = challenges[challengeKey];
 
-    if (!stored) {
-      return res.status(400).json({ error: 'Challenge không tồn tại hoặc đã hết hạn.' });
-    }
-    if (Date.now() > stored.expiresAt) {
-      return res.status(400).json({ error: 'Challenge đã hết hạn. Vui lòng thử lại.' });
-    }
-    if (clientData.challenge !== stored.challenge) {
-      return res.status(400).json({ error: 'Challenge không khớp. Tấn công replay bị chặn.' });
-    }
+    if (!stored) return res.status(400).json({ error: 'Challenge không tồn tại hoặc đã hết hạn.' });
+    if (Date.now() > stored.expiresAt) return res.status(400).json({ error: 'Challenge đã hết hạn.' });
+    if (clientData.challenge !== stored.challenge) return res.status(400).json({ error: 'Challenge không khớp.' });
 
-    // 3. Xoá challenge đã dùng (one-time use)
+    // 3. Xóa challenge đã dùng
     delete challenges[challengeKey];
-    await saveBlob(CHALLENGES_KEY, challenges);
+    await saveJson(CHALLENGES_KEY, challenges);
 
     // 4. Tìm credentialId trong danh sách nhân viên
-    const sysData = await loadBlob(SCHEDULE_KEY);
-    if (!sysData || !sysData.locations) {
-      return res.status(404).json({ error: 'Không tìm thấy dữ liệu hệ thống.' });
-    }
+    const sysData = await loadJson(SCHEDULE_KEY);
+    if (!sysData || !sysData.locations) return res.status(404).json({ error: 'Không tìm thấy dữ liệu hệ thống.' });
 
     let matchedEmp = null;
     let matchedCredential = null;
@@ -94,7 +63,6 @@ export default async function handler(req, res) {
       (loc.employees || []).forEach(emp => {
         (emp.passkeyCredentials || []).forEach(cred => {
           if (cred.credentialId === credentialId) {
-            // Kiểm tra nếu empCode được cung cấp, phải khớp
             if (!empCode || emp.code === empCode) {
               matchedEmp = emp;
               matchedCredential = cred;
@@ -111,29 +79,23 @@ export default async function handler(req, res) {
       });
     }
 
-    // 5. Anti-replay: Kiểm tra signCount (nếu có)
-    // Trong production đầy đủ, cần verify signature bằng public key
-    // Tạm thời bỏ qua verify signature vì cần parse CBOR (cần thư viện cbor)
-    // Signature verification là layer bảo mật THÊM VÀO sau khi có thư viện CBOR
-
-    // 6. Cập nhật signCount
+    // 5. Cập nhật signCount
     matchedCredential.signCount = (matchedCredential.signCount || 0) + 1;
     matchedCredential.lastUsedAt = new Date().toISOString();
 
-    // [QUAN TRỌNG] Đăng ký visitorId của trình duyệt hiện tại vào registeredDevices
-    // Điều này giúp trình duyệt này được nhận diện tự động ở các lần tải trang sau
+    // Đăng ký visitorId trình duyệt mới vào registeredDevices
     if (visitorId) {
       if (!matchedEmp.registeredDevices) matchedEmp.registeredDevices = [];
       if (!matchedEmp.registeredDevices.some(d => d.visitorId === visitorId)) {
         matchedEmp.registeredDevices.push({
-          visitorId: visitorId,
+          visitorId,
           addedAt: new Date().toISOString(),
           deviceName: (deviceName || 'Trình duyệt từ Passkey').trim()
         });
       }
     }
 
-    await saveBlob(SCHEDULE_KEY, sysData);
+    await saveJson(SCHEDULE_KEY, sysData);
 
     res.status(200).json({
       ok: true,
@@ -142,9 +104,8 @@ export default async function handler(req, res) {
       empName: matchedEmp.name,
       message: `✅ Nhận diện thành công! Xin chào ${matchedEmp.name}.`
     });
-
   } catch (err) {
-    console.error('[webauthn-verify]', err);
+    console.error('[webauthn-verify]', err.message);
     res.status(500).json({ error: err.message });
   }
 }

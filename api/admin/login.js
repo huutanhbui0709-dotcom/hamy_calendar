@@ -1,19 +1,17 @@
-import { put, list } from '@vercel/blob';
+import { loadJson, saveJson } from '../../../lib/r2.js';
 import { randomBytes, pbkdf2Sync } from 'crypto';
 import { SignJWT } from 'jose';
 
-const BLOB_PREFIX = 'cfhm/';
-const BLOB_KEY = `${BLOB_PREFIX}admin-users.json`;
+const KEY = 'cfhm/admin-users.json';
 const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
 
-// Hàm băm mật khẩu bằng PBKDF2 của Node crypto
+// ── Password helpers ─────────────────────────────────────────────────────────
 function hashPassword(password) {
   const salt = randomBytes(16).toString('hex');
   const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
   return `${salt}:${hash}`;
 }
 
-// Hàm kiểm tra mật khẩu
 function verifyPassword(password, storedHash) {
   if (!storedHash || !storedHash.includes(':')) return false;
   const [salt, originalHash] = storedHash.split(':');
@@ -21,54 +19,38 @@ function verifyPassword(password, storedHash) {
   return hash === originalHash;
 }
 
-async function fetchBlobJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Blob fetch failed: ${res.status}`);
-  return res.json();
-}
-
+// ── R2 helpers ───────────────────────────────────────────────────────────────
 async function getAdminUsers() {
   try {
-    const { blobs } = await list({ prefix: BLOB_KEY });
-    const blob = blobs.find(b => b.pathname === BLOB_KEY);
-    if (!blob) return [];
-    return await fetchBlobJson(blob.url);
+    const data = await loadJson(KEY);
+    return Array.isArray(data) ? data : [];
   } catch (err) {
-    console.error('getAdminUsers error:', err);
+    console.error('[login] getAdminUsers error:', err.message);
     return [];
   }
 }
 
 async function saveAdminUsers(users) {
-  await put(BLOB_KEY, JSON.stringify(users), {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: 'application/json',
-  });
+  await saveJson(KEY, users);
 }
 
+// ── Handler ──────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
-  }
+  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
 
-  // GET: Dùng để khởi tạo tài khoản admin đầu tiên nếu chưa có
+  // GET: Khởi tạo tài khoản admin mặc định nếu chưa có
   if (req.method === 'GET') {
     try {
       const users = await getAdminUsers();
       if (users.length === 0) {
-        // Tạo tài khoản admin mặc định: admin / admin123
-        const passwordHash = hashPassword('admin123');
         const rootAdmin = {
           id: 'root-admin-id',
           username: 'admin',
-          passwordHash: passwordHash,
+          passwordHash: hashPassword('admin123'),
           role: 'admin'
         };
         await saveAdminUsers([rootAdmin]);
@@ -94,29 +76,21 @@ export default async function handler(req, res) {
       const users = await getAdminUsers();
       const user = users.find(u => u.username === username);
 
-      if (!user) {
+      if (!user || !verifyPassword(password, user.passwordHash)) {
         res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu không chính xác.' });
         return;
       }
 
-      const isMatch = verifyPassword(password, user.passwordHash);
-      if (!isMatch) {
-        res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu không chính xác.' });
-        return;
-      }
-
-      // Tạo JWT token bằng jose
       const secret = new TextEncoder().encode(JWT_SECRET);
       const token = await new SignJWT({ id: user.id, username: user.username, role: user.role })
         .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('2h')
+        .setIssuedAt()
+        .setExpirationTime('8h')
         .sign(secret);
 
-      // Đặt cookie HTTP-Only
-      res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=7200`);
-      res.status(200).json({ ok: true, message: 'Đăng nhập thành công!' });
+      res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=28800`);
+      res.status(200).json({ ok: true, username: user.username, role: user.role });
     } catch (err) {
-      console.error('[LOGIN POST ERROR]', err);
       res.status(500).json({ error: err.message });
     }
     return;

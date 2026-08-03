@@ -8,6 +8,7 @@
     "vercel-dev": "vercel dev"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1101.0",
     "@vercel/blob": "^0.27.3",
     "bcryptjs": "^3.0.3",
     "jose": "^4.15.9",
