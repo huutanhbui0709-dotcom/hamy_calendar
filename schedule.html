@@ -1375,25 +1375,46 @@
 
     // Render weekly days inputs inside form
     var daysContainer = document.getElementById('weekly-days-container');
-    DAYS.forEach(function (day) {
-      // ... (rest of days rendering code inside the file remains unharmed by targeting this spot for the save button)
+    var dayBlocksMap = {};
+
+    function generateTimeOptions(selectedValue) {
+      var html = '';
+      for (var h = 0; h < 24; h++) {
+        var hh = h < 10 ? '0' + h : '' + h;
+        var val1 = hh + ':00';
+        html += '<option value="' + val1 + '"' + (selectedValue === val1 ? ' selected' : '') + '>' + val1 + '</option>';
+        var val2 = hh + ':30';
+        html += '<option value="' + val2 + '"' + (selectedValue === val2 ? ' selected' : '') + '>' + val2 + '</option>';
+      }
+      html += '<option value="24:00"' + (selectedValue === '24:00' ? ' selected' : '') + '>24:00</option>';
+      return html;
+    }
+
+    DAYS.forEach(function (day, index) {
       var dayDiv = document.createElement('div');
       dayDiv.className = 'day-block';
       dayDiv.dataset.day = day.key;
+      dayDiv.dataset.index = index;
       dayDiv.innerHTML = '\
       <div class="flex items-center justify-between mb-3">\
         <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-gray-700">\
           <input type="checkbox" class="day-enabled rounded text-brand-500 focus:ring-brand-500/30 w-4 h-4" style="accent-color:#0E7C66">\
           <span>' + esc(day.label) + '</span>\
         </label>\
-        <button type="button" class="btn-add-day-range hidden flex items-center gap-1 text-xs font-bold text-brand-500 hover:text-brand-700">\
-          + Thêm giờ\
-        </button>\
+        <div class="flex items-center gap-2">\
+          <button type="button" class="btn-copy-prev hidden flex items-center gap-1 text-[11px] font-semibold text-brand-600 bg-brand-50 hover:bg-brand-100 px-2 py-1 rounded transition-all">\
+            📋 Sao chép từ ' + (index > 0 ? DAYS[index - 1].label : '') + '\
+          </button>\
+          <button type="button" class="btn-add-day-range hidden flex items-center gap-1 text-xs font-bold text-brand-500 hover:text-brand-700">\
+            + Thêm giờ\
+          </button>\
+        </div>\
       </div>\
       <div class="day-time-ranges space-y-2 hidden"></div>';
 
       var chk = dayDiv.querySelector('.day-enabled');
       var addBtn = dayDiv.querySelector('.btn-add-day-range');
+      var copyBtn = dayDiv.querySelector('.btn-copy-prev');
       var timeRangesDiv = dayDiv.querySelector('.day-time-ranges');
 
       chk.onchange = function () {
@@ -1406,26 +1427,75 @@
         } else {
           addBtn.classList.add('hidden');
           timeRangesDiv.classList.add('hidden');
+          timeRangesDiv.innerHTML = '';
         }
+        updateCopyButtons();
       };
 
       addBtn.onclick = function () {
         addTimeRowToDay(timeRangesDiv);
       };
 
+      if (index > 0) {
+        copyBtn.onclick = function () {
+          var prevDayBlock = dayBlocksMap[DAYS[index - 1].key];
+          if (!prevDayBlock) return;
+          var prevRanges = prevDayBlock.querySelectorAll('.time-row');
+          if (prevRanges.length === 0) return;
+
+          timeRangesDiv.innerHTML = '';
+          prevRanges.forEach(function (row) {
+            var s = row.querySelector('.time-start').value;
+            var en = row.querySelector('.time-end').value;
+            addTimeRowToDay(timeRangesDiv, s, en);
+          });
+
+          showToast('📋 Đã sao chép khung giờ từ ' + DAYS[index - 1].label + '!');
+          updateCopyButtons();
+        };
+      }
+
+      dayBlocksMap[day.key] = dayDiv;
       daysContainer.appendChild(dayDiv);
     });
 
-    function addTimeRowToDay(container) {
+    function updateCopyButtons() {
+      DAYS.forEach(function (day, index) {
+        if (index === 0) return;
+        var currentBlock = dayBlocksMap[day.key];
+        var prevBlock = dayBlocksMap[DAYS[index - 1].key];
+        if (!currentBlock || !prevBlock) return;
+
+        var currentChecked = currentBlock.querySelector('.day-enabled').checked;
+        var prevChecked = prevBlock.querySelector('.day-enabled').checked;
+        var prevHasRanges = prevBlock.querySelectorAll('.time-row').length > 0;
+
+        var copyBtn = currentBlock.querySelector('.btn-copy-prev');
+        if (currentChecked && prevChecked && prevHasRanges) {
+          copyBtn.classList.remove('hidden');
+        } else {
+          copyBtn.classList.add('hidden');
+        }
+      });
+    }
+
+    function addTimeRowToDay(container, startVal, endVal) {
+      startVal = startVal || '05:00';
+      endVal = endVal || '08:00';
+
       var div = document.createElement('div');
       div.className = 'time-row flex items-center gap-2 pop';
       div.innerHTML = '\
       <div class="flex-1 flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-2 py-1.5 focus-within:border-brand-400 transition-colors">\
         <span class="text-xs font-semibold text-gray-400 shrink-0">Từ</span>\
-        <input type="time" class="time-start flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono" value="05:00" step="1800">\
+        <select class="time-start flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono cursor-pointer">\
+          ' + generateTimeOptions(startVal) + '\
+        </select>\
         <span class="text-gray-300 font-light">—</span>\
         <span class="text-xs font-semibold text-gray-400 shrink-0">đến</span>\
-        <input type="time" class="time-end flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono" value="08:00" step="1800">\
+        <select class="time-end flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono cursor-pointer">\
+          ' + generateTimeOptions(endVal) + '\
+        </select>\
       </div>\
       <button type="button" class="btn-rm-time-row w-6 h-6 rounded flex items-center justify-center text-gray-300 hover:bg-red-50 hover:text-red-400 transition-colors flex-shrink-0" title="Xóa">\
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>\
@@ -1434,11 +1504,17 @@
       div.querySelector('.btn-rm-time-row').onclick = function () {
         if (container.children.length > 1) {
           div.remove();
+          updateCopyButtons();
         } else {
           showToast('Cần ít nhất 1 khung giờ nếu đã bật ngày này', 'warn');
         }
       };
+
+      div.querySelector('.time-start').onchange = updateCopyButtons;
+      div.querySelector('.time-end').onchange = updateCopyButtons;
+
       container.appendChild(div);
+      updateCopyButtons();
     }
 
     // Xử lý nút Lưu Email
@@ -1620,6 +1696,7 @@
         container.classList.add('hidden');
         container.innerHTML = '';
       });
+      updateCopyButtons();
 
       renderRecentList();
       showToast('✅ Đăng ký lịch tuần thành công!');
