@@ -288,9 +288,16 @@
               <!-- Container cho các nút chuyển quán -->
               <div id="pub-loc-tabs" class="flex flex-wrap gap-2"></div>
             </div>
-            <div class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100">
-              <p class="text-[11px] text-gray-400 font-medium">Cập nhật lúc</p>
-              <p class="text-xs font-semibold text-brand-600 mono" id="pub-time">—</p>
+            <div class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100 flex flex-col sm:items-end">
+              <p class="text-[11px] text-gray-400 font-medium mb-0.5">Cập nhật lúc</p>
+              <div class="flex items-center gap-2">
+                <button onclick="forceRefreshPublishedSchedule(this)" class="text-gray-400 hover:text-brand-600 transition-colors p-1 -m-1 rounded-full" title="Làm mới lịch">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
+                <p class="text-xs font-semibold text-brand-600 mono" id="pub-time">—</p>
+              </div>
             </div>
           </div>
           <div class="pub-table-wrap">
@@ -683,6 +690,31 @@
     function switchPubLoc(locId) {
       activePubLocId = locId;
       renderPublishedSchedule();
+    }
+
+    function forceRefreshPublishedSchedule(btn) {
+      if (btn) {
+        var svg = btn.querySelector('svg');
+        if (svg) svg.classList.add('animate-spin', 'text-brand-600');
+      }
+      fetch('/data/published_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && (data.locations || data.publishedAt)) {
+            localStorage.setItem(PUB_KEY, JSON.stringify(data));
+            renderPublishedSchedule();
+            showToast('✅ Đã cập nhật lịch làm việc mới nhất!');
+          }
+        })
+        .catch(function () {
+          showToast('❌ Không thể tải lịch, vui lòng thử lại', 'warn');
+        })
+        .finally(function () {
+          if (btn) {
+            var svg = btn.querySelector('svg');
+            if (svg) svg.classList.remove('animate-spin', 'text-brand-600');
+          }
+        });
     }
 
     // Load app system locations and employees — từ server (đồng bộ tất cả thiết bị)
