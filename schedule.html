@@ -518,6 +518,32 @@
     </div>
   </div>
 
+  <!-- Modal mời đăng ký Passkey (hiện sau khi OTP xác minh thành công) -->
+  <div id="passkey-invite-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm px-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-sm w-full p-6 space-y-5 fade-up text-center">
+      <div class="w-16 h-16 mx-auto rounded-full bg-violet-50 flex items-center justify-center text-4xl">🔑</div>
+      <div>
+        <h3 class="text-lg font-bold text-gray-900">Nhận diện tự động?</h3>
+        <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">
+          Đăng ký <b>Passkey</b> để lần sau, dù dùng <b>Chrome, Firefox, Safari</b> hay bất kỳ trình duyệt nào,
+          hệ thống tự động nhận ra bạn — không cần OTP nữa.
+        </p>
+        <p class="text-xs text-violet-600 font-semibold mt-2">(Face ID / Touch ID / Windows Hello)</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <button type="button" id="btn-passkey-yes"
+          class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm shadow-lg shadow-violet-500/30 transition-all flex items-center justify-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          Đăng ký nhận diện tự động
+        </button>
+        <button type="button" id="btn-passkey-skip"
+          class="w-full py-2 rounded-xl text-sm font-semibold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
+          Bỏ qua (chỉ dùng trình duyệt này)
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast"
     class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-xl text-sm font-semibold">
   </div>
@@ -844,16 +870,34 @@
       if (!banner) return;
 
       if (linkedEmpCode && empMap[linkedEmpCode]) {
+        // Kiểm tra nhân viên đã có Passkey chưa
+        var hasPasskey = false;
+        if (sysData && sysData.locations) {
+          sysData.locations.forEach(function (loc) {
+            (loc.employees || []).forEach(function (emp) {
+              if (emp.code === linkedEmpCode && emp.passkeyCredentials && emp.passkeyCredentials.length > 0) {
+                hasPasskey = true;
+              }
+            });
+          });
+        }
+
         // Thiết bị đã liên kết — hiện thông báo xanh
         banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-emerald-50 border border-emerald-200';
         banner.style.removeProperty('display');
+
+        var passkeyNote = hasPasskey
+          ? '<p class="text-emerald-600 text-xs mt-1 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Passkey đã đăng ký — đổi trình duyệt vẫn nhận diện tự động.</p>'
+          : '<button type="button" onclick="offerPasskeyFromBanner(\'' + esc(linkedEmpCode) + '\')" class="mt-1.5 text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1 underline underline-offset-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Đăng ký nhận diện tự động (đổi trình duyệt không cần OTP)</button>';
+
         banner.innerHTML =
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
             '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' +
           '</svg>' +
-          '<div class="text-sm">' +
+          '<div class="text-sm flex-1">' +
             '<p class="font-bold text-emerald-800">Thiết bị đã được liên kết</p>' +
             '<p class="text-emerald-700 text-xs mt-0.5">Nhận diện là <span class="font-semibold">' + esc(empMap[linkedEmpCode]) + '</span>. Bạn có thể đăng ký lịch ngay.</p>' +
+            passkeyNote +
           '</div>';
       } else if (!selectEmp.value) {
         // Thiết bị chưa liên kết — hiện thông báo cam
@@ -873,6 +917,24 @@
         banner.style.setProperty('display', 'none', 'important');
       }
     }
+
+    window.offerPasskeyFromBanner = function(empCode) {
+      if (!window.PublicKeyCredential) {
+        showToast('❌ Trình duyệt hoặc thiết bị không hỗ trợ Passkey', 'error');
+        return;
+      }
+      window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        .then(function (available) {
+          if (!available) {
+            showToast('❌ Thiết bị không hỗ trợ Face ID / Touch ID / Windows Hello', 'error');
+            return;
+          }
+          registerPasskey(empCode);
+        })
+        .catch(function () {
+          showToast('❌ Không hỗ trợ xác thực bảo mật', 'error');
+        });
+    };
 
     rebuildEmpDropdown();
 
@@ -1150,27 +1212,35 @@
             });
           
           // === Mời đăng ký Passkey để nhận diện thiết bị trên mọi trình duyệt ===
-          if (window.PublicKeyCredential) {
-            // Kiểm tra platform authenticator có sẵn không (Face ID / Touch ID / Windows Hello)
+          function _offerPasskey(empCodeForPasskey) {
+            if (!window.PublicKeyCredential) return; // Browser không hỗ trợ
             window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
               .then(function (available) {
-                if (!available) return; // Không có → bỏ qua
+                if (!available) return; // Không có Face ID / Windows Hello
+                var modal = document.getElementById('passkey-invite-modal');
+                if (!modal) return;
+                modal.classList.remove('hidden');
+
+                var btnYes = document.getElementById('btn-passkey-yes');
+                var btnSkip = document.getElementById('btn-passkey-skip');
                 
-                // Hỏi nhân viên có muốn đăng ký Passkey không
-                setTimeout(function () {
-                  var wantPasskey = confirm(
-                    '🔑 Đăng ký nhận diện thiết bị tự động?\n\n' +
-                    'Từ lần sau, dù bạn dùng Chrome, Safari hay bất kỳ trình duyệt nào trên thiết bị này, ' +
-                    'hệ thống sẽ TỰ ĐỘNG nhận ra bạn mà không cần nhập OTP lại.\n\n' +
-                    '(Sử dụng Face ID / Touch ID / Windows Hello)'
-                  );
-                  if (wantPasskey) {
-                    registerPasskey(selectEmp.value);
-                  }
-                }, 1000);
+                // Clone để tránh duplicate listeners
+                var newYes = btnYes.cloneNode(true);
+                btnYes.parentNode.replaceChild(newYes, btnYes);
+                var newSkip = btnSkip.cloneNode(true);
+                btnSkip.parentNode.replaceChild(newSkip, btnSkip);
+
+                newYes.addEventListener('click', function () {
+                  modal.classList.add('hidden');
+                  registerPasskey(empCodeForPasskey);
+                });
+                newSkip.addEventListener('click', function () {
+                  modal.classList.add('hidden');
+                });
               })
-              .catch(function () {}); // browser không hỗ trợ → bỏ qua
+              .catch(function () {});
           }
+          _offerPasskey(selectEmp.value);
         } else {
           errDiv.textContent = res.data.error || 'Mã OTP không chính xác.';
           errDiv.classList.remove('hidden');
