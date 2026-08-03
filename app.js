@@ -99,6 +99,9 @@ function ensureScheduleShape(loc) {
     if (!loc.schedule[d.key]) loc.schedule[d.key] = {};
     loc.employees.forEach(emp => {
       if (!loc.schedule[d.key][emp.id]) loc.schedule[d.key][emp.id] = [];
+      // Đảm bảo các field device luôn tồn tại để API merge hoạt động đúng
+      if (!Object.prototype.hasOwnProperty.call(emp, 'registeredDevices')) emp.registeredDevices = [];
+      if (!Object.prototype.hasOwnProperty.call(emp, 'passkeyCredentials')) emp.passkeyCredentials = [];
     });
   });
 }

@@ -100,7 +100,10 @@ export default async function handler(req, res) {
         return;
       }
 
-      // Merge & bảo lưu danh sách thiết bị liên kết để Admin ghi đè không làm mất
+      // Merge device: bổ sung các thiết bị từ R2 vào body nếu body của nhân viên KHÔNG có field đó
+      // (tránh mất khi các API khác ghi lịch mà không biết về devices)
+      // Nhưng NẾU body đã có field registeredDevices/passkeyCredentials (kể cả mảng rỗng),
+      // thì giữ nguyên để Admin có thể xóa thiết bị.
       if (fileName === 'admin_schedule.json') {
         try {
           const existingData = await loadJson(r2Key);
@@ -118,8 +121,15 @@ export default async function handler(req, res) {
             body.locations.forEach(loc => {
               (loc.employees || []).forEach(emp => {
                 if (emp.code) {
-                  emp.registeredDevices = deviceMap[emp.code] || [];
-                  emp.passkeyCredentials = passkeyMap[emp.code] || [];
+                  // Chỉ fill từ R2 nếu body employee KHÔNG có field này
+                  // (undefined = nguồn không phải Admin, không biết về devices)
+                  // Nếu body có field (kể cả []) thì Admin đã cố ý set → giữ nguyên
+                  if (!Object.prototype.hasOwnProperty.call(emp, 'registeredDevices')) {
+                    emp.registeredDevices = deviceMap[emp.code] || [];
+                  }
+                  if (!Object.prototype.hasOwnProperty.call(emp, 'passkeyCredentials')) {
+                    emp.passkeyCredentials = passkeyMap[emp.code] || [];
+                  }
                 }
               });
             });
