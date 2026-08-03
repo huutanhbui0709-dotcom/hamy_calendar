@@ -599,9 +599,12 @@ const server = http.createServer(async (req, res) => {
           (loc.employees || []).forEach(emp => { if (emp.code === empCode) empName = emp.name; });
         });
 
+        const host = req.headers.host || 'localhost';
+        const cleanHost = host.split(':')[0];
+
         const options = {
           challenge,
-          rp: { name: 'CFHM Lịch Làm Việc' },
+          rp: { name: 'CFHM Lịch Làm Việc', id: cleanHost },
           user: { id: toBase64Url(Buffer.from(empCode, 'utf8')), name: empCode, displayName: empName },
           pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
           authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'preferred', residentKey: 'preferred' },

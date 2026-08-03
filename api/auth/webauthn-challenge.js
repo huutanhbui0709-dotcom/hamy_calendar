@@ -51,9 +51,12 @@ export default async function handler(req, res) {
         });
       }
 
+      const host = req.headers.host || 'hamy-calendar.vercel.app';
+      const cleanHost = host.split(':')[0];
+
       const options = {
         challenge,
-        rp: { name: 'CFHM Lịch Làm Việc' },
+        rp: { name: 'CFHM Lịch Làm Việc', id: cleanHost },
         user: {
           id: toBase64Url(Buffer.from(empCode, 'utf8')),
           name: empCode,
