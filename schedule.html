@@ -338,6 +338,9 @@
             </div>
 
             <form id="register-form" novalidate class="space-y-6">
+              <!-- Banner trạng thái thiết bị -->
+              <div id="device-status-banner" class="hidden rounded-xl px-4 py-3 flex items-start gap-3 mb-1" style="display:none!important"></div>
+
               <!-- Chọn Nhân Viên -->
               <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5"
@@ -831,7 +834,46 @@
           selectEmp.dispatchEvent(new Event('change'));
         }
       }
+
+      // Cập nhật banner trạng thái thiết bị
+      updateDeviceStatusBanner(linkedEmpCode);
     }
+
+    function updateDeviceStatusBanner(linkedEmpCode) {
+      var banner = document.getElementById('device-status-banner');
+      if (!banner) return;
+
+      if (linkedEmpCode && empMap[linkedEmpCode]) {
+        // Thiết bị đã liên kết — hiện thông báo xanh
+        banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-emerald-50 border border-emerald-200';
+        banner.style.removeProperty('display');
+        banner.innerHTML =
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
+            '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' +
+          '</svg>' +
+          '<div class="text-sm">' +
+            '<p class="font-bold text-emerald-800">Thiết bị đã được liên kết</p>' +
+            '<p class="text-emerald-700 text-xs mt-0.5">Nhận diện là <span class="font-semibold">' + esc(empMap[linkedEmpCode]) + '</span>. Bạn có thể đăng ký lịch ngay.</p>' +
+          '</div>';
+      } else if (!selectEmp.value) {
+        // Thiết bị chưa liên kết — hiện thông báo cam
+        banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-orange-50 border border-orange-200';
+        banner.style.removeProperty('display');
+        banner.innerHTML =
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
+            '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
+          '</svg>' +
+          '<div class="text-sm">' +
+            '<p class="font-bold text-orange-800">Thiết bị chưa được liên kết</p>' +
+            '<p class="text-orange-700 text-xs mt-0.5">Chọn tên của bạn bên dưới để xác thực và liên kết thiết bị này với tài khoản.</p>' +
+          '</div>';
+      } else {
+        // Đã chọn nhân viên — ẩn banner
+        banner.className = 'hidden';
+        banner.style.setProperty('display', 'none', 'important');
+      }
+    }
+
     rebuildEmpDropdown();
 
 
@@ -1034,6 +1076,7 @@
       selectEmpText.classList.add('text-gray-500');
       showEmailSection('');
       deviceVerified = false;
+      updateDeviceStatusBanner(null);
     });
 
     document.getElementById('btn-resend-otp').addEventListener('click', function () {
@@ -1102,7 +1145,7 @@
             .then(function (data) {
               if (data && data.locations) {
                 sysData = data;
-                rebuildEmpDropdown();
+                rebuildEmpDropdown(); // sẽ gọi updateDeviceStatusBanner với linkedEmpCode → ẩn banner tự động
               }
             });
           
@@ -1289,8 +1332,13 @@
       showEmailSection(empCode);
       if (!empCode) {
         deviceVerified = false;
+        updateDeviceStatusBanner(null); // Hiển thị lại banner cảnh báo
         return;
       }
+
+      // Ẩn banner khi đang check (sẽ cập nhật lại sau)
+      var banner = document.getElementById('device-status-banner');
+      if (banner) { banner.className = 'hidden'; banner.style.setProperty('display','none','important'); }
       
       var visitorId = getVisitorId();
       
@@ -1313,6 +1361,7 @@
           selectEmpText.classList.remove('text-gray-900');
           selectEmpText.classList.add('text-gray-500');
           showEmailSection('');
+          updateDeviceStatusBanner(null);
         } else if (data.status === 'otp_required') {
           deviceVerified = false;
 
@@ -1341,6 +1390,7 @@
               selectEmpText.classList.remove('text-gray-900');
               selectEmpText.classList.add('text-gray-500');
               showEmailSection('');
+              updateDeviceStatusBanner(null);
             });
           }
 
@@ -1688,6 +1738,7 @@
       selectEmpText.classList.add('text-gray-500');
       selectEmpText.classList.remove('text-gray-900');
       showEmailSection(''); // Hide email section
+      updateDeviceStatusBanner(null);
 
       dayBlocks.forEach(function (dayBlock) {
         dayBlock.querySelector('.day-enabled').checked = false;
