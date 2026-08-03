@@ -1,4 +1,4 @@
-import { loadJson, saveJson } from '../../../lib/r2.js';
+import { loadJson, saveJson } from '../../lib/r2.js';
 import { randomBytes } from 'crypto';
 
 const CHALLENGES_KEY = 'cfhm/webauthn_challenges.json';

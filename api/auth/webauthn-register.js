@@ -3,7 +3,7 @@
  * Hoàn tất đăng ký Passkey sau khi browser tạo credential thành công.
  * Lưu {credentialId, publicKey, counter, transports} vào emp.passkeyCredentials[]
  */
-import { loadJson, saveJson } from '../../../lib/r2.js';
+import { loadJson, saveJson } from '../../lib/r2.js';
 
 const CHALLENGES_KEY = 'cfhm/webauthn_challenges.json';
 const SCHEDULE_KEY   = 'cfhm/admin_schedule.json';

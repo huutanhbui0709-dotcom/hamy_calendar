@@ -6,7 +6,7 @@
  * POST /data/admin_schedule.json + body  → ghi đè lên R2
  */
 
-import { loadJson, saveJson, getPublicUrl } from '../../../lib/r2.js';
+import { loadJson, saveJson, getPublicUrl } from '../../lib/r2.js';
 import { jwtVerify } from 'jose';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';

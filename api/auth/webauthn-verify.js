@@ -2,7 +2,7 @@
  * POST /api/auth/webauthn-verify
  * Xác thực Passkey khi nhân viên mở app từ trình duyệt mới (cross-browser recognition).
  */
-import { loadJson, saveJson } from '../../../lib/r2.js';
+import { loadJson, saveJson } from '../../lib/r2.js';
 
 const CHALLENGES_KEY = 'cfhm/webauthn_challenges.json';
 const SCHEDULE_KEY   = 'cfhm/admin_schedule.json';

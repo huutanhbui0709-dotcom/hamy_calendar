@@ -11,13 +11,7 @@
           "code": "TANH",
           "name": "Tánh",
           "email": "samnach52@gmail.com",
-          "registeredDevices": [
-            {
-              "visitorId": "62ba4547d6bf6be4c599daad719cf40e",
-              "addedAt": "2026-08-03T03:15:15.437Z",
-              "deviceName": "Iphone của Tánh"
-            }
-          ]
+          "registeredDevices": []
         },
         {
           "id": "emp-102",

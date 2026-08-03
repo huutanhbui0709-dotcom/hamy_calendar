@@ -1,4 +1,4 @@
-import { loadJson, saveJson } from '../../../lib/r2.js';
+import { loadJson, saveJson } from '../../lib/r2.js';
 import nodemailer from 'nodemailer';
 
 const SCHEDULE_KEY = 'cfhm/admin_schedule.json';

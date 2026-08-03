@@ -1,4 +1,4 @@
-import { loadJson, saveJson } from '../../../lib/r2.js';
+import { loadJson, saveJson } from '../../lib/r2.js';
 import { randomBytes, pbkdf2Sync } from 'crypto';
 import { SignJWT } from 'jose';
 
