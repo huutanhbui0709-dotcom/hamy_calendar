@@ -1166,14 +1166,15 @@
     }
 
     // === WebAuthn: Xác thực Passkey (cross-browser recognition) ===
-    function tryPasskeyAuth() {
+    function tryPasskeyAuth(empCode) {
       return new Promise(function (resolve, reject) {
         if (!window.PublicKeyCredential) { reject(new Error('WebAuthn not supported')); return; }
+        if (!empCode) { reject(new Error('Thiếu mã nhân viên.')); return; }
         
         fetch('/api/auth/webauthn-challenge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'begin-authentication' })
+          body: JSON.stringify({ action: 'begin-authentication', empCode: empCode })
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {
@@ -1197,7 +1198,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              empCode: empCode, // Đảm bảo khớp session với nhân viên được chọn
+              empCode: empCode,
               credentialId: assertion.id,
               clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
               authenticatorData: arrayBufferToBase64(response.authenticatorData),
@@ -1210,7 +1211,7 @@
         .then(function (r) { return r.json(); })
         .then(function (data) {
           if (data.ok && data.empCode) {
-            resolve(data); // { empCode, empName }
+            resolve(data);
           } else {
             reject(new Error(data.error || 'Thiết bị này chưa được liên kết Passkey cho tài khoản của bạn.'));
           }
