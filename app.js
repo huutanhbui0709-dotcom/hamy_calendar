@@ -1227,7 +1227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Swipe-down to close drawer on mobile ──────────────────────────────
+  // ── Swipe left-to-right to close drawer on mobile ────────────────────────
   (function initDrawerSwipe() {
     let touchStartY = 0;
     let touchStartX = 0;
@@ -1240,7 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!el) return;
 
       el.addEventListener('touchstart', function(e) {
-        // Only trigger from drawer-head area to avoid conflicting with content scroll
+        // Trigger everywhere in drawer, or just head? We'll trigger on the head to avoid breaking content scroll
         if (e.touches.length !== 1) return;
         const head = el.querySelector('.drawer-head');
         if (head && head.contains(e.target)) {
@@ -1252,13 +1252,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       el.addEventListener('touchmove', function(e) {
         if (!isDragging) return;
-        const dy = e.touches[0].clientY - touchStartY;
-        const dx = Math.abs(e.touches[0].clientX - touchStartX);
-        // Chỉ áp dụng khi vuốt dọc rõ ràng (dy > dx)
-        if (dy > 0 && dy > dx) {
-          // Translate drawer theo ngón tay để feedback trực quan
-          const clamped = Math.min(dy, 150);
-          el.style.transform = 'translateY(' + clamped + 'px)';
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        
+        // Chỉ áp dụng khi vuốt ngang từ trái sang phải rõ ràng (dx > dy)
+        if (dx > 0 && dx > dy) {
+          // Translate drawer theo chiều ngang
+          const clamped = Math.min(dx, window.innerWidth);
+          el.style.transform = 'translateX(' + clamped + 'px)';
           el.style.transition = 'none';
         }
       }, { passive: true });
@@ -1266,20 +1267,24 @@ document.addEventListener('DOMContentLoaded', () => {
       el.addEventListener('touchend', function(e) {
         if (!isDragging) return;
         isDragging = false;
-        const dy = e.changedTouches[0].clientY - touchStartY;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        
         // Reset transition
-        el.style.transition = '';
-        if (dy >= 80) {
-          // Vuốt đủ mạnh → đóng drawer
-          el.style.transform = 'translateY(-100%)';
+        el.style.transition = 'transform 0.2s ease-out';
+        
+        if (dx >= 80) {
+          // Vuốt đủ xa sang phải → đóng drawer
+          el.style.transform = 'translateX(100%)';
           setTimeout(function() {
             el.style.transform = '';
+            el.style.transition = '';
             closeShiftDrawer();
             closeEmployeeDrawer();
-          }, 180);
+          }, 200);
         } else {
-          // Snap trở lại
+          // Snap trở lại nếu chưa đủ xa
           el.style.transform = '';
+          setTimeout(function() { el.style.transition = ''; }, 200);
         }
       }, { passive: true });
 

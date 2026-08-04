@@ -1356,24 +1356,8 @@ td.day-cell:hover .cell-empty-hint {
     height: -webkit-fill-available;
   }
 
-  /* Drag handle trên mobile */
-  .drawer-head::before {
-    content: '';
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 36px;
-    height: 4px;
-    background: rgba(255, 255, 255, .25);
-    border-radius: 99px;
-    pointer-events: none;
-  }
-
   .drawer-head {
     position: relative;
-    padding-top: 16px;
-    /* thêm chỗ cho drag handle */
   }
 
   .drawer-body {
