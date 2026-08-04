@@ -705,30 +705,47 @@ td.day-cell:hover .cell-empty-hint {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
+  gap: 12px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
   background: var(--ink);
   color: #fff;
+  min-height: 0;
+}
+
+/* Eyebrow + Title on same row */
+.drawer-head-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
 }
 
 .drawer-head .drawer-eyebrow {
   color: rgba(255, 255, 255, .55);
+  margin: 0;
+  flex-shrink: 0;
 }
 
+.drawer-head h1,
 .drawer-head h2 {
-  font-size: 16px;
+  font-size: 15px;
   color: #fff;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .drawer-eyebrow {
   font-family: var(--font-mono);
-  font-size: 20.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--primary);
   letter-spacing: .06em;
-  margin: 0 0 2px;
+  margin: 0;
   text-transform: uppercase;
 }
 
@@ -758,9 +775,24 @@ td.day-cell:hover .cell-empty-hint {
 }
 
 .drawer-col {
-  padding: 16px 22px;
+  padding: 12px 16px;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  /* Smooth scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.drawer-col::-webkit-scrollbar {
+  width: 5px;
+}
+.drawer-col::-webkit-scrollbar-track {
+  background: transparent;
+}
+.drawer-col::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 99px;
 }
 
 .drawer-col+.drawer-col {
@@ -768,8 +800,23 @@ td.day-cell:hover .cell-empty-hint {
 }
 
 .drawer-col-narrow {
-  flex: 0 0 300px;
+  flex: 0 0 280px;
   background: var(--surface-sunken);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.drawer-col-narrow::-webkit-scrollbar {
+  width: 5px;
+}
+.drawer-col-narrow::-webkit-scrollbar-track {
+  background: transparent;
+}
+.drawer-col-narrow::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 99px;
 }
 
 .drawer-section-title {
@@ -1299,18 +1346,44 @@ td.day-cell:hover .cell-empty-hint {
     height: -webkit-fill-available;
   }
 
+  /* Drag handle trên mobile */
+  .drawer-head::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    background: rgba(255,255,255,.25);
+    border-radius: 99px;
+    pointer-events: none;
+  }
+
+  .drawer-head {
+    position: relative;
+    padding-top: 16px; /* thêm chỗ cho drag handle */
+  }
+
   .drawer-body {
     flex-direction: column;
-    overflow-y: auto;
+    overflow-y: hidden; /* mỗi col tự cuộn */
+  }
+
+  .drawer-col {
+    flex: 1;
+    min-height: 0;
+    max-height: 45vh;
+  }
+
+  .drawer-col-narrow {
+    flex: none;
+    max-height: 35vh;
   }
 
   .drawer-col+.drawer-col {
     border-left: none;
     border-top: 1px solid var(--line);
-  }
-
-  .drawer-col-narrow {
-    flex: none;
   }
 
   /* Location tabs scrollable on mobile */

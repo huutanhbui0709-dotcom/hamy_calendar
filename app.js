@@ -1226,6 +1226,70 @@ document.addEventListener('DOMContentLoaded', () => {
       else { closeShiftDrawer(); closeEmployeeDrawer(); }
     }
   });
+
+  // ── Swipe-down to close drawer on mobile ──────────────────────────────
+  (function initDrawerSwipe() {
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let isDragging = false;
+
+    const DRAWERS = ['#shift-drawer', '#employee-drawer'];
+
+    DRAWERS.forEach(function(sel) {
+      const el = document.querySelector(sel);
+      if (!el) return;
+
+      el.addEventListener('touchstart', function(e) {
+        // Only trigger from drawer-head area to avoid conflicting with content scroll
+        if (e.touches.length !== 1) return;
+        const head = el.querySelector('.drawer-head');
+        if (head && head.contains(e.target)) {
+          touchStartY = e.touches[0].clientY;
+          touchStartX = e.touches[0].clientX;
+          isDragging = true;
+        }
+      }, { passive: true });
+
+      el.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        const dy = e.touches[0].clientY - touchStartY;
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        // Chỉ áp dụng khi vuốt dọc rõ ràng (dy > dx)
+        if (dy > 0 && dy > dx) {
+          // Translate drawer theo ngón tay để feedback trực quan
+          const clamped = Math.min(dy, 150);
+          el.style.transform = 'translateY(' + clamped + 'px)';
+          el.style.transition = 'none';
+        }
+      }, { passive: true });
+
+      el.addEventListener('touchend', function(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        // Reset transition
+        el.style.transition = '';
+        if (dy >= 80) {
+          // Vuốt đủ mạnh → đóng drawer
+          el.style.transform = 'translateY(-100%)';
+          setTimeout(function() {
+            el.style.transform = '';
+            closeShiftDrawer();
+            closeEmployeeDrawer();
+          }, 180);
+        } else {
+          // Snap trở lại
+          el.style.transform = '';
+        }
+      }, { passive: true });
+
+      el.addEventListener('touchcancel', function() {
+        isDragging = false;
+        el.style.transform = '';
+        el.style.transition = '';
+      }, { passive: true });
+    });
+  })();
 });
 
 window.renderDeviceManagement = function() {
