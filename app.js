@@ -1240,14 +1240,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!el) return;
 
       el.addEventListener('touchstart', function(e) {
-        // Trigger everywhere in drawer, or just head? We'll trigger on the head to avoid breaking content scroll
         if (e.touches.length !== 1) return;
-        const head = el.querySelector('.drawer-head');
-        if (head && head.contains(e.target)) {
-          touchStartY = e.touches[0].clientY;
-          touchStartX = e.touches[0].clientX;
-          isDragging = true;
+        // Bỏ qua nếu chạm vào các thành phần tương tác (nút, input, select, ...)
+        const tag = e.target.tagName.toLowerCase();
+        if (tag === 'input' || tag === 'select' || tag === 'textarea' || tag === 'button' || e.target.closest('button') || e.target.closest('.icon-btn')) {
+          return;
         }
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        isDragging = true;
       }, { passive: true });
 
       el.addEventListener('touchmove', function(e) {
