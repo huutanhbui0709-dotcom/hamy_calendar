@@ -858,7 +858,10 @@
           selectEmpText.textContent = empMap[linkedEmpCode] + ' (' + linkedEmpCode + ')';
           selectEmpText.classList.remove('text-gray-500');
           selectEmpText.classList.add('text-gray-900');
-          selectEmp.dispatchEvent(new Event('change'));
+          // Đánh dấu thiết bị đã xác thực TRƯỚC khi dispatch event
+          // tránh handler gọi lại check-device và reset deviceVerified về false
+          deviceVerified = true;
+          selectEmp.dispatchEvent(new CustomEvent('change', { detail: { skipDeviceCheck: true } }));
         }
       }
 
@@ -1402,12 +1405,19 @@
 
 
     // Trigger email & device section check when employee is chosen
-    selectEmp.addEventListener('change', function () {
+    selectEmp.addEventListener('change', function (e) {
       var empCode = selectEmp.value;
       showEmailSection(empCode);
       if (!empCode) {
         deviceVerified = false;
-        updateDeviceStatusBanner(null); // Hiển thị lại banner cảnh báo
+        updateDeviceStatusBanner(null);
+        return;
+      }
+
+      // Nếu đây là auto-select do thiết bị đã liên kết → bỏ qua check-device
+      if (e.detail && e.detail.skipDeviceCheck) {
+        // deviceVerified đã được set = true trước khi dispatch
+        updateDeviceStatusBanner(linkedEmpCode);
         return;
       }
 
@@ -1716,6 +1726,11 @@
 
       var empCode = selectEmp.value;
       if (!empCode) { errEl.textContent = 'Vui lòng chọn tên nhân viên.'; errEl.classList.remove('hidden'); return; }
+
+      // Fallback: nếu thiết bị đã nhận diện qua linkedEmpCode (OTP/Passkey) → coi như verified
+      if (!deviceVerified && linkedEmpCode && linkedEmpCode === empCode) {
+        deviceVerified = true;
+      }
 
       if (!deviceVerified) {
         errEl.textContent = 'Thiết bị của bạn chưa được xác thực. Vui lòng xác thực thiết bị bằng mã OTP gửi qua email trước khi đăng ký ca!';
