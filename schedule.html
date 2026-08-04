@@ -1837,7 +1837,9 @@
       selectEmpText.classList.add('text-gray-500');
       selectEmpText.classList.remove('text-gray-900');
       showEmailSection(''); // Hide email section
-      updateDeviceStatusBanner(null);
+      
+      // Khôi phục lại việc tự động chọn nhân viên & cập nhật trạng thái thiết bị đã liên kết
+      rebuildEmpDropdown();
 
       dayBlocks.forEach(function (dayBlock) {
         dayBlock.querySelector('.day-enabled').checked = false;
