@@ -787,9 +787,11 @@ td.day-cell:hover .cell-empty-hint {
 .drawer-col::-webkit-scrollbar {
   width: 5px;
 }
+
 .drawer-col::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .drawer-col::-webkit-scrollbar-thumb {
   background: var(--line-strong);
   border-radius: 99px;
@@ -801,7 +803,6 @@ td.day-cell:hover .cell-empty-hint {
 
 .drawer-col-narrow {
   flex: 0 0 280px;
-  background: var(--surface-sunken);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
@@ -811,9 +812,11 @@ td.day-cell:hover .cell-empty-hint {
 .drawer-col-narrow::-webkit-scrollbar {
   width: 5px;
 }
+
 .drawer-col-narrow::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .drawer-col-narrow::-webkit-scrollbar-thumb {
   background: var(--line-strong);
   border-radius: 99px;
@@ -1032,7 +1035,7 @@ td.day-cell:hover .cell-empty-hint {
 
 .employee-list li:hover {
   border-color: var(--line-strong);
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
 }
 
 .employee-list .emp-info {
@@ -1238,18 +1241,21 @@ td.day-cell:hover .cell-empty-hint {
   cursor: pointer;
   transition: all 0.15s ease;
 }
+
 .suggest-card:hover {
   background: var(--surface-sunken);
   border-color: var(--line-strong);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
+
 .suggest-card .suggest-times {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
 }
+
 .suggest-time-badge {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1261,6 +1267,7 @@ td.day-cell:hover .cell-empty-hint {
   border: 1px solid var(--line);
   transition: all 0.12s;
 }
+
 .suggest-time-badge:hover {
   background: var(--primary-tint) !important;
   color: var(--primary) !important;
@@ -1303,14 +1310,17 @@ td.day-cell:hover .cell-empty-hint {
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
     display: flex;
     width: 100%;
   }
 
   .main-tab-nav::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
+    /* Chrome/Safari */
   }
 
   .main-tab-btn {
@@ -1327,7 +1337,7 @@ td.day-cell:hover .cell-empty-hint {
     width: 100%;
   }
 
-  .staff-toggle-bar > div {
+  .staff-toggle-bar>div {
     width: 100%;
     justify-content: center;
   }
@@ -1355,19 +1365,21 @@ td.day-cell:hover .cell-empty-hint {
     transform: translateX(-50%);
     width: 36px;
     height: 4px;
-    background: rgba(255,255,255,.25);
+    background: rgba(255, 255, 255, .25);
     border-radius: 99px;
     pointer-events: none;
   }
 
   .drawer-head {
     position: relative;
-    padding-top: 16px; /* thêm chỗ cho drag handle */
+    padding-top: 16px;
+    /* thêm chỗ cho drag handle */
   }
 
   .drawer-body {
     flex-direction: column;
-    overflow-y: hidden; /* mỗi col tự cuộn */
+    overflow-y: hidden;
+    /* mỗi col tự cuộn */
   }
 
   .drawer-col {
@@ -1395,10 +1407,13 @@ td.day-cell:hover .cell-empty-hint {
     padding-bottom: 6px;
     scrollbar-width: none;
   }
+
   .loc-tabs::-webkit-scrollbar {
     display: none;
   }
-  .loc-tab, .loc-tab-add {
+
+  .loc-tab,
+  .loc-tab-add {
     flex: 0 0 auto;
   }
 
@@ -1410,24 +1425,28 @@ td.day-cell:hover .cell-empty-hint {
     gap: 8px;
     padding: 12px;
   }
-  .reg-search, .reg-dropdown, .reg-count {
+
+  .reg-search,
+  .reg-dropdown,
+  .reg-count {
     width: 100%;
     min-width: 0;
   }
+
   .reg-count {
     text-align: center;
   }
 
   /* Admin panel layout grid adjustments */
-  #panel-admin > .reg-header-row > div:nth-child(2) {
+  #panel-admin>.reg-header-row>div:nth-child(2) {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 6px;
   }
-  
-  #panel-admin > .reg-header-row {
+
+  #panel-admin>.reg-header-row {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -1437,6 +1456,7 @@ td.day-cell:hover .cell-empty-hint {
     align-items: stretch !important;
     gap: 10px !important;
   }
+
   #lock-reg-settings-row button {
     margin-left: 0 !important;
     width: 100%;
@@ -1446,7 +1466,7 @@ td.day-cell:hover .cell-empty-hint {
   .weekly-reg-wrap {
     overflow-x: auto;
   }
-  
+
   #reg-admin-cards {
     grid-template-columns: 1fr !important;
   }
