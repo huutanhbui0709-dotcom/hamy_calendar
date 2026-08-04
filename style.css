@@ -1223,20 +1223,69 @@ td.day-cell:hover .cell-empty-hint {
 /* ============ Responsive ============ */
 @media (max-width: 720px) {
   .app-shell {
-    padding: 14px 12px 48px;
+    padding: 12px 10px 48px;
   }
 
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+    gap: 14px;
   }
 
   .topbar-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
     width: 100%;
   }
 
+  .topbar-actions #btn-logout {
+    grid-column: span 2;
+  }
+
   .btn {
-    flex: 1;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* Main Tab Navigation Horizontal Scroll on Mobile */
+  .main-tab-nav {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    display: flex;
+    width: 100%;
+  }
+
+  .main-tab-nav::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .main-tab-btn {
+    flex: 1 0 auto;
+    padding: 12px 18px;
+    text-align: center;
+  }
+
+  /* Staff Toggle Bar Responsive */
+  .staff-toggle-bar {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .staff-toggle-bar > div {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #staff-toggle-container {
     justify-content: center;
   }
 
@@ -1247,6 +1296,7 @@ td.day-cell:hover .cell-empty-hint {
 
   .drawer {
     height: 100vh;
+    height: -webkit-fill-available;
   }
 
   .drawer-body {
@@ -1261,5 +1311,70 @@ td.day-cell:hover .cell-empty-hint {
 
   .drawer-col-narrow {
     flex: none;
+  }
+
+  /* Location tabs scrollable on mobile */
+  .loc-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+  .loc-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .loc-tab, .loc-tab-add {
+    flex: 0 0 auto;
+  }
+
+  /* Filter bar grid on Mobile */
+  .reg-filter-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 8px;
+    padding: 12px;
+  }
+  .reg-search, .reg-dropdown, .reg-count {
+    width: 100%;
+    min-width: 0;
+  }
+  .reg-count {
+    text-align: center;
+  }
+
+  /* Admin panel layout grid adjustments */
+  #panel-admin > .reg-header-row > div:nth-child(2) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+  
+  #panel-admin > .reg-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #lock-reg-settings-row {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  #lock-reg-settings-row button {
+    margin-left: 0 !important;
+    width: 100%;
+  }
+
+  /* Weekly registration list wrapping */
+  .weekly-reg-wrap {
+    overflow-x: auto;
+  }
+  
+  #reg-admin-cards {
+    grid-template-columns: 1fr !important;
   }
 }
