@@ -427,11 +427,9 @@
           </div>
 
           <!-- Recent -->
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 fade-up">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Đã đăng ký gần đây</h3>
-            <div id="recent-list" class="space-y-1">
-              <p class="text-sm text-gray-400 italic">Chưa có đăng ký nào.</p>
-            </div>
+          <div id="recent-section" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 fade-up" hidden>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" id="recent-list-title">Lịch của bạn</h3>
+            <div id="recent-list" class="space-y-1"></div>
           </div>
         </div>
 
@@ -808,9 +806,12 @@
     // Aggregate all unique employees from all locations
     var empMap = {};
 
+    // linkedEmpCode là biến module-level để renderRecentList và các hàm khác truy cập
+    var linkedEmpCode = null;
+
     function rebuildEmpDropdown() {
       empMap = {};
-      var linkedEmpCode = null;
+      linkedEmpCode = null; // reset mỗi lần rebuild
       var currentVisitorId = getVisitorId();
 
       if (sysData.locations && sysData.locations.length) {
@@ -863,6 +864,8 @@
 
       // Cập nhật banner trạng thái thiết bị
       updateDeviceStatusBanner(linkedEmpCode);
+      // Cập nhật danh sách đăng ký gần đây theo nhân viên thiết bị đang liên kết
+      renderRecentList();
     }
 
     function updateDeviceStatusBanner(linkedEmpCode) {
@@ -1835,16 +1838,35 @@
     });
 
     function renderRecentList() {
+      var section = document.getElementById('recent-section');
       var el = document.getElementById('recent-list');
-      var recent = regData.slice().reverse().slice(0, 8);
-      if (!recent.length) { el.innerHTML = '<p class="text-sm text-gray-400 italic">Chưa có đăng ký nào.</p>'; return; }
+      var titleEl = document.getElementById('recent-list-title');
+
+      // Nếu chưa liên kết thiết bị → ẩn toàn bộ section
+      if (!linkedEmpCode) {
+        if (section) section.hidden = true;
+        return;
+      }
+
+      // Đã liên kết → hiện section, lọc theo nhân viên
+      if (section) section.hidden = false;
+      var empName = empMap[linkedEmpCode] || linkedEmpCode;
+      if (titleEl) titleEl.textContent = 'Lịch của ' + empName;
+
+      var recent = regData.slice().reverse()
+        .filter(function (r) { return r.empCode === linkedEmpCode; })
+        .slice(0, 8);
+
+      if (!recent.length) {
+        el.innerHTML = '<p class="text-sm text-gray-400 italic">Bạn chưa có lịch đăng ký nào.</p>';
+        return;
+      }
+
       el.innerHTML = recent.map(function (r) {
         var dl = DAYS.find(function (d) { return d.key === r.day; }); dl = dl ? dl.label : r.day;
-        var name = empMap[r.empCode] || r.empCode;
         return '<div class="flex items-center gap-2.5 py-2 border-b border-gray-50 last:border-0">\
-        <span class="mono text-xs font-bold text-white bg-brand-500 px-2 py-0.5 rounded-lg tracking-wider shrink-0">'+ esc(name) + '</span>\
         <span class="text-xs font-semibold text-gray-400 shrink-0">'+ esc(dl) + '</span>\
-        <span class="mono text-xs text-gray-600 font-medium truncate">' + r.timeRanges.map(function (t) { return t.start + '–' + t.end; }).join(' · ') + '</span>\
+        <span class="mono text-xs text-gray-600 font-medium truncate">' + r.timeRanges.map(function (t) { return t.start + '\u2013' + t.end; }).join(' · ') + '</span>\
       </div>';
       }).join('');
     }
