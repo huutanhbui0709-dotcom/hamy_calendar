@@ -102,24 +102,25 @@ export default async function handler(req, res) {
 
       // Merge employee_registrations: giữ lại các bản ghi của nhân viên khác
       // tránh trường hợp client ghi đè mất dữ liệu
-      // LƯU Ý: Chỉ merge khi KHÔNG phải là Admin đăng nhập. Admin có quyền xoá/ghi đè hoàn toàn.
+      // Merge employee_registrations: giữ lại các bản ghi của nhân viên khác
+      // Tránh trường hợp ghi đè mất dữ liệu khi nhân viên gửi lịch mới
       if (fileName === 'employee_registrations.json') {
         try {
-          const isAdmin = await checkAdminAuth(req);
-          if (!isAdmin) {
-            const existingRegs = await loadJson(r2Key);
-            if (Array.isArray(existingRegs) && Array.isArray(body)) {
-              // Tìm các empCode có trong body (của client gửi lên)
-              const submittedEmpCodes = new Set(body.map(r => r.empCode).filter(Boolean));
-              // Giữ lại tất cả records của nhân viên khác
-              const others = existingRegs.filter(r => !submittedEmpCodes.has(r.empCode));
-              // Ghi đè records của empCode đang gửi lên bằng dữ liệu mới
+          const existingRegs = await loadJson(r2Key);
+          if (Array.isArray(existingRegs) && Array.isArray(body)) {
+            // Lấy danh sách các empCode duy nhất có trong body gửi lên
+            const submittedEmpCodes = [...new Set(body.map(r => r.empCode).filter(Boolean))];
+            
+            // Nếu chỉ gửi lên của 1 nhân viên duy nhất (đây là request gửi lịch của trang nhân viên)
+            // thì chúng ta bắt buộc phải merge với dữ liệu cũ trên R2 để giữ lại các nhân viên khác
+            if (submittedEmpCodes.length === 1) {
+              const empCodeToUpdate = submittedEmpCodes[0];
+              const others = existingRegs.filter(r => r.empCode !== empCodeToUpdate);
               body = [...others, ...body];
             }
           }
         } catch (mergeErr) {
           console.warn('[Merge Regs Warn]', mergeErr.message);
-          // Fallback: dùng body gốc nếu merge lỗi
         }
       }
 
