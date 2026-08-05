@@ -86,6 +86,9 @@ function nameToCode(name) {
   return str;
 }
 
+// Cờ đánh dấu hệ thống đã khởi tạo xong, tránh truy cập vào biến `state` khi nó đang trong TDZ
+var isSystemInitialized = false;
+
 // Hàm tìm mã duy nhất trong toàn hệ thống (across all locations)
 function getUniqueEmpCode(name, excludeEmpId = null) {
   let baseCode = nameToCode(name);
@@ -94,8 +97,8 @@ function getUniqueEmpCode(name, excludeEmpId = null) {
   let suffix = 2;
   
   const isCodeTaken = (c) => {
-    // Kiểm tra an toàn xem state đã được khai báo chưa để tránh lỗi ReferenceError khi loadData() chạy ban đầu
-    const data = (typeof state !== 'undefined' && state) ? state.data : null;
+    if (!isSystemInitialized) return false;
+    const data = state.data;
     if (!data || !data.locations) return false;
     return data.locations.some(loc => 
       (loc.employees || []).some(emp => emp.code === c && emp.id !== excludeEmpId)
@@ -111,9 +114,10 @@ function getUniqueEmpCode(name, excludeEmpId = null) {
 
 // Hàm kiểm tra trùng email trong toàn hệ thống (across all locations)
 function isEmailTaken(email, excludeEmpId = null) {
+  if (!isSystemInitialized) return false;
   if (!email) return false;
   const cleanEmail = email.trim().toLowerCase();
-  const data = (typeof state !== 'undefined' && state) ? state.data : null;
+  const data = state.data;
   if (!data || !data.locations) return false;
   return data.locations.some(loc => 
     (loc.employees || []).some(emp => emp.email && emp.email.trim().toLowerCase() === cleanEmail && emp.id !== excludeEmpId)
@@ -216,6 +220,7 @@ const state = {
   data: loadData(),
   drawer: null, // { locId, dayKey, empId, draft: [{s,e}] }
 };
+isSystemInitialized = true;
 
 function getActiveLocation() {
   return state.data.locations.find(l => l.id === state.data.activeLocationId) || state.data.locations[0];
