@@ -128,8 +128,27 @@ function addEmployeeToLocation(loc, name, ensureShape = true, email = '') {
   // Sinh mã nhân viên duy nhất trong toàn hệ thống
   const code = getUniqueEmpCode(name);
   const emp = { id: uid(), code, name: name.trim(), email: (email || '').trim() };
-  loc.employees.push(emp);
-  if (ensureShape) ensureScheduleShape(loc);
+
+  // Thêm nhân viên này vào TẤT CẢ các quán (Không phân biệt nhân viên thuộc quán nào)
+  const data = (typeof state !== 'undefined' && state) ? state.data : null;
+  if (data && data.locations) {
+    data.locations.forEach(l => {
+      // Tránh copy reference trực tiếp để độc lập về devices/credentials nếu admin sửa riêng lẻ, nhưng clone các thuộc tính cơ bản
+      const empClone = {
+        id: emp.id,
+        code: emp.code,
+        name: emp.name,
+        email: emp.email,
+        registeredDevices: [],
+        passkeyCredentials: []
+      };
+      l.employees.push(empClone);
+      if (ensureShape) ensureScheduleShape(l);
+    });
+  } else {
+    loc.employees.push(emp);
+    if (ensureShape) ensureScheduleShape(loc);
+  }
   return emp;
 }
 
@@ -143,8 +162,9 @@ function ensureScheduleShape(loc) {
 }
 
 function createDefaultData() {
-  const quan5 = makeLocation('QUÁN 5', ['Tánh', 'Ái Vy', 'Hà Vy', 'Muội', 'Lan Anh', 'Thuý Anh', 'Ngọc Thảo', 'Hương', 'Dì My']);
-  const quan2 = makeLocation('QUÁN 2', ['Hoa', 'Chi', 'Hà Vy', 'Muội', 'Hiền', 'Ngọc Thảo', 'Gia Phát', 'Dì My', 'Hương']);
+  const allStaff = ['Tánh', 'Ái Vy', 'Hà Vy', 'Muội', 'Lan Anh', 'Thuý Anh', 'Ngọc Thảo', 'Hương', 'Dì My', 'Hoa', 'Chi', 'Hiền', 'Gia Phát'];
+  const quan5 = makeLocation('QUÁN 5', allStaff);
+  const quan2 = makeLocation('QUÁN 2', allStaff);
   return { locations: [quan5, quan2], activeLocationId: quan5.id };
 }
 
@@ -932,10 +952,13 @@ function renderEmployeeList() {
     $('[data-action="delete"]', li).addEventListener('click', () => {
       showConfirm({
         title: `Xoá ${emp.name}?`,
-        message: `Toàn bộ ca làm việc đã xếp cho ${emp.name} (${emp.code}) trong tuần sẽ bị xoá theo. Hành động này không thể hoàn tác.`,
+        message: `Toàn bộ ca làm việc đã xếp cho ${emp.name} (${emp.code}) trong tuần ở tất cả các quán sẽ bị xoá theo. Hành động này không thể hoàn tác.`,
         onConfirm: () => {
-          loc.employees = loc.employees.filter(e => e.id !== emp.id);
-          DAYS.forEach(d => { delete loc.schedule[d.key][emp.id]; });
+          // Xoá nhân viên và ca làm việc của họ ở TẤT CẢ các quán
+          state.data.locations.forEach(l => {
+            l.employees = l.employees.filter(e => e.id !== emp.id);
+            DAYS.forEach(d => { delete l.schedule[d.key][emp.id]; });
+          });
           saveData();
           renderEmployeeList();
           renderTable();
@@ -983,12 +1006,17 @@ function startRenameEmployee(li, loc, emp) {
         title: 'Xác nhận thay đổi',
         message: `Cập nhật thông tin nhân viên?`,
         onConfirm: () => { 
-          emp.name = name; 
-          emp.email = email;
-          // Tự động sinh mã nhân viên mới không trùng nếu tên thay đổi
-          if (name !== originalName) {
-            emp.code = getUniqueEmpCode(name, emp.id);
-          }
+          // Cập nhật thông tin đồng bộ ở TẤT CẢ các quán
+          const newCode = (name !== originalName) ? getUniqueEmpCode(name, emp.id) : emp.code;
+          state.data.locations.forEach(l => {
+            (l.employees || []).forEach(e => {
+              if (e.id === emp.id) {
+                e.name = name;
+                e.email = email;
+                e.code = newCode;
+              }
+            });
+          });
           saveData(); 
           renderEmployeeList(); 
           renderTable(); 
