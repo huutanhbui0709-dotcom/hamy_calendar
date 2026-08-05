@@ -130,9 +130,9 @@ function addEmployeeToLocation(loc, name, ensureShape = true, email = '') {
   const emp = { id: uid(), code, name: name.trim(), email: (email || '').trim() };
 
   // Thêm nhân viên này vào TẤT CẢ các quán (Không phân biệt nhân viên thuộc quán nào)
-  const data = (typeof state !== 'undefined' && state) ? state.data : null;
-  if (data && data.locations) {
-    data.locations.forEach(l => {
+  // Dùng isSystemInitialized để tránh TDZ ReferenceError khi state chưa khởi tạo xong
+  if (isSystemInitialized && state.data && state.data.locations) {
+    state.data.locations.forEach(l => {
       // Chỉ clone các thuộc tính cơ bản, KHÔNG clone registeredDevices/passkeyCredentials
       // để server R2 tự động merge device (không ghi đè thiết bị đã đăng ký)
       const empClone = {
@@ -145,6 +145,7 @@ function addEmployeeToLocation(loc, name, ensureShape = true, email = '') {
       if (ensureShape) ensureScheduleShape(l);
     });
   } else {
+    // Lúc khởi tạo (state chưa có): chỉ thêm vào loc được chỉ định
     loc.employees.push(emp);
     if (ensureShape) ensureScheduleShape(loc);
   }
