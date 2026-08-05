@@ -1044,31 +1044,57 @@ function startRenameEmployee(li, loc, emp) {
       return;
     }
 
-    settled = true;
-    if (name && (name !== originalName || email !== originalEmail)) {
-      showConfirm({
-        title: 'Xác nhận thay đổi',
-        message: `Cập nhật thông tin nhân viên?`,
-        onConfirm: () => { 
-          // Cập nhật thông tin đồng bộ ở TẤT CẢ các quán
-          const newCode = (name !== originalName) ? getUniqueEmpCode(name, emp.id) : emp.code;
-          state.data.locations.forEach(l => {
-            (l.employees || []).forEach(e => {
-              if (e.id === emp.id) {
-                e.name = name;
-                e.email = email;
-                e.code = newCode;
-              }
+    const hasLinkedDevices = (emp.registeredDevices && emp.registeredDevices.length > 0) || 
+                             (emp.passkeyCredentials && emp.passkeyCredentials.length > 0);
+    
+    const isEmailDeleted = originalEmail && !email;
+    const isEmailChanged = originalEmail && email !== originalEmail;
+
+    const proceedWithSave = () => {
+      settled = true;
+      if (name && (name !== originalName || email !== originalEmail)) {
+        showConfirm({
+          title: 'Xác nhận thay đổi',
+          message: `Cập nhật thông tin nhân viên?`,
+          onConfirm: () => { 
+            // Cập nhật thông tin đồng bộ ở TẤT CẢ các quán
+            const newCode = (name !== originalName) ? getUniqueEmpCode(name, emp.id) : emp.code;
+            state.data.locations.forEach(l => {
+              (l.employees || []).forEach(e => {
+                if (e.id === emp.id) {
+                  e.name = name;
+                  e.email = email;
+                  e.code = newCode;
+                  // Hủy liên kết thiết bị nếu thay đổi/xóa email
+                  if (isEmailDeleted || isEmailChanged) {
+                    e.registeredDevices = [];
+                    e.passkeyCredentials = [];
+                  }
+                }
+              });
             });
-          });
-          saveData(); 
-          renderEmployeeList(); 
-          renderTable(); 
+            saveData(); 
+            renderEmployeeList(); 
+            renderTable(); 
+          },
+          onCancel: () => renderEmployeeList()
+        });
+      } else {
+        renderEmployeeList();
+      }
+    };
+
+    if ((isEmailDeleted || isEmailChanged) && hasLinkedDevices) {
+      showConfirm({
+        title: '⚠️ Hủy liên kết thiết bị?',
+        message: `Email này đang được liên kết với thiết bị của nhân viên ${emp.name}. Nếu bạn ${isEmailDeleted ? 'xóa' : 'thay đổi'} email, liên kết thiết bị này sẽ bị hủy bỏ hoàn toàn. Bạn có chắc chắn muốn tiếp tục?`,
+        onConfirm: () => {
+          proceedWithSave();
         },
         onCancel: () => renderEmployeeList()
       });
     } else {
-      renderEmployeeList();
+      proceedWithSave();
     }
   };
 
