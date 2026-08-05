@@ -1051,11 +1051,6 @@
           });
         }
 
-        // 2. Dự phòng: quét từ lịch sử đăng ký nếu trước đó admin chưa cài mail nhưng nv đã từng tự nhập
-        regData.forEach(function (r) {
-          if (r.email && !emailMap[r.empCode]) emailMap[r.empCode] = r.email;
-        });
-
         // Ghi các email vào localStorage để dùng offline
         localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(emailMap));
       }
@@ -1092,7 +1087,7 @@
           return;
         }
 
-        // Tìm email trực tiếp trong sysData (độ ưu tiên cao nhất)
+        // Tìm email trực tiếp trong sysData (luôn lấy trực tiếp từ R2)
         var stored = null;
         if (sysData && sysData.locations) {
           sysData.locations.forEach(function (loc) {
@@ -1104,21 +1099,6 @@
               });
             }
           });
-        }
-
-        // Dự phòng: Tìm trong regData
-        if (!stored && regData) {
-          regData.forEach(function (r) {
-            if (r.empCode === empCode && r.email) {
-              stored = r.email;
-            }
-          });
-        }
-
-        // Dự phòng cuối: Tìm trong localMap
-        if (!stored) {
-          var emailMap = getEmailMap();
-          stored = emailMap[empCode];
         }
 
         emailSection.classList.remove('hidden');
