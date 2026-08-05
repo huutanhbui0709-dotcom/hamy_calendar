@@ -1895,40 +1895,63 @@
           return;
         }
 
-        // Xóa sạch toàn bộ lịch cũ của nhân viên này trong tất cả các ngày trong tuần trước khi thêm lịch mới
-        regData = regData.filter(function (x) {
-          return x.empCode !== empCode;
-        });
+        // Vô hiệu hóa nút gửi tạm thời trong lúc fetch/save
+        var submitBtn = document.querySelector('#register-form button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
-        // Save each day as a separate registration item (or update if needed)
-        daysChecked.forEach(function (dayInfo) {
-          // Add new — include email to sync lên server
-          regData.push({
-            id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
-            empCode: empCode,
-            email: finalEmail,
-            day: dayInfo.day,
-            timeRanges: dayInfo.timeRanges,
-            submittedAt: new Date().toISOString()
+        // BƯỚC 1: Fetch registrations mới nhất từ server để bảo đảm đồng bộ (ca nào bị Admin xóa sẽ biến mất khỏi local)
+        fetch('/data/employee_registrations.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (r) { return r.json(); })
+          .then(function (serverRegData) {
+            if (Array.isArray(serverRegData)) {
+              regData = serverRegData;
+            }
+
+            // BƯỚC 2: Chỉ cập nhật (ghi đè) những ngày có trong daysChecked
+            var daysToUpdate = daysChecked.map(function(d) { return d.day; });
+            regData = regData.filter(function (x) {
+              // Giữ lại ca của nhân viên khác, HOẶC ca của nhân viên này ở những ngày KHÔNG được chọn cập nhật lần này
+              return !(x.empCode === empCode && daysToUpdate.includes(x.day));
+            });
+
+            // Thêm các ca mới được chọn
+            daysChecked.forEach(function (dayInfo) {
+              regData.push({
+                id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+                empCode: empCode,
+                email: finalEmail,
+                day: dayInfo.day,
+                timeRanges: dayInfo.timeRanges,
+                submittedAt: new Date().toISOString()
+              });
+            });
+
+            rebuildEmailMap(); // Cập nhật cache email
+
+            // BƯỚC 3: Lưu lên server và local
+            saveRegs(empCode);
+
+            document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
+            okEl.classList.remove('hidden');
+
+            // Reset fields
+            selectEmp.value = '';
+            selectEmpText.textContent = '— Chọn nhân viên —';
+            selectEmpText.classList.add('text-gray-500');
+            selectEmpText.classList.remove('text-gray-900');
+            showEmailSection(''); // Ẩn email section
+
+            // Khôi phục lại việc tự động chọn nhân viên & cập nhật trạng thái thiết bị đã liên kết
+            rebuildEmpDropdown();
+          })
+          .catch(function (e) {
+            console.error('Lỗi đồng bộ lịch trước khi lưu:', e);
+            errEl.textContent = 'Không thể đồng bộ với máy chủ. Vui lòng thử lại sau.';
+            errEl.classList.remove('hidden');
+          })
+          .finally(function () {
+            if (submitBtn) submitBtn.disabled = false;
           });
-        });
-
-        rebuildEmailMap(); // Cập nhật cache sau khi push
-
-        saveRegs(empCode);
-
-        document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
-        okEl.classList.remove('hidden');
-
-        // Reset fields
-        selectEmp.value = '';
-        selectEmpText.textContent = '— Chọn nhân viên —';
-        selectEmpText.classList.add('text-gray-500');
-        selectEmpText.classList.remove('text-gray-900');
-        showEmailSection(''); // Hide email section
-
-        // Khôi phục lại việc tự động chọn nhân viên & cập nhật trạng thái thiết bị đã liên kết
-        rebuildEmpDropdown();
 
         dayBlocks.forEach(function (dayBlock) {
           dayBlock.querySelector('.day-enabled').checked = false;
