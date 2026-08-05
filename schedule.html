@@ -1578,14 +1578,14 @@
 
       function generateTimeOptions(selectedValue) {
         var html = '';
-        for (var h = 0; h < 24; h++) {
+        for (var h = 5; h < 22; h++) {
           var hh = h < 10 ? '0' + h : '' + h;
           var val1 = hh + ':00';
           html += '<option value="' + val1 + '"' + (selectedValue === val1 ? ' selected' : '') + '>' + val1 + '</option>';
           var val2 = hh + ':30';
           html += '<option value="' + val2 + '"' + (selectedValue === val2 ? ' selected' : '') + '>' + val2 + '</option>';
         }
-        html += '<option value="24:00"' + (selectedValue === '24:00' ? ' selected' : '') + '>24:00</option>';
+        html += '<option value="22:00"' + (selectedValue === '22:00' ? ' selected' : '') + '>22:00</option>';
         return html;
       }
 
