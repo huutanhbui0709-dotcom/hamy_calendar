@@ -240,6 +240,7 @@ const state = {
   data: loadData(),
   drawer: null, // { locId, dayKey, empId, draft: [{s,e}] }
 };
+window.state = state;
 isSystemInitialized = true;
 
 function getActiveLocation() {

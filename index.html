@@ -1052,7 +1052,9 @@
           .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
           .then(function (data) {
             if (data && data.locations) {
-              // Lưu vào localStorage để app.js's state được cập nhật qua renderAll
+              // Cập nhật RAM state trực tiếp
+              if (window.state) window.state.data = data;
+              // Lưu vào localStorage
               localStorage.setItem('lich-lam-viec:data:v2', JSON.stringify(data));
 
               // Re-build map của Admin index.html
@@ -1060,7 +1062,7 @@
                 buildNameMap('lich-lam-viec:data:v2');
               }
 
-              // Render lại toàn bộ giao diện (renderAll trong app.js sẽ cập nhật state)
+              // Render lại toàn bộ giao diện
               if (typeof renderAll === 'function') renderAll();
               if (typeof window.renderDeviceManagement === 'function') {
                 window.renderDeviceManagement();
