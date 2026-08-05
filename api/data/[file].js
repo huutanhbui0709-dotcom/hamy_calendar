@@ -102,16 +102,20 @@ export default async function handler(req, res) {
 
       // Merge employee_registrations: giữ lại các bản ghi của nhân viên khác
       // tránh trường hợp client ghi đè mất dữ liệu
+      // LƯU Ý: Chỉ merge khi KHÔNG phải là Admin đăng nhập. Admin có quyền xoá/ghi đè hoàn toàn.
       if (fileName === 'employee_registrations.json') {
         try {
-          const existingRegs = await loadJson(r2Key);
-          if (Array.isArray(existingRegs) && Array.isArray(body)) {
-            // Tìm các empCode có trong body (của client gửi lên)
-            const submittedEmpCodes = new Set(body.map(r => r.empCode).filter(Boolean));
-            // Giữ lại tất cả records của nhân viên khác
-            const others = existingRegs.filter(r => !submittedEmpCodes.has(r.empCode));
-            // Ghi đè records của empCode đang gửi lên bằng dữ liệu mới
-            body = [...others, ...body];
+          const isAdmin = await checkAdminAuth(req);
+          if (!isAdmin) {
+            const existingRegs = await loadJson(r2Key);
+            if (Array.isArray(existingRegs) && Array.isArray(body)) {
+              // Tìm các empCode có trong body (của client gửi lên)
+              const submittedEmpCodes = new Set(body.map(r => r.empCode).filter(Boolean));
+              // Giữ lại tất cả records của nhân viên khác
+              const others = existingRegs.filter(r => !submittedEmpCodes.has(r.empCode));
+              // Ghi đè records của empCode đang gửi lên bằng dữ liệu mới
+              body = [...others, ...body];
+            }
           }
         } catch (mergeErr) {
           console.warn('[Merge Regs Warn]', mergeErr.message);

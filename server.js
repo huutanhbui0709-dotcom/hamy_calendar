@@ -811,21 +811,24 @@ const server = http.createServer(async (req, res) => {
 
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
-        req.on('end', () => {
+        req.on('end', async () => {
           try {
             let data = JSON.parse(body);
 
-            // Merge employee_registrations: giữ lại records của nhân viên khác
+            // Merge employee_registrations: giữ lại records của nhân viên khác (chỉ merge nếu KHÔNG phải Admin)
             if (fileName === 'employee_registrations.json' && Array.isArray(data)) {
               try {
-                let existing = [];
-                if (fs.existsSync(filePath)) {
-                  existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-                }
-                if (Array.isArray(existing)) {
-                  const submittedCodes = new Set(data.map(r => r.empCode).filter(Boolean));
-                  const others = existing.filter(r => !submittedCodes.has(r.empCode));
-                  data = [...others, ...data];
+                const isAdmin = await checkAdminAuthLocal(req);
+                if (!isAdmin) {
+                  let existing = [];
+                  if (fs.existsSync(filePath)) {
+                    existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                  }
+                  if (Array.isArray(existing)) {
+                    const submittedCodes = new Set(data.map(r => r.empCode).filter(Boolean));
+                    const others = existing.filter(r => !submittedCodes.has(r.empCode));
+                    data = [...others, ...data];
+                  }
                 }
               } catch (mergeErr) {
                 console.warn('  ⚠ Merge regs warn:', mergeErr.message);
