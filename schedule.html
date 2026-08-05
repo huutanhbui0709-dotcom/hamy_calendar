@@ -288,12 +288,17 @@
               <!-- Container cho các nút chuyển quán -->
               <div id="pub-loc-tabs" class="flex flex-wrap gap-2"></div>
             </div>
-            <div class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100 flex flex-col sm:items-end">
+            <div
+              class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100 flex flex-col sm:items-end">
               <p class="text-[11px] text-gray-400 font-medium mb-0.5">Cập nhật lúc</p>
               <div class="flex items-center gap-2">
-                <button onclick="forceRefreshPublishedSchedule(this)" class="text-gray-400 hover:text-brand-600 transition-colors p-1 -m-1 rounded-full" title="Làm mới lịch">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <button onclick="forceRefreshPublishedSchedule(this)"
+                  class="text-gray-400 hover:text-brand-600 transition-colors p-1 -m-1 rounded-full"
+                  title="Làm mới lịch">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </button>
                 <p class="text-xs font-semibold text-brand-600 mono" id="pub-time">—</p>
@@ -339,7 +344,8 @@
 
             <form id="register-form" novalidate class="space-y-6">
               <!-- Banner trạng thái thiết bị -->
-              <div id="device-status-banner" class="hidden rounded-xl px-4 py-3 flex items-start gap-3 mb-1" style="display:none!important"></div>
+              <div id="device-status-banner" class="hidden rounded-xl px-4 py-3 flex items-start gap-3 mb-1"
+                style="display:none!important"></div>
 
               <!-- Chọn Nhân Viên -->
               <div>
@@ -368,30 +374,39 @@
               <div id="email-section" class="hidden">
                 <!-- Đã có email: hiện dạng ẩn -->
                 <div id="email-display" class="hidden">
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Email xác nhận</label>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Email xác
+                    nhận</label>
                   <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2" stroke-linecap="round" class="shrink-0">
-                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2"
+                      stroke-linecap="round" class="shrink-0">
+                      <rect x="3" y="11" width="18" height="11" rx="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
                     <span id="email-masked" class="mono text-sm font-semibold text-emerald-700 flex-1"></span>
                   </div>
                 </div>
                 <!-- Chưa có email: hiện ô nhập -->
                 <div id="email-input-wrap" class="hidden">
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5" for="input-email">
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5"
+                    for="input-email">
                     Email của bạn <span class="text-red-400">*</span>
                   </label>
                   <div class="flex gap-2">
                     <input type="email" id="input-email" autocomplete="email"
                       class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold bg-gray-50 focus:bg-white transition-all mono"
                       placeholder="example@gmail.com">
-                    <button type="button" id="btn-save-email" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shrink-0">
+                    <button type="button" id="btn-save-email"
+                      class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shrink-0">
                       Lưu
                     </button>
                   </div>
                   <p class="text-xs text-orange-500 mt-1.5 flex items-start gap-1.5 font-medium leading-relaxed">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                      stroke-linecap="round" class="shrink-0 mt-0.5">
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                      <line x1="12" y1="9" x2="12" y2="13" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
                     </svg>
                     Lưu ý: Email sau khi lưu sẽ đồng bộ hệ thống và <b>không thể tự thay đổi</b>. Hãy nhập chính xác!
                   </p>
@@ -428,1125 +443,1141 @@
 
           <!-- Recent -->
           <div id="recent-section" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 fade-up" hidden>
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" id="recent-list-title">Lịch của bạn</h3>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" id="recent-list-title">Lịch của
+              bạn</h3>
             <div id="recent-list" class="space-y-1"></div>
           </div>
         </div>
 
       </div>
     </div>
-  <!-- Modal Xác nhận Liên kết Thiết bị -->
-  <div id="confirm-link-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm px-4">
-    <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full p-6 sm:p-8 space-y-6 fade-up">
-      <div class="text-center space-y-3">
-        <div class="w-16 h-16 mx-auto rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-3xl">
-          🔗
+    <!-- Modal Xác nhận Liên kết Thiết bị -->
+    <div id="confirm-link-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm px-4">
+      <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full p-6 sm:p-8 space-y-6 fade-up">
+        <div class="text-center space-y-3">
+          <div
+            class="w-16 h-16 mx-auto rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-3xl">
+            🔗
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">Liên Kết Thiết Bị</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">
+            Thiết bị này chưa được liên kết với tài khoản của bạn. Bạn có muốn nhận mã OTP qua email để xác thực không?
+          </p>
+          <p id="confirm-masked-email"
+            class="font-bold text-blue-800 text-sm tracking-wide bg-blue-50 py-1 px-3 rounded-lg inline-block"></p>
         </div>
-        <h3 class="text-xl font-bold text-gray-900">Liên Kết Thiết Bị</h3>
-        <p class="text-gray-500 text-sm leading-relaxed">
-          Thiết bị này chưa được liên kết với tài khoản của bạn. Bạn có muốn nhận mã OTP qua email để xác thực không?
-        </p>
-        <p id="confirm-masked-email" class="font-bold text-blue-800 text-sm tracking-wide bg-blue-50 py-1 px-3 rounded-lg inline-block"></p>
-      </div>
 
-      <div class="flex gap-3 pt-2">
-        <button type="button" id="btn-cancel-link"
-          class="flex-1 px-4 py-3 border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors">
-          Không, hủy
-        </button>
-        <button type="button" id="btn-confirm-link"
-          class="flex-1 px-4 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-500/30 transition-all flex justify-center items-center gap-2">
-          Gửi mã OTP
-        </button>
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="btn-cancel-link"
+            class="flex-1 px-4 py-3 border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors">
+            Không, hủy
+          </button>
+          <button type="button" id="btn-confirm-link"
+            class="flex-1 px-4 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-500/30 transition-all flex justify-center items-center gap-2">
+            Gửi mã OTP
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal Xác minh Thiết bị OTP -->
-  <div id="otp-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm px-4">
-    <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full p-6 sm:p-8 space-y-6 fade-up">
-      <div class="text-center space-y-2">
-        <div class="w-16 h-16 mx-auto rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-3xl">
-          📱
+    <!-- Modal Xác minh Thiết bị OTP -->
+    <div id="otp-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm px-4">
+      <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full p-6 sm:p-8 space-y-6 fade-up">
+        <div class="text-center space-y-2">
+          <div
+            class="w-16 h-16 mx-auto rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-3xl">
+            📱
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">Xác Minh Thiết Bị</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">
+            Thiết bị này chưa được liên kết với tài khoản của bạn.
+            Một mã OTP đã được gửi đến email:
+          </p>
+          <p id="otp-masked-email"
+            class="font-bold text-emerald-800 text-sm tracking-wide bg-emerald-50 py-1 px-3 rounded-lg inline-block">
+          </p>
         </div>
-        <h3 class="text-xl font-bold text-gray-900">Xác Minh Thiết Bị</h3>
-        <p class="text-gray-500 text-sm leading-relaxed">
-          Thiết bị này chưa được liên kết với tài khoản của bạn.
-          Một mã OTP đã được gửi đến email:
-        </p>
-        <p id="otp-masked-email" class="font-bold text-emerald-800 text-sm tracking-wide bg-emerald-50 py-1 px-3 rounded-lg inline-block"></p>
-      </div>
 
-      <div class="space-y-4">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5" for="input-otp">
+              Mã OTP (6 chữ số)
+            </label>
+            <input type="text" id="input-otp" maxlength="6" placeholder="• • • • • •"
+              class="w-full text-center tracking-[0.5em] text-2xl font-bold px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none transition-all">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5"
+              for="input-device-name">
+              Tên thiết bị của bạn
+            </label>
+            <input type="text" id="input-device-name" placeholder="Ví dụ: iPhone của An, Laptop Dell..."
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold transition-all">
+          </div>
+
+          <div id="otp-error" class="hidden text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-xl">
+          </div>
+
+          <div class="flex gap-3">
+            <button type="button" id="btn-cancel-otp"
+              class="w-1/3 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
+              Hủy
+            </button>
+            <button type="button" id="btn-verify-otp"
+              class="w-2/3 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold shadow-md transition-all">
+              Xác minh & Liên kết
+            </button>
+          </div>
+
+          <div class="text-center">
+            <button type="button" id="btn-resend-otp" class="text-xs font-semibold text-brand-600 hover:underline">
+              Gửi lại mã OTP
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal mời đăng ký Passkey (hiện sau khi OTP xác minh thành công) -->
+    <div id="passkey-invite-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm px-4">
+      <div
+        class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-sm w-full p-6 space-y-5 fade-up text-center">
+        <div class="w-16 h-16 mx-auto rounded-full bg-violet-50 flex items-center justify-center text-4xl">🔑</div>
         <div>
-          <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5" for="input-otp">
-            Mã OTP (6 chữ số)
-          </label>
-          <input type="text" id="input-otp" maxlength="6" placeholder="• • • • • •"
-            class="w-full text-center tracking-[0.5em] text-2xl font-bold px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none transition-all">
+          <h3 class="text-lg font-bold text-gray-900">Nhận diện tự động?</h3>
+          <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">
+            Đăng ký <b>Passkey</b> để lần sau, dù dùng <b>Chrome, Firefox, Safari</b> hay bất kỳ trình duyệt nào,
+            hệ thống tự động nhận ra bạn — không cần OTP nữa.
+          </p>
+          <p class="text-xs text-violet-600 font-semibold mt-2">(Face ID / Touch ID / Windows Hello)</p>
         </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5" for="input-device-name">
-            Tên thiết bị của bạn
-          </label>
-          <input type="text" id="input-device-name" placeholder="Ví dụ: iPhone của Tánh, Laptop Dell..."
-            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 outline-none text-sm font-semibold transition-all">
-        </div>
-
-        <div id="otp-error" class="hidden text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-xl"></div>
-
-        <div class="flex gap-3">
-          <button type="button" id="btn-cancel-otp"
-            class="w-1/3 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
-            Hủy
+        <div class="flex flex-col gap-2">
+          <button type="button" id="btn-passkey-yes"
+            class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm shadow-lg shadow-violet-500/30 transition-all flex items-center justify-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <path
+                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+            </svg>
+            Đăng ký nhận diện tự động
           </button>
-          <button type="button" id="btn-verify-otp"
-            class="w-2/3 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold shadow-md transition-all">
-            Xác minh & Liên kết
-          </button>
-        </div>
-
-        <div class="text-center">
-          <button type="button" id="btn-resend-otp" class="text-xs font-semibold text-brand-600 hover:underline">
-            Gửi lại mã OTP
+          <button type="button" id="btn-passkey-skip"
+            class="w-full py-2 rounded-xl text-sm font-semibold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
+            Bỏ qua (chỉ dùng trình duyệt này)
           </button>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal mời đăng ký Passkey (hiện sau khi OTP xác minh thành công) -->
-  <div id="passkey-invite-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm px-4">
-    <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-sm w-full p-6 space-y-5 fade-up text-center">
-      <div class="w-16 h-16 mx-auto rounded-full bg-violet-50 flex items-center justify-center text-4xl">🔑</div>
-      <div>
-        <h3 class="text-lg font-bold text-gray-900">Nhận diện tự động?</h3>
-        <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">
-          Đăng ký <b>Passkey</b> để lần sau, dù dùng <b>Chrome, Firefox, Safari</b> hay bất kỳ trình duyệt nào,
-          hệ thống tự động nhận ra bạn — không cần OTP nữa.
-        </p>
-        <p class="text-xs text-violet-600 font-semibold mt-2">(Face ID / Touch ID / Windows Hello)</p>
-      </div>
-      <div class="flex flex-col gap-2">
-        <button type="button" id="btn-passkey-yes"
-          class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm shadow-lg shadow-violet-500/30 transition-all flex items-center justify-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-          Đăng ký nhận diện tự động
-        </button>
-        <button type="button" id="btn-passkey-skip"
-          class="w-full py-2 rounded-xl text-sm font-semibold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
-          Bỏ qua (chỉ dùng trình duyệt này)
-        </button>
-      </div>
+    <div id="toast"
+      class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-xl text-sm font-semibold">
     </div>
-  </div>
 
-  <div id="toast"
-    class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-xl text-sm font-semibold">
-  </div>
+    <script>
+      var CORE_STORAGE_KEY = 'lich-lam-viec:data:v2';
+      var REG_KEY = 'cfhm-schedule-v1';
+      var PUB_KEY = 'cfhm-published-schedule';
+      var DAYS = [
+        { key: 'T2', label: 'Thứ 2' }, { key: 'T3', label: 'Thứ 3' }, { key: 'T4', label: 'Thứ 4' },
+        { key: 'T5', label: 'Thứ 5' }, { key: 'T6', label: 'Thứ 6' }, { key: 'T7', label: 'Thứ 7' },
+        { key: 'CN', label: 'Chủ Nhật' }
+      ];
+      var esc = function (s) { return String(s ?? '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] }); };
 
-  <script>
-    var CORE_STORAGE_KEY = 'lich-lam-viec:data:v2';
-    var REG_KEY = 'cfhm-schedule-v1';
-    var PUB_KEY = 'cfhm-published-schedule';
-    var DAYS = [
-      { key: 'T2', label: 'Thứ 2' }, { key: 'T3', label: 'Thứ 3' }, { key: 'T4', label: 'Thứ 4' },
-      { key: 'T5', label: 'Thứ 5' }, { key: 'T6', label: 'Thứ 6' }, { key: 'T7', label: 'Thứ 7' },
-      { key: 'CN', label: 'Chủ Nhật' }
-    ];
-    var esc = function (s) { return String(s ?? '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] }); };
-
-    /* ====== Tab switching ====== */
-    var currentTab = 'view';
-    function switchTab(tab) {
-      currentTab = tab;
-      document.getElementById('tab-btn-view').classList.toggle('active', tab === 'view');
-      document.getElementById('tab-btn-register').classList.toggle('active', tab === 'register');
-      document.getElementById('panel-view').classList.toggle('active', tab === 'view');
-      document.getElementById('panel-register').classList.toggle('active', tab === 'register');
-    }
-
-    var activePubLocId = null;
-
-    /* ====== Render published schedule ====== */
-    function renderPublishedSchedule() {
-      var raw = localStorage.getItem(PUB_KEY);
-      var pubEmpty = document.getElementById('pub-empty');
-      var pubSchedule = document.getElementById('pub-schedule');
-
-      if (!raw) {
-        pubEmpty.classList.remove('hidden');
-        pubSchedule.classList.add('hidden');
+      /* ====== Tab switching ====== */
+      var currentTab = 'view';
+      function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-btn-view').classList.toggle('active', tab === 'view');
+        document.getElementById('tab-btn-register').classList.toggle('active', tab === 'register');
+        document.getElementById('panel-view').classList.toggle('active', tab === 'view');
+        document.getElementById('panel-register').classList.toggle('active', tab === 'register');
       }
 
-      // Luôn luôn lấy bản cập nhật mới nhất từ server
-      fetch('/data/published_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (res) { return res.json(); })
+      var activePubLocId = null;
+
+      /* ====== Render published schedule ====== */
+      function renderPublishedSchedule() {
+        var raw = localStorage.getItem(PUB_KEY);
+        var pubEmpty = document.getElementById('pub-empty');
+        var pubSchedule = document.getElementById('pub-schedule');
+
+        if (!raw) {
+          pubEmpty.classList.remove('hidden');
+          pubSchedule.classList.add('hidden');
+        }
+
+        // Luôn luôn lấy bản cập nhật mới nhất từ server
+        fetch('/data/published_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            if (data && (data.locations || data.publishedAt)) {
+              var oldRaw = localStorage.getItem(PUB_KEY);
+              var newRaw = JSON.stringify(data);
+              if (oldRaw !== newRaw) {
+                localStorage.setItem(PUB_KEY, newRaw);
+                renderPublishedSchedule(); // Render lại nếu có dữ liệu mới
+              }
+            }
+          }).catch(function () { });
+
+        if (!raw) return;
+
+
+        var snap;
+        try { snap = JSON.parse(raw); } catch (e) {
+          pubEmpty.classList.remove('hidden');
+          pubSchedule.classList.add('hidden');
+          return;
+        }
+
+        // Format fallback cho snapshot cũ
+        var locations = snap.locations;
+        if (!locations && snap.locationName) {
+          locations = [{
+            id: 'loc-default',
+            name: snap.locationName,
+            employees: snap.employees || [],
+            schedule: snap.schedule || {}
+          }];
+        }
+
+        // Nếu snapshot không có danh sách quán đầy đủ, lấy từ sysData
+        if (sysData && sysData.locations && sysData.locations.length) {
+          var snapLocMap = {};
+          if (locations) {
+            locations.forEach(function (l) { snapLocMap[l.name] = l; snapLocMap[l.id] = l; });
+          }
+          locations = sysData.locations.map(function (sysLoc) {
+            var matched = snapLocMap[sysLoc.name] || snapLocMap[sysLoc.id];
+            return matched || {
+              id: sysLoc.id,
+              name: sysLoc.name,
+              employees: sysLoc.employees || [],
+              schedule: sysLoc.schedule || {}
+            };
+          });
+        }
+
+        if (!locations || !locations.length) {
+          pubEmpty.classList.remove('hidden');
+          pubSchedule.classList.add('hidden');
+          return;
+        }
+
+        pubEmpty.classList.add('hidden');
+        pubSchedule.classList.remove('hidden');
+
+        // Update Header time
+        var pubAt = snap.publishedAt ? new Date(snap.publishedAt) : null;
+        document.getElementById('pub-time').textContent = pubAt
+          ? pubAt.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' }) + ' ' +
+          pubAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+          : '—';
+
+        // Ensure active location
+        if (!activePubLocId || !locations.find(function (l) { return l.id === activePubLocId; })) {
+          activePubLocId = locations[0].id;
+        }
+
+        // Render Quán Tabs
+        var locTabsEl = document.getElementById('pub-loc-tabs');
+        locTabsEl.innerHTML = locations.map(function (loc) {
+          var isActive = loc.id === activePubLocId;
+          return '<button type="button" onclick="switchPubLoc(\'' + loc.id + '\')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all ' +
+            (isActive ? 'bg-brand-500 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200') + '">' +
+            esc(loc.name) + ' (' + (loc.employees ? loc.employees.length : 0) + ' NV)</button>';
+        }).join('');
+
+        var curLoc = locations.find(function (l) { return l.id === activePubLocId; }) || locations[0];
+
+        // Table head (THỨ 2 -> CN)
+        var thead = document.getElementById('pub-table-head');
+        thead.innerHTML = DAYS.map(function (d) {
+          return '<th class="text-center bg-gray-900 text-white py-2.5 px-3 text-xs font-extrabold tracking-wider border-r border-gray-800 last:border-0">' + esc(d.label.toUpperCase()) + '</th>';
+        }).join('');
+
+        // Table body: Single row matching Admin grid style
+        var tbody = document.getElementById('pub-table-body');
+        var tr = document.createElement('tr');
+
+        DAYS.forEach(function (d) {
+          var td = document.createElement('td');
+          td.className = 'align-top p-2.5 border-r border-gray-100 last:border-0 bg-gray-50/30 min-w-[140px]';
+
+          // Gather all shifts for this day and sort by start time
+          var dayShifts = [];
+          (curLoc.employees || []).forEach(function (emp) {
+            var shifts = (curLoc.schedule[d.key] && curLoc.schedule[d.key][emp.id]) || [];
+            shifts.forEach(function (sh) {
+              dayShifts.push({ s: sh.s, e: sh.e, empId: emp.id, empName: emp.name });
+            });
+          });
+          dayShifts.sort(function (a, b) { return a.s - b.s; });
+
+          if (dayShifts.length === 0) {
+            td.innerHTML = '<div class="h-20 flex items-center justify-center text-gray-300 text-xs italic">Chưa có ca</div>';
+          } else {
+            var html = dayShifts.map(function (sh) {
+              var periodClass = sh.s < 720
+                ? 'bg-emerald-50 text-emerald-800 border-l-[3px] border-emerald-500 shadow-sm'
+                : 'bg-indigo-50 text-indigo-800 border-l-[3px] border-indigo-500 shadow-sm';
+              var sH = Math.floor(sh.s / 60), sM = sh.s % 60;
+              var eH = Math.floor(sh.e / 60), eM = sh.e % 60;
+              var fmt = function (h, m) { return m === 0 ? h + 'h' : h + 'h' + (m < 10 ? '0' + m : m); };
+              var timeLabel = fmt(sH, sM) + '-' + fmt(eH, eM);
+
+              return '<div class="flex flex-col items-start px-2.5 py-1.5 rounded-md mb-1.5 ' + periodClass + '">' +
+                '<span class="uppercase tracking-wide font-extrabold text-[11px] leading-tight block w-full">' + esc(sh.empName) + '</span>' +
+                '<span class="mono text-[11px] font-medium opacity-85 mt-0.5 block">' + timeLabel + '</span>' +
+                '</div>';
+            }).join('');
+            td.innerHTML = html;
+          }
+          tr.appendChild(td);
+        });
+
+        tbody.innerHTML = '';
+        tbody.appendChild(tr);
+      }
+
+      function switchPubLoc(locId) {
+        activePubLocId = locId;
+        renderPublishedSchedule();
+      }
+
+      function forceRefreshPublishedSchedule(btn) {
+        if (btn) {
+          var svg = btn.querySelector('svg');
+          if (svg) svg.classList.add('animate-spin', 'text-brand-600');
+        }
+        fetch('/data/published_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            if (data && (data.locations || data.publishedAt)) {
+              localStorage.setItem(PUB_KEY, JSON.stringify(data));
+              renderPublishedSchedule();
+              showToast('✅ Đã cập nhật lịch làm việc mới nhất!');
+            }
+          })
+          .catch(function () {
+            showToast('❌ Không thể tải lịch, vui lòng thử lại', 'warn');
+          })
+          .finally(function () {
+            if (btn) {
+              var svg = btn.querySelector('svg');
+              if (svg) svg.classList.remove('animate-spin', 'text-brand-600');
+            }
+          });
+      }
+
+      // Load app system locations and employees — từ server (đồng bộ tất cả thiết bị)
+      var sysData = (function () {
+        try {
+          var raw = localStorage.getItem(CORE_STORAGE_KEY);
+          return raw ? JSON.parse(raw) : { locations: [] };
+        } catch (e) { return { locations: [] }; }
+      })();
+      // Nạp sysData mới nhất từ server
+      fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
         .then(function (data) {
-          if (data && (data.locations || data.publishedAt)) {
-            var oldRaw = localStorage.getItem(PUB_KEY);
-            var newRaw = JSON.stringify(data);
-            if (oldRaw !== newRaw) {
-              localStorage.setItem(PUB_KEY, newRaw);
-              renderPublishedSchedule(); // Render lại nếu có dữ liệu mới
+          if (data && data.locations) {
+            sysData = data;
+            localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
+            rebuildEmailMap(); // Cập nhật lại email map khi có dữ liệu admin mới nhất
+            // Cập nhật lại dropdown nhân viên
+            rebuildEmpDropdown();
+            // Cập nhật lại giao diện hiển thị email
+            if (typeof selectEmp !== 'undefined' && selectEmp) {
+              showEmailSection(selectEmp.value);
             }
           }
         }).catch(function () { });
 
-      if (!raw) return;
+      // Load current registered schedule data — từ server
+      var regData = (function () { try { return JSON.parse(localStorage.getItem(REG_KEY)) || []; } catch (e) { return []; } })();
+      var saveRegs = function (empCode) {
+        localStorage.setItem(REG_KEY, JSON.stringify(regData));
 
-
-      var snap;
-      try { snap = JSON.parse(raw); } catch (e) {
-        pubEmpty.classList.remove('hidden');
-        pubSchedule.classList.add('hidden');
-        return;
-      }
-
-      // Format fallback cho snapshot cũ
-      var locations = snap.locations;
-      if (!locations && snap.locationName) {
-        locations = [{
-          id: 'loc-default',
-          name: snap.locationName,
-          employees: snap.employees || [],
-          schedule: snap.schedule || {}
-        }];
-      }
-
-      // Nếu snapshot không có danh sách quán đầy đủ, lấy từ sysData
-      if (sysData && sysData.locations && sysData.locations.length) {
-        var snapLocMap = {};
-        if (locations) {
-          locations.forEach(function (l) { snapLocMap[l.name] = l; snapLocMap[l.id] = l; });
+        // Nếu gửi từ client nhân viên → chỉ POST lịch của chính nhân viên đó để server merge
+        // Tránh việc gửi đè/khôi phục lại các lịch cũ của nhân viên khác (hoặc lịch đã bị Admin xóa)
+        var payload = regData;
+        if (empCode) {
+          payload = regData.filter(function (x) { return x.empCode === empCode; });
         }
-        locations = sysData.locations.map(function (sysLoc) {
-          var matched = snapLocMap[sysLoc.name] || snapLocMap[sysLoc.id];
-          return matched || {
-            id: sysLoc.id,
-            name: sysLoc.name,
-            employees: sysLoc.employees || [],
-            schedule: sysLoc.schedule || {}
-          };
-        });
-      }
 
-      if (!locations || !locations.length) {
-        pubEmpty.classList.remove('hidden');
-        pubSchedule.classList.add('hidden');
-        return;
-      }
-
-      pubEmpty.classList.add('hidden');
-      pubSchedule.classList.remove('hidden');
-
-      // Update Header time
-      var pubAt = snap.publishedAt ? new Date(snap.publishedAt) : null;
-      document.getElementById('pub-time').textContent = pubAt
-        ? pubAt.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' }) + ' ' +
-        pubAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-        : '—';
-
-      // Ensure active location
-      if (!activePubLocId || !locations.find(function (l) { return l.id === activePubLocId; })) {
-        activePubLocId = locations[0].id;
-      }
-
-      // Render Quán Tabs
-      var locTabsEl = document.getElementById('pub-loc-tabs');
-      locTabsEl.innerHTML = locations.map(function (loc) {
-        var isActive = loc.id === activePubLocId;
-        return '<button type="button" onclick="switchPubLoc(\'' + loc.id + '\')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all ' +
-          (isActive ? 'bg-brand-500 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200') + '">' +
-          esc(loc.name) + ' (' + (loc.employees ? loc.employees.length : 0) + ' NV)</button>';
-      }).join('');
-
-      var curLoc = locations.find(function (l) { return l.id === activePubLocId; }) || locations[0];
-
-      // Table head (THỨ 2 -> CN)
-      var thead = document.getElementById('pub-table-head');
-      thead.innerHTML = DAYS.map(function (d) {
-        return '<th class="text-center bg-gray-900 text-white py-2.5 px-3 text-xs font-extrabold tracking-wider border-r border-gray-800 last:border-0">' + esc(d.label.toUpperCase()) + '</th>';
-      }).join('');
-
-      // Table body: Single row matching Admin grid style
-      var tbody = document.getElementById('pub-table-body');
-      var tr = document.createElement('tr');
-
-      DAYS.forEach(function (d) {
-        var td = document.createElement('td');
-        td.className = 'align-top p-2.5 border-r border-gray-100 last:border-0 bg-gray-50/30 min-w-[140px]';
-
-        // Gather all shifts for this day and sort by start time
-        var dayShifts = [];
-        (curLoc.employees || []).forEach(function (emp) {
-          var shifts = (curLoc.schedule[d.key] && curLoc.schedule[d.key][emp.id]) || [];
-          shifts.forEach(function (sh) {
-            dayShifts.push({ s: sh.s, e: sh.e, empId: emp.id, empName: emp.name });
-          });
-        });
-        dayShifts.sort(function (a, b) { return a.s - b.s; });
-
-        if (dayShifts.length === 0) {
-          td.innerHTML = '<div class="h-20 flex items-center justify-center text-gray-300 text-xs italic">Chưa có ca</div>';
-        } else {
-          var html = dayShifts.map(function (sh) {
-            var periodClass = sh.s < 720 
-              ? 'bg-emerald-50 text-emerald-800 border-l-[3px] border-emerald-500 shadow-sm' 
-              : 'bg-indigo-50 text-indigo-800 border-l-[3px] border-indigo-500 shadow-sm';
-            var sH = Math.floor(sh.s / 60), sM = sh.s % 60;
-            var eH = Math.floor(sh.e / 60), eM = sh.e % 60;
-            var fmt = function (h, m) { return m === 0 ? h + 'h' : h + 'h' + (m < 10 ? '0' + m : m); };
-            var timeLabel = fmt(sH, sM) + '-' + fmt(eH, eM);
-
-            return '<div class="flex flex-col items-start px-2.5 py-1.5 rounded-md mb-1.5 ' + periodClass + '">' +
-              '<span class="uppercase tracking-wide font-extrabold text-[11px] leading-tight block w-full">' + esc(sh.empName) + '</span>' +
-              '<span class="mono text-[11px] font-medium opacity-85 mt-0.5 block">' + timeLabel + '</span>' +
-              '</div>';
-          }).join('');
-          td.innerHTML = html;
-        }
-        tr.appendChild(td);
-      });
-
-      tbody.innerHTML = '';
-      tbody.appendChild(tr);
-    }
-
-    function switchPubLoc(locId) {
-      activePubLocId = locId;
-      renderPublishedSchedule();
-    }
-
-    function forceRefreshPublishedSchedule(btn) {
-      if (btn) {
-        var svg = btn.querySelector('svg');
-        if (svg) svg.classList.add('animate-spin', 'text-brand-600');
-      }
-      fetch('/data/published_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (res) { return res.json(); })
+        fetch('/data/employee_registrations.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(function (e) { console.warn('Không lưu registrations:', e); });
+      };
+      // Nạp regData mới nhất từ server
+      fetch('/data/employee_registrations.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
         .then(function (data) {
-          if (data && (data.locations || data.publishedAt)) {
-            localStorage.setItem(PUB_KEY, JSON.stringify(data));
-            renderPublishedSchedule();
-            showToast('✅ Đã cập nhật lịch làm việc mới nhất!');
+          if (Array.isArray(data)) {
+            regData = data;
+            localStorage.setItem(REG_KEY, JSON.stringify(data));
+            rebuildEmailMap(); // Cập nhật email map từ server
+            renderRecentList();
+            // Cập nhật lại giao diện hiển thị email
+            if (typeof selectEmp !== 'undefined' && selectEmp) {
+              showEmailSection(selectEmp.value);
+            }
           }
-        })
-        .catch(function () {
-          showToast('❌ Không thể tải lịch, vui lòng thử lại', 'warn');
-        })
-        .finally(function () {
-          if (btn) {
-            var svg = btn.querySelector('svg');
-            if (svg) svg.classList.remove('animate-spin', 'text-brand-600');
-          }
-        });
-    }
-
-    // Load app system locations and employees — từ server (đồng bộ tất cả thiết bị)
-    var sysData = (function () {
-      try {
-        var raw = localStorage.getItem(CORE_STORAGE_KEY);
-        return raw ? JSON.parse(raw) : { locations: [] };
-      } catch (e) { return { locations: [] }; }
-    })();
-    // Nạp sysData mới nhất từ server
-    fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data && data.locations) {
-          sysData = data;
-          localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
-          rebuildEmailMap(); // Cập nhật lại email map khi có dữ liệu admin mới nhất
-          // Cập nhật lại dropdown nhân viên
-          rebuildEmpDropdown();
-          // Cập nhật lại giao diện hiển thị email
-          if (typeof selectEmp !== 'undefined' && selectEmp) {
-            showEmailSection(selectEmp.value);
-          }
-        }
-      }).catch(function () { });
-
-    // Load current registered schedule data — từ server
-    var regData = (function () { try { return JSON.parse(localStorage.getItem(REG_KEY)) || []; } catch (e) { return []; } })();
-    var saveRegs = function (empCode) {
-      localStorage.setItem(REG_KEY, JSON.stringify(regData));
-      
-      // Nếu gửi từ client nhân viên → chỉ POST lịch của chính nhân viên đó để server merge
-      // Tránh việc gửi đè/khôi phục lại các lịch cũ của nhân viên khác (hoặc lịch đã bị Admin xóa)
-      var payload = regData;
-      if (empCode) {
-        payload = regData.filter(function (x) { return x.empCode === empCode; });
-      }
-
-      fetch('/data/employee_registrations.json', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(function (e) { console.warn('Không lưu registrations:', e); });
-    };
-    // Nạp regData mới nhất từ server
-    fetch('/data/employee_registrations.json?t=' + Date.now(), { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (Array.isArray(data)) {
-          regData = data;
-          localStorage.setItem(REG_KEY, JSON.stringify(data));
-          rebuildEmailMap(); // Cập nhật email map từ server
-          renderRecentList();
-          // Cập nhật lại giao diện hiển thị email
-          if (typeof selectEmp !== 'undefined' && selectEmp) {
-            showEmailSection(selectEmp.value);
-          }
-        }
-      }).catch(function () { });
+        }).catch(function () { });
 
 
-    var selectEmp = document.getElementById('select-emp');
-    var selectEmpBtn = document.getElementById('select-emp-btn');
-    var selectEmpText = document.getElementById('select-emp-text');
-    var selectEmpMenu = document.getElementById('select-emp-menu');
-    var selectEmpList = document.getElementById('select-emp-list');
-    var customEmpDropdown = document.getElementById('custom-emp-dropdown');
+      var selectEmp = document.getElementById('select-emp');
+      var selectEmpBtn = document.getElementById('select-emp-btn');
+      var selectEmpText = document.getElementById('select-emp-text');
+      var selectEmpMenu = document.getElementById('select-emp-menu');
+      var selectEmpList = document.getElementById('select-emp-list');
+      var customEmpDropdown = document.getElementById('custom-emp-dropdown');
 
-    // Aggregate all unique employees from all locations
-    var empMap = {};
+      // Aggregate all unique employees from all locations
+      var empMap = {};
 
-    // linkedEmpCode là biến module-level để renderRecentList và các hàm khác truy cập
-    var linkedEmpCode = null;
+      // linkedEmpCode là biến module-level để renderRecentList và các hàm khác truy cập
+      var linkedEmpCode = null;
 
-    function rebuildEmpDropdown() {
-      empMap = {};
-      linkedEmpCode = null; // reset mỗi lần rebuild
-      var currentVisitorId = getVisitorId();
+      function rebuildEmpDropdown() {
+        empMap = {};
+        linkedEmpCode = null; // reset mỗi lần rebuild
+        var currentVisitorId = getVisitorId();
 
-      if (sysData.locations && sysData.locations.length) {
-        sysData.locations.forEach(function (loc) {
-          if (loc.employees && loc.employees.length) {
-            loc.employees.forEach(function (emp) {
-              empMap[emp.code] = emp.name;
-              // Kiểm tra xem thiết bị này đã liên kết với nhân viên nào chưa
-              if (emp.registeredDevices && emp.registeredDevices.length) {
-                emp.registeredDevices.forEach(function (dev) {
-                  if (dev.visitorId === currentVisitorId) {
-                    linkedEmpCode = emp.code;
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-      // Populate Custom Select Employee element
-      selectEmpList.innerHTML = '';
-      var sortedCodes = Object.keys(empMap).sort();
-      sortedCodes.forEach(function (code) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'w-full text-left px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors focus:bg-brand-50 focus:text-brand-700 outline-none';
-        btn.textContent = empMap[code] + ' (' + code + ')';
-        btn.onclick = function () {
-          selectEmp.value = code;
-          selectEmpText.textContent = empMap[code] + ' (' + code + ')';
-          selectEmpText.classList.remove('text-gray-500');
-          selectEmpText.classList.add('text-gray-900');
-          selectEmpMenu.classList.add('hidden');
-          selectEmp.dispatchEvent(new Event('change'));
-        };
-        selectEmpList.appendChild(btn);
-      });
-
-      // Tự động chọn nhân viên nếu thiết bị đã được liên kết
-      if (linkedEmpCode && empMap[linkedEmpCode]) {
-        // Chỉ auto-select nếu chưa có ai được chọn (tránh ghi đè khi người dùng đang chọn lại)
-        if (!selectEmp.value) {
-          selectEmp.value = linkedEmpCode;
-          selectEmpText.textContent = empMap[linkedEmpCode] + ' (' + linkedEmpCode + ')';
-          selectEmpText.classList.remove('text-gray-500');
-          selectEmpText.classList.add('text-gray-900');
-          // Đánh dấu thiết bị đã xác thực TRƯỚC khi dispatch event
-          // tránh handler gọi lại check-device và reset deviceVerified về false
-          deviceVerified = true;
-          selectEmp.dispatchEvent(new CustomEvent('change', { detail: { skipDeviceCheck: true } }));
-        }
-      }
-
-      // Cập nhật banner trạng thái thiết bị
-      updateDeviceStatusBanner(linkedEmpCode);
-      // Cập nhật danh sách đăng ký gần đây theo nhân viên thiết bị đang liên kết
-      renderRecentList();
-    }
-
-    function updateDeviceStatusBanner(linkedEmpCode) {
-      var banner = document.getElementById('device-status-banner');
-      if (!banner) return;
-
-      if (linkedEmpCode && empMap[linkedEmpCode]) {
-        // Kiểm tra nhân viên đã có Passkey chưa
-        var hasPasskey = false;
-        if (sysData && sysData.locations) {
+        if (sysData.locations && sysData.locations.length) {
           sysData.locations.forEach(function (loc) {
-            (loc.employees || []).forEach(function (emp) {
-              if (emp.code === linkedEmpCode && emp.passkeyCredentials && emp.passkeyCredentials.length > 0) {
-                hasPasskey = true;
-              }
-            });
+            if (loc.employees && loc.employees.length) {
+              loc.employees.forEach(function (emp) {
+                empMap[emp.code] = emp.name;
+                // Kiểm tra xem thiết bị này đã liên kết với nhân viên nào chưa
+                if (emp.registeredDevices && emp.registeredDevices.length) {
+                  emp.registeredDevices.forEach(function (dev) {
+                    if (dev.visitorId === currentVisitorId) {
+                      linkedEmpCode = emp.code;
+                    }
+                  });
+                }
+              });
+            }
           });
         }
+        // Populate Custom Select Employee element
+        selectEmpList.innerHTML = '';
+        var sortedCodes = Object.keys(empMap).sort();
+        sortedCodes.forEach(function (code) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'w-full text-left px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-colors focus:bg-brand-50 focus:text-brand-700 outline-none';
+          btn.textContent = empMap[code] + ' (' + code + ')';
+          btn.onclick = function () {
+            selectEmp.value = code;
+            selectEmpText.textContent = empMap[code] + ' (' + code + ')';
+            selectEmpText.classList.remove('text-gray-500');
+            selectEmpText.classList.add('text-gray-900');
+            selectEmpMenu.classList.add('hidden');
+            selectEmp.dispatchEvent(new Event('change'));
+          };
+          selectEmpList.appendChild(btn);
+        });
 
-        // Thiết bị đã liên kết — hiện thông báo xanh
-        banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-emerald-50 border border-emerald-200';
-        banner.style.removeProperty('display');
+        // Tự động chọn nhân viên nếu thiết bị đã được liên kết
+        if (linkedEmpCode && empMap[linkedEmpCode]) {
+          // Chỉ auto-select nếu chưa có ai được chọn (tránh ghi đè khi người dùng đang chọn lại)
+          if (!selectEmp.value) {
+            selectEmp.value = linkedEmpCode;
+            selectEmpText.textContent = empMap[linkedEmpCode] + ' (' + linkedEmpCode + ')';
+            selectEmpText.classList.remove('text-gray-500');
+            selectEmpText.classList.add('text-gray-900');
+            // Đánh dấu thiết bị đã xác thực TRƯỚC khi dispatch event
+            // tránh handler gọi lại check-device và reset deviceVerified về false
+            deviceVerified = true;
+            selectEmp.dispatchEvent(new CustomEvent('change', { detail: { skipDeviceCheck: true } }));
+          }
+        }
 
-        var passkeyNote = hasPasskey
-          ? '<p class="text-emerald-600 text-xs mt-1 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Passkey đã đăng ký — đổi trình duyệt vẫn nhận diện tự động.</p>'
-          : '<button type="button" onclick="offerPasskeyFromBanner(\'' + esc(linkedEmpCode) + '\')" class="mt-1.5 text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1 underline underline-offset-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Đăng ký nhận diện tự động (đổi trình duyệt không cần OTP)</button>';
+        // Cập nhật banner trạng thái thiết bị
+        updateDeviceStatusBanner(linkedEmpCode);
+        // Cập nhật danh sách đăng ký gần đây theo nhân viên thiết bị đang liên kết
+        renderRecentList();
+      }
 
-        banner.innerHTML =
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
+      function updateDeviceStatusBanner(linkedEmpCode) {
+        var banner = document.getElementById('device-status-banner');
+        if (!banner) return;
+
+        if (linkedEmpCode && empMap[linkedEmpCode]) {
+          // Kiểm tra nhân viên đã có Passkey chưa
+          var hasPasskey = false;
+          if (sysData && sysData.locations) {
+            sysData.locations.forEach(function (loc) {
+              (loc.employees || []).forEach(function (emp) {
+                if (emp.code === linkedEmpCode && emp.passkeyCredentials && emp.passkeyCredentials.length > 0) {
+                  hasPasskey = true;
+                }
+              });
+            });
+          }
+
+          // Thiết bị đã liên kết — hiện thông báo xanh
+          banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-emerald-50 border border-emerald-200';
+          banner.style.removeProperty('display');
+
+          var passkeyNote = hasPasskey
+            ? '<p class="text-emerald-600 text-xs mt-1 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Passkey đã đăng ký — đổi trình duyệt vẫn nhận diện tự động.</p>'
+            : '<button type="button" onclick="offerPasskeyFromBanner(\'' + esc(linkedEmpCode) + '\')" class="mt-1.5 text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1 underline underline-offset-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Đăng ký nhận diện tự động (đổi trình duyệt không cần OTP)</button>';
+
+          banner.innerHTML =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E7C66" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
             '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' +
-          '</svg>' +
-          '<div class="text-sm flex-1">' +
+            '</svg>' +
+            '<div class="text-sm flex-1">' +
             '<p class="font-bold text-emerald-800">Thiết bị đã được liên kết</p>' +
             '<p class="text-emerald-700 text-xs mt-0.5">Nhận diện là <span class="font-semibold">' + esc(empMap[linkedEmpCode]) + '</span>. Bạn có thể đăng ký lịch ngay.</p>' +
             passkeyNote +
-          '</div>';
-      } else if (!selectEmp.value) {
-        // Thiết bị chưa liên kết — hiện thông báo cam
-        banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-orange-50 border border-orange-200';
-        banner.style.removeProperty('display');
-        banner.innerHTML =
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
+            '</div>';
+        } else if (!selectEmp.value) {
+          // Thiết bị chưa liên kết — hiện thông báo cam
+          banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-orange-50 border border-orange-200';
+          banner.style.removeProperty('display');
+          banner.innerHTML =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
             '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
-          '</svg>' +
-          '<div class="text-sm">' +
+            '</svg>' +
+            '<div class="text-sm">' +
             '<p class="font-bold text-orange-800">Thiết bị chưa được liên kết</p>' +
             '<p class="text-orange-700 text-xs mt-0.5">Chọn tên của bạn bên dưới để xác thực và liên kết thiết bị này với tài khoản.</p>' +
-          '</div>';
-      } else {
-        // Đã chọn nhân viên — ẩn banner
-        banner.className = 'hidden';
-        banner.style.setProperty('display', 'none', 'important');
-      }
-    }
-
-    window.offerPasskeyFromBanner = function(empCode) {
-      if (!window.PublicKeyCredential) {
-        showToast('❌ Trình duyệt hoặc thiết bị không hỗ trợ Passkey', 'error');
-        return;
-      }
-      window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-        .then(function (available) {
-          if (!available) {
-            showToast('❌ Thiết bị không hỗ trợ Face ID / Touch ID / Windows Hello', 'error');
-            return;
-          }
-          registerPasskey(empCode);
-        })
-        .catch(function () {
-          showToast('❌ Không hỗ trợ xác thực bảo mật', 'error');
-        });
-    };
-
-    rebuildEmpDropdown();
-
-
-    // Toggle dropdown
-    selectEmpBtn.onclick = function () {
-      selectEmpMenu.classList.toggle('hidden');
-    };
-
-    // Close dropdown on click outside
-    document.addEventListener('click', function (e) {
-      if (!customEmpDropdown.contains(e.target)) {
-        selectEmpMenu.classList.add('hidden');
-      }
-    });
-
-    /* ====== Email logic ====== */
-    var EMAIL_STORE_KEY = 'cfhm-emp-emails';
-    // emailMap là cache bộ nhớ, được xây dựng từ regData và danh sách nhân viên của hệ thống
-    var emailMap = {};
-
-    function rebuildEmailMap() {
-      emailMap = {};
-      
-      // 1. Quét email từ thông tin nhân viên do Admin quản lý (Độ ưu tiên cao vì là dữ liệu admin thiết lập)
-      if (sysData && sysData.locations) {
-        sysData.locations.forEach(function (loc) {
-          if (loc.employees) {
-            loc.employees.forEach(function (emp) {
-              if (emp.email) emailMap[emp.code] = emp.email;
-            });
-          }
-        });
+            '</div>';
+        } else {
+          // Đã chọn nhân viên — ẩn banner
+          banner.className = 'hidden';
+          banner.style.setProperty('display', 'none', 'important');
+        }
       }
 
-      // 2. Dự phòng: quét từ lịch sử đăng ký nếu trước đó admin chưa cài mail nhưng nv đã từng tự nhập
-      regData.forEach(function (r) {
-        if (r.email && !emailMap[r.empCode]) emailMap[r.empCode] = r.email;
+      window.offerPasskeyFromBanner = function (empCode) {
+        if (!window.PublicKeyCredential) {
+          showToast('❌ Trình duyệt hoặc thiết bị không hỗ trợ Passkey', 'error');
+          return;
+        }
+        window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+          .then(function (available) {
+            if (!available) {
+              showToast('❌ Thiết bị không hỗ trợ Face ID / Touch ID / Windows Hello', 'error');
+              return;
+            }
+            registerPasskey(empCode);
+          })
+          .catch(function () {
+            showToast('❌ Không hỗ trợ xác thực bảo mật', 'error');
+          });
+      };
+
+      rebuildEmpDropdown();
+
+
+      // Toggle dropdown
+      selectEmpBtn.onclick = function () {
+        selectEmpMenu.classList.toggle('hidden');
+      };
+
+      // Close dropdown on click outside
+      document.addEventListener('click', function (e) {
+        if (!customEmpDropdown.contains(e.target)) {
+          selectEmpMenu.classList.add('hidden');
+        }
       });
 
-      // Ghi các email vào localStorage để dùng offline
-      localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(emailMap));
-    }
+      /* ====== Email logic ====== */
+      var EMAIL_STORE_KEY = 'cfhm-emp-emails';
+      // emailMap là cache bộ nhớ, được xây dựng từ regData và danh sách nhân viên của hệ thống
+      var emailMap = {};
 
-    function getEmailMap() {
-      // Ưu tiên emailMap trong bộ nhớ (xây từ regData), fallback localStorage
-      if (Object.keys(emailMap).length) return emailMap;
-      try { return JSON.parse(localStorage.getItem(EMAIL_STORE_KEY)) || {}; } catch (e) { return {}; }
-    }
-    function saveEmailMap(map) {
-      emailMap = map;
-      localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(map));
-      // Không cần gọi server riêng: email được gửi lên cùng regData khi submit form
-    }
-    function maskEmail(email) {
-      var parts = email.split('@');
-      if (parts.length !== 2) return email;
-      var local = parts[0];
-      var domain = parts[1];
-      var visible = local.length <= 2 ? local[0] : local.slice(0, 2);
-      return visible + '***@' + domain;
-    }
-    function showEmailSection(empCode) {
-      var emailSection = document.getElementById('email-section');
-      var emailDisplay = document.getElementById('email-display');
-      var emailInputWrap = document.getElementById('email-input-wrap');
-      var emailMasked = document.getElementById('email-masked');
-      var inputEmail = document.getElementById('input-email');
+      function rebuildEmailMap() {
+        emailMap = {};
 
-      if (!empCode) {
-        emailSection.classList.add('hidden');
-        emailDisplay.classList.add('hidden');
-        emailInputWrap.classList.add('hidden');
-        return;
-      }
+        // 1. Quét email từ thông tin nhân viên do Admin quản lý (Độ ưu tiên cao vì là dữ liệu admin thiết lập)
+        if (sysData && sysData.locations) {
+          sysData.locations.forEach(function (loc) {
+            if (loc.employees) {
+              loc.employees.forEach(function (emp) {
+                if (emp.email) emailMap[emp.code] = emp.email;
+              });
+            }
+          });
+        }
 
-      // Tìm email trực tiếp trong sysData (độ ưu tiên cao nhất)
-      var stored = null;
-      if (sysData && sysData.locations) {
-        sysData.locations.forEach(function (loc) {
-          if (loc.employees) {
-            loc.employees.forEach(function (emp) {
-              if (emp.code === empCode && emp.email) {
-                stored = emp.email;
-              }
-            });
-          }
-        });
-      }
-
-      // Dự phòng: Tìm trong regData
-      if (!stored && regData) {
+        // 2. Dự phòng: quét từ lịch sử đăng ký nếu trước đó admin chưa cài mail nhưng nv đã từng tự nhập
         regData.forEach(function (r) {
-          if (r.empCode === empCode && r.email) {
-            stored = r.email;
-          }
+          if (r.email && !emailMap[r.empCode]) emailMap[r.empCode] = r.email;
         });
+
+        // Ghi các email vào localStorage để dùng offline
+        localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(emailMap));
       }
 
-      // Dự phòng cuối: Tìm trong localMap
-      if (!stored) {
-        var emailMap = getEmailMap();
-        stored = emailMap[empCode];
+      function getEmailMap() {
+        // Ưu tiên emailMap trong bộ nhớ (xây từ regData), fallback localStorage
+        if (Object.keys(emailMap).length) return emailMap;
+        try { return JSON.parse(localStorage.getItem(EMAIL_STORE_KEY)) || {}; } catch (e) { return {}; }
       }
-
-      emailSection.classList.remove('hidden');
-
-      if (stored) {
-        emailMasked.textContent = maskEmail(stored);
-        emailDisplay.classList.remove('hidden');
-        emailInputWrap.classList.add('hidden');
-        inputEmail.value = '';
-      } else {
-        emailDisplay.classList.add('hidden');
-        emailInputWrap.classList.remove('hidden');
-        inputEmail.value = '';
-        inputEmail.focus();
+      function saveEmailMap(map) {
+        emailMap = map;
+        localStorage.setItem(EMAIL_STORE_KEY, JSON.stringify(map));
+        // Không cần gọi server riêng: email được gửi lên cùng regData khi submit form
       }
-    }
-
-    // === Thiết lập Device Fingerprinting & OTP ===
-    var deviceVerified = false;
-
-    function cyrb128(str) {
-      let h1 = 1779033703, h2 = 3024733117, h3 = 3362453659, h4 = 50249321;
-      for (let i = 0, k; i < str.length; i++) {
-        k = str.charCodeAt(i);
-        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
-        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
-        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
-        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+      function maskEmail(email) {
+        var parts = email.split('@');
+        if (parts.length !== 2) return email;
+        var local = parts[0];
+        var domain = parts[1];
+        var visible = local.length <= 2 ? local[0] : local.slice(0, 2);
+        return visible + '***@' + domain;
       }
-      h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
-      h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
-      h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
-      h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-      return [(h1^h2^h3^h4)>>>0, (h2^h1)>>>0, (h3^h1)>>>0, (h4^h1)>>>0];
-    }
-    
-    function getVisitorId() {
-      var parts = [
-        navigator.userAgent || '',
-        navigator.language || '',
-        screen.colorDepth || '',
-        screen.width + 'x' + screen.height,
-        new Date().getTimezoneOffset(),
-        navigator.hardwareConcurrency || '',
-        navigator.deviceMemory || ''
-      ];
-      try {
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = "#f60";
-        ctx.fillRect(125,1,62,20);
-        ctx.fillStyle = "#069";
-        ctx.fillText("CFHM Calendar Fingerprint v1", 2, 15);
-        parts.push(canvas.toDataURL());
-      } catch (e) {}
-      var hashParts = cyrb128(parts.join('||'));
-      return hashParts.map(function(x) { return x.toString(16).padStart(8, '0'); }).join('');
-    }
+      function showEmailSection(empCode) {
+        var emailSection = document.getElementById('email-section');
+        var emailDisplay = document.getElementById('email-display');
+        var emailInputWrap = document.getElementById('email-input-wrap');
+        var emailMasked = document.getElementById('email-masked');
+        var inputEmail = document.getElementById('input-email');
 
-    function sendOTPCode(empCode, visitorId, maskedEmail) {
-      document.getElementById('otp-masked-email').textContent = maskedEmail;
-      document.getElementById('otp-error').classList.add('hidden');
-      document.getElementById('otp-modal').classList.remove('hidden');
-      
-      var btnResend = document.getElementById('btn-resend-otp');
-      btnResend.disabled = true;
-      btnResend.textContent = 'Đang gửi mã...';
-
-      fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ empCode: empCode, visitorId: visitorId })
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data.ok) {
-          showToast('✅ Đã gửi mã OTP tới email của bạn!');
-        } else {
-          showToast('❌ Lỗi gửi OTP: ' + (data.error || 'Vui lòng thử lại.'));
+        if (!empCode) {
+          emailSection.classList.add('hidden');
+          emailDisplay.classList.add('hidden');
+          emailInputWrap.classList.add('hidden');
+          return;
         }
-      })
-      .catch(function () {
-        showToast('❌ Lỗi kết nối gửi OTP.');
-      })
-      .finally(function() {
-        btnResend.disabled = false;
-        btnResend.textContent = 'Gửi lại mã OTP';
-      });
-    }
 
-    document.getElementById('btn-cancel-otp').addEventListener('click', function () {
-      document.getElementById('otp-modal').classList.add('hidden');
-      // Reset dropdown
-      selectEmp.value = '';
-      selectEmpText.textContent = '— Chọn nhân viên —';
-      selectEmpText.classList.remove('text-gray-900');
-      selectEmpText.classList.add('text-gray-500');
-      showEmailSection('');
-      deviceVerified = false;
-      updateDeviceStatusBanner(null);
-    });
+        // Tìm email trực tiếp trong sysData (độ ưu tiên cao nhất)
+        var stored = null;
+        if (sysData && sysData.locations) {
+          sysData.locations.forEach(function (loc) {
+            if (loc.employees) {
+              loc.employees.forEach(function (emp) {
+                if (emp.code === empCode && emp.email) {
+                  stored = emp.email;
+                }
+              });
+            }
+          });
+        }
 
-    document.getElementById('btn-resend-otp').addEventListener('click', function () {
-      var empCode = selectEmp.value;
-      if (!empCode) return;
-      var email = '';
-      if (sysData && sysData.locations) {
-        sysData.locations.forEach(function (loc) {
-          if (loc.employees) {
-            loc.employees.forEach(function (emp) {
-              if (emp.code === empCode) email = emp.email;
-            });
-          }
-        });
-      }
-      if (!email) return;
-      var parts = email.split('@');
-      var masked = parts[0].slice(0, 2) + '***@' + parts[1];
-      sendOTPCode(empCode, getVisitorId(), masked);
-    });
+        // Dự phòng: Tìm trong regData
+        if (!stored && regData) {
+          regData.forEach(function (r) {
+            if (r.empCode === empCode && r.email) {
+              stored = r.email;
+            }
+          });
+        }
 
-    document.getElementById('btn-verify-otp').addEventListener('click', function () {
-      var otpInput = document.getElementById('input-otp');
-      var devInput = document.getElementById('input-device-name');
-      var otp = otpInput.value.trim();
-      var deviceName = devInput.value.trim();
-      var errDiv = document.getElementById('otp-error');
-      
-      if (otp.length !== 6 || !/^\d+$/.test(otp)) {
-        errDiv.textContent = 'Mã OTP phải có đúng 6 chữ số.';
-        errDiv.classList.remove('hidden');
-        otpInput.focus();
-        return;
+        // Dự phòng cuối: Tìm trong localMap
+        if (!stored) {
+          var emailMap = getEmailMap();
+          stored = emailMap[empCode];
+        }
+
+        emailSection.classList.remove('hidden');
+
+        if (stored) {
+          emailMasked.textContent = maskEmail(stored);
+          emailDisplay.classList.remove('hidden');
+          emailInputWrap.classList.add('hidden');
+          inputEmail.value = '';
+        } else {
+          emailDisplay.classList.add('hidden');
+          emailInputWrap.classList.remove('hidden');
+          inputEmail.value = '';
+          inputEmail.focus();
+        }
       }
-      if (!deviceName) {
-        errDiv.textContent = 'Vui lòng nhập tên thiết bị của bạn.';
-        errDiv.classList.remove('hidden');
-        devInput.focus();
-        return;
+
+      // === Thiết lập Device Fingerprinting & OTP ===
+      var deviceVerified = false;
+
+      function cyrb128(str) {
+        let h1 = 1779033703, h2 = 3024733117, h3 = 3362453659, h4 = 50249321;
+        for (let i = 0, k; i < str.length; i++) {
+          k = str.charCodeAt(i);
+          h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+          h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+          h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+          h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+        }
+        h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+        h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+        h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+        h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+        return [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0];
       }
-      
-      errDiv.classList.add('hidden');
-      var btnVerify = document.getElementById('btn-verify-otp');
-      btnVerify.disabled = true;
-      btnVerify.textContent = 'Đang xác minh...';
-      
-      fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          empCode: selectEmp.value,
-          visitorId: getVisitorId(),
-          otp: otp,
-          deviceName: deviceName
+
+      function getVisitorId() {
+        var parts = [
+          navigator.userAgent || '',
+          navigator.language || '',
+          screen.colorDepth || '',
+          screen.width + 'x' + screen.height,
+          new Date().getTimezoneOffset(),
+          navigator.hardwareConcurrency || '',
+          navigator.deviceMemory || ''
+        ];
+        try {
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
+          ctx.textBaseline = "alphabetic";
+          ctx.fillStyle = "#f60";
+          ctx.fillRect(125, 1, 62, 20);
+          ctx.fillStyle = "#069";
+          ctx.fillText("CFHM Calendar Fingerprint v1", 2, 15);
+          parts.push(canvas.toDataURL());
+        } catch (e) { }
+        var hashParts = cyrb128(parts.join('||'));
+        return hashParts.map(function (x) { return x.toString(16).padStart(8, '0'); }).join('');
+      }
+
+      function sendOTPCode(empCode, visitorId, maskedEmail) {
+        document.getElementById('otp-masked-email').textContent = maskedEmail;
+        document.getElementById('otp-error').classList.add('hidden');
+        document.getElementById('otp-modal').classList.remove('hidden');
+
+        var btnResend = document.getElementById('btn-resend-otp');
+        btnResend.disabled = true;
+        btnResend.textContent = 'Đang gửi mã...';
+
+        fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ empCode: empCode, visitorId: visitorId })
         })
-      })
-      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
-      .then(function (res) {
-        if (res.ok) {
-          showToast('✅ Thiết bị đã được xác thực thành công!');
-          document.getElementById('otp-modal').classList.add('hidden');
-          deviceVerified = true;
-          // Reload sysData để đồng bộ thiết bị vừa liên kết
-          fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-              if (data && data.locations) {
-                sysData = data;
-                rebuildEmpDropdown(); // sẽ gọi updateDeviceStatusBanner với linkedEmpCode → ẩn banner tự động
-              }
-            });
-          
-          // === Mời đăng ký Passkey để nhận diện thiết bị trên mọi trình duyệt ===
-          function _offerPasskey(empCodeForPasskey) {
-            if (!window.PublicKeyCredential) return; // Browser không hỗ trợ
-            window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-              .then(function (available) {
-                if (!available) return; // Không có Face ID / Windows Hello
-                var modal = document.getElementById('passkey-invite-modal');
-                if (!modal) return;
-                modal.classList.remove('hidden');
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.ok) {
+              showToast('✅ Đã gửi mã OTP tới email của bạn!');
+            } else {
+              showToast('❌ Lỗi gửi OTP: ' + (data.error || 'Vui lòng thử lại.'));
+            }
+          })
+          .catch(function () {
+            showToast('❌ Lỗi kết nối gửi OTP.');
+          })
+          .finally(function () {
+            btnResend.disabled = false;
+            btnResend.textContent = 'Gửi lại mã OTP';
+          });
+      }
 
-                var btnYes = document.getElementById('btn-passkey-yes');
-                var btnSkip = document.getElementById('btn-passkey-skip');
-                
-                // Clone để tránh duplicate listeners
-                var newYes = btnYes.cloneNode(true);
-                btnYes.parentNode.replaceChild(newYes, btnYes);
-                var newSkip = btnSkip.cloneNode(true);
-                btnSkip.parentNode.replaceChild(newSkip, btnSkip);
-
-                newYes.addEventListener('click', function () {
-                  modal.classList.add('hidden');
-                  registerPasskey(empCodeForPasskey);
-                });
-                newSkip.addEventListener('click', function () {
-                  modal.classList.add('hidden');
-                });
-              })
-              .catch(function () {});
-          }
-          _offerPasskey(selectEmp.value);
-        } else {
-          errDiv.textContent = res.data.error || 'Mã OTP không chính xác.';
-          errDiv.classList.remove('hidden');
-        }
-      })
-      .catch(function () {
-        errDiv.textContent = 'Lỗi kết nối mạng, vui lòng thử lại.';
-        errDiv.classList.remove('hidden');
-      })
-      .finally(function () {
-        btnVerify.disabled = false;
-        btnVerify.textContent = 'Xác minh & Liên kết';
+      document.getElementById('btn-cancel-otp').addEventListener('click', function () {
+        document.getElementById('otp-modal').classList.add('hidden');
+        // Reset dropdown
+        selectEmp.value = '';
+        selectEmpText.textContent = '— Chọn nhân viên —';
+        selectEmpText.classList.remove('text-gray-900');
+        selectEmpText.classList.add('text-gray-500');
+        showEmailSection('');
+        deviceVerified = false;
+        updateDeviceStatusBanner(null);
       });
-    });
 
-    // === WebAuthn: Đăng ký Passkey ===
-    function registerPasskey(empCode) {
-      fetch('/api/auth/webauthn-challenge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ empCode: empCode, action: 'begin-registration' })
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data.ok || !data.options) throw new Error(data.error || 'Không lấy được challenge.');
-        
-        var opts = data.options;
-        // Chuyển base64url → Uint8Array cho challenge và user.id
-        opts.challenge = base64urlToUint8Array(opts.challenge);
-        opts.user.id = base64urlToUint8Array(opts.user.id);
-        
-        return navigator.credentials.create({ publicKey: opts });
-      })
-      .then(function (credential) {
-        if (!credential) throw new Error('Không tạo được credential.');
-        
-        var response = credential.response;
-        return fetch('/api/auth/webauthn-register', {
+      document.getElementById('btn-resend-otp').addEventListener('click', function () {
+        var empCode = selectEmp.value;
+        if (!empCode) return;
+        var email = '';
+        if (sysData && sysData.locations) {
+          sysData.locations.forEach(function (loc) {
+            if (loc.employees) {
+              loc.employees.forEach(function (emp) {
+                if (emp.code === empCode) email = emp.email;
+              });
+            }
+          });
+        }
+        if (!email) return;
+        var parts = email.split('@');
+        var masked = parts[0].slice(0, 2) + '***@' + parts[1];
+        sendOTPCode(empCode, getVisitorId(), masked);
+      });
+
+      document.getElementById('btn-verify-otp').addEventListener('click', function () {
+        var otpInput = document.getElementById('input-otp');
+        var devInput = document.getElementById('input-device-name');
+        var otp = otpInput.value.trim();
+        var deviceName = devInput.value.trim();
+        var errDiv = document.getElementById('otp-error');
+
+        if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+          errDiv.textContent = 'Mã OTP phải có đúng 6 chữ số.';
+          errDiv.classList.remove('hidden');
+          otpInput.focus();
+          return;
+        }
+        if (!deviceName) {
+          errDiv.textContent = 'Vui lòng nhập tên thiết bị của bạn.';
+          errDiv.classList.remove('hidden');
+          devInput.focus();
+          return;
+        }
+
+        errDiv.classList.add('hidden');
+        var btnVerify = document.getElementById('btn-verify-otp');
+        btnVerify.disabled = true;
+        btnVerify.textContent = 'Đang xác minh...';
+
+        fetch('/api/auth/verify-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            empCode: empCode,
-            credentialId: credential.id,
-            clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
-            attestationObject: arrayBufferToBase64(response.attestationObject),
-            transports: response.getTransports ? response.getTransports() : ['internal'],
-            deviceName: getDeviceName(),
-            visitorId: getVisitorId()
+            empCode: selectEmp.value,
+            visitorId: getVisitorId(),
+            otp: otp,
+            deviceName: deviceName
           })
-        });
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data.ok) {
-          showToast('🔑 Đã đăng ký nhận diện thiết bị thành công! Lần sau tự động đăng nhập.');
-        } else {
-          showToast('Lỗi lưu Passkey: ' + data.error, 'error');
-          console.warn('[Passkey Register]', data.error);
-        }
-      })
-      .catch(function (err) {
-        // Người dùng huỷ → không báo lỗi
-        if (err.name !== 'NotAllowedError') {
-          showToast('Lỗi tạo Passkey: ' + err.message, 'error');
-          console.warn('[Passkey Register Error]', err.message);
-        }
-      });
-    }
+        })
+          .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+          .then(function (res) {
+            if (res.ok) {
+              showToast('✅ Thiết bị đã được xác thực thành công!');
+              document.getElementById('otp-modal').classList.add('hidden');
+              deviceVerified = true;
+              // Reload sysData để đồng bộ thiết bị vừa liên kết
+              fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                  if (data && data.locations) {
+                    sysData = data;
+                    rebuildEmpDropdown(); // sẽ gọi updateDeviceStatusBanner với linkedEmpCode → ẩn banner tự động
+                  }
+                });
 
-    // === WebAuthn: Xác thực Passkey (cross-browser recognition) ===
-    function tryPasskeyAuth(empCode) {
-      return new Promise(function (resolve, reject) {
-        if (!window.PublicKeyCredential) { reject(new Error('WebAuthn not supported')); return; }
-        
+              // === Mời đăng ký Passkey để nhận diện thiết bị trên mọi trình duyệt ===
+              function _offerPasskey(empCodeForPasskey) {
+                if (!window.PublicKeyCredential) return; // Browser không hỗ trợ
+                window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+                  .then(function (available) {
+                    if (!available) return; // Không có Face ID / Windows Hello
+                    var modal = document.getElementById('passkey-invite-modal');
+                    if (!modal) return;
+                    modal.classList.remove('hidden');
+
+                    var btnYes = document.getElementById('btn-passkey-yes');
+                    var btnSkip = document.getElementById('btn-passkey-skip');
+
+                    // Clone để tránh duplicate listeners
+                    var newYes = btnYes.cloneNode(true);
+                    btnYes.parentNode.replaceChild(newYes, btnYes);
+                    var newSkip = btnSkip.cloneNode(true);
+                    btnSkip.parentNode.replaceChild(newSkip, btnSkip);
+
+                    newYes.addEventListener('click', function () {
+                      modal.classList.add('hidden');
+                      registerPasskey(empCodeForPasskey);
+                    });
+                    newSkip.addEventListener('click', function () {
+                      modal.classList.add('hidden');
+                    });
+                  })
+                  .catch(function () { });
+              }
+              _offerPasskey(selectEmp.value);
+            } else {
+              errDiv.textContent = res.data.error || 'Mã OTP không chính xác.';
+              errDiv.classList.remove('hidden');
+            }
+          })
+          .catch(function () {
+            errDiv.textContent = 'Lỗi kết nối mạng, vui lòng thử lại.';
+            errDiv.classList.remove('hidden');
+          })
+          .finally(function () {
+            btnVerify.disabled = false;
+            btnVerify.textContent = 'Xác minh & Liên kết';
+          });
+      });
+
+      // === WebAuthn: Đăng ký Passkey ===
+      function registerPasskey(empCode) {
         fetch('/api/auth/webauthn-challenge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'begin-authentication', empCode: empCode || null, visitorId: getVisitorId() })
+          body: JSON.stringify({ empCode: empCode, action: 'begin-registration' })
         })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (!data.ok || !data.options) throw new Error(data.error || 'Không lấy được challenge.');
-          
-          var opts = data.options;
-          opts.challenge = base64urlToUint8Array(opts.challenge);
-          if (opts.allowCredentials && opts.allowCredentials.length > 0) {
-            opts.allowCredentials = opts.allowCredentials.map(function (c) {
-              return { id: base64urlToUint8Array(c.id), type: c.type, transports: c.transports };
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!data.ok || !data.options) throw new Error(data.error || 'Không lấy được challenge.');
+
+            var opts = data.options;
+            // Chuyển base64url → Uint8Array cho challenge và user.id
+            opts.challenge = base64urlToUint8Array(opts.challenge);
+            opts.user.id = base64urlToUint8Array(opts.user.id);
+
+            return navigator.credentials.create({ publicKey: opts });
+          })
+          .then(function (credential) {
+            if (!credential) throw new Error('Không tạo được credential.');
+
+            var response = credential.response;
+            return fetch('/api/auth/webauthn-register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                empCode: empCode,
+                credentialId: credential.id,
+                clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
+                attestationObject: arrayBufferToBase64(response.attestationObject),
+                transports: response.getTransports ? response.getTransports() : ['internal'],
+                deviceName: getDeviceName(),
+                visitorId: getVisitorId()
+              })
             });
-          } else {
-            // Không có Passkey nào được đăng ký cho user này
-            throw new Error('Chưa đăng ký Passkey.');
-          }
-          
-          return navigator.credentials.get({ publicKey: opts });
-        })
-        .then(function (assertion) {
-          if (!assertion) throw new Error('Xác thực thất bại.');
-          
-          var response = assertion.response;
-          return fetch('/api/auth/webauthn-verify', {
+          })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.ok) {
+              showToast('🔑 Đã đăng ký nhận diện thiết bị thành công! Lần sau tự động đăng nhập.');
+            } else {
+              showToast('Lỗi lưu Passkey: ' + data.error, 'error');
+              console.warn('[Passkey Register]', data.error);
+            }
+          })
+          .catch(function (err) {
+            // Người dùng huỷ → không báo lỗi
+            if (err.name !== 'NotAllowedError') {
+              showToast('Lỗi tạo Passkey: ' + err.message, 'error');
+              console.warn('[Passkey Register Error]', err.message);
+            }
+          });
+      }
+
+      // === WebAuthn: Xác thực Passkey (cross-browser recognition) ===
+      function tryPasskeyAuth(empCode) {
+        return new Promise(function (resolve, reject) {
+          if (!window.PublicKeyCredential) { reject(new Error('WebAuthn not supported')); return; }
+
+          fetch('/api/auth/webauthn-challenge', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              empCode: empCode,
-              credentialId: assertion.id,
-              clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
-              authenticatorData: arrayBufferToBase64(response.authenticatorData),
-              signature: arrayBufferToBase64(response.signature),
-              visitorId: getVisitorId(),
-              deviceName: getDeviceName()
+            body: JSON.stringify({ action: 'begin-authentication', empCode: empCode || null, visitorId: getVisitorId() })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (!data.ok || !data.options) throw new Error(data.error || 'Không lấy được challenge.');
+
+              var opts = data.options;
+              opts.challenge = base64urlToUint8Array(opts.challenge);
+              if (opts.allowCredentials && opts.allowCredentials.length > 0) {
+                opts.allowCredentials = opts.allowCredentials.map(function (c) {
+                  return { id: base64urlToUint8Array(c.id), type: c.type, transports: c.transports };
+                });
+              } else {
+                // Không có Passkey nào được đăng ký cho user này
+                throw new Error('Chưa đăng ký Passkey.');
+              }
+
+              return navigator.credentials.get({ publicKey: opts });
             })
-          });
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data.ok && data.empCode) {
-            resolve(data);
-          } else {
-            reject(new Error(data.error || 'Thiết bị này chưa được liên kết Passkey cho tài khoản của bạn.'));
-          }
-        })
-        .catch(function (err) {
-          reject(err);
-        });
-      });
-    }
+            .then(function (assertion) {
+              if (!assertion) throw new Error('Xác thực thất bại.');
 
-    // === Helper: Tên thiết bị tự động ===
-    function getDeviceName() {
-      var ua = navigator.userAgent;
-      if (/iPhone/.test(ua)) return 'iPhone của ' + (empMap[selectEmp.value] || selectEmp.value);
-      if (/iPad/.test(ua)) return 'iPad của ' + (empMap[selectEmp.value] || selectEmp.value);
-      if (/Android/.test(ua)) return 'Android của ' + (empMap[selectEmp.value] || selectEmp.value);
-      if (/Macintosh/.test(ua)) return 'Macbook của ' + (empMap[selectEmp.value] || selectEmp.value);
-      if (/Windows/.test(ua)) return 'Windows của ' + (empMap[selectEmp.value] || selectEmp.value);
-      return 'Thiết bị của ' + (empMap[selectEmp.value] || selectEmp.value);
-    }
-
-    // === Helpers: base64url <-> ArrayBuffer ===
-    function base64urlToUint8Array(base64url) {
-      var base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-      while (base64.length % 4) base64 += '=';
-      var binary = atob(base64);
-      var bytes = new Uint8Array(binary.length);
-      for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      return bytes;
-    }
-    function arrayBufferToBase64(buffer) {
-      var bytes = new Uint8Array(buffer);
-      var binary = '';
-      for (var i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    }
-
-
-
-    // Trigger email & device section check when employee is chosen
-    selectEmp.addEventListener('change', function (e) {
-      var empCode = selectEmp.value;
-      showEmailSection(empCode);
-      if (!empCode) {
-        deviceVerified = false;
-        updateDeviceStatusBanner(null);
-        return;
-      }
-
-      // Nếu đây là auto-select do thiết bị đã liên kết → bỏ qua check-device
-      if (e.detail && e.detail.skipDeviceCheck) {
-        // deviceVerified đã được set = true trước khi dispatch
-        updateDeviceStatusBanner(linkedEmpCode);
-        return;
-      }
-
-      // Ẩn banner khi đang check (sẽ cập nhật lại sau)
-      var banner = document.getElementById('device-status-banner');
-      if (banner) { banner.className = 'hidden'; banner.style.setProperty('display','none','important'); }
-      
-      var visitorId = getVisitorId();
-      
-      fetch('/api/auth/check-device', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ empCode: empCode, visitorId: visitorId })
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data.status === 'allowed') {
-          deviceVerified = true;
-          showToast('✅ Thiết bị hợp lệ. Bạn có thể đăng ký ca làm!');
-        } else if (data.status === 'conflict') {
-          deviceVerified = false;
-          alert('❌ ' + data.message);
-          // Reset dropdown
-          selectEmp.value = '';
-          selectEmpText.textContent = '— Chọn nhân viên —';
-          selectEmpText.classList.remove('text-gray-900');
-          selectEmpText.classList.add('text-gray-500');
-          showEmailSection('');
-          updateDeviceStatusBanner(null);
-        } else if (data.status === 'otp_required') {
-          deviceVerified = false;
-
-          function _showOtpModal(maskedEmail) {
-            var modal = document.getElementById('confirm-link-modal');
-            document.getElementById('confirm-masked-email').textContent = maskedEmail;
-            modal.classList.remove('hidden');
-            
-            var confirmBtn = document.getElementById('btn-confirm-link');
-            var cancelBtn = document.getElementById('btn-cancel-link');
-            
-            var newConfirmBtn = confirmBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-            var newCancelBtn = cancelBtn.cloneNode(true);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-            
-            newConfirmBtn.addEventListener('click', function() {
-              modal.classList.add('hidden');
-              sendOTPCode(empCode, visitorId, maskedEmail);
+              var response = assertion.response;
+              return fetch('/api/auth/webauthn-verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  empCode: empCode,
+                  credentialId: assertion.id,
+                  clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
+                  authenticatorData: arrayBufferToBase64(response.authenticatorData),
+                  signature: arrayBufferToBase64(response.signature),
+                  visitorId: getVisitorId(),
+                  deviceName: getDeviceName()
+                })
+              });
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (data.ok && data.empCode) {
+                resolve(data);
+              } else {
+                reject(new Error(data.error || 'Thiết bị này chưa được liên kết Passkey cho tài khoản của bạn.'));
+              }
+            })
+            .catch(function (err) {
+              reject(err);
             });
-            
-            newCancelBtn.addEventListener('click', function() {
-              modal.classList.add('hidden');
+        });
+      }
+
+      // === Helper: Tên thiết bị tự động ===
+      function getDeviceName() {
+        var ua = navigator.userAgent;
+        if (/iPhone/.test(ua)) return 'iPhone của ' + (empMap[selectEmp.value] || selectEmp.value);
+        if (/iPad/.test(ua)) return 'iPad của ' + (empMap[selectEmp.value] || selectEmp.value);
+        if (/Android/.test(ua)) return 'Android của ' + (empMap[selectEmp.value] || selectEmp.value);
+        if (/Macintosh/.test(ua)) return 'Macbook của ' + (empMap[selectEmp.value] || selectEmp.value);
+        if (/Windows/.test(ua)) return 'Windows của ' + (empMap[selectEmp.value] || selectEmp.value);
+        return 'Thiết bị của ' + (empMap[selectEmp.value] || selectEmp.value);
+      }
+
+      // === Helpers: base64url <-> ArrayBuffer ===
+      function base64urlToUint8Array(base64url) {
+        var base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        while (base64.length % 4) base64 += '=';
+        var binary = atob(base64);
+        var bytes = new Uint8Array(binary.length);
+        for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return bytes;
+      }
+      function arrayBufferToBase64(buffer) {
+        var bytes = new Uint8Array(buffer);
+        var binary = '';
+        for (var i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+      }
+
+
+
+      // Trigger email & device section check when employee is chosen
+      selectEmp.addEventListener('change', function (e) {
+        var empCode = selectEmp.value;
+        showEmailSection(empCode);
+        if (!empCode) {
+          deviceVerified = false;
+          updateDeviceStatusBanner(null);
+          return;
+        }
+
+        // Nếu đây là auto-select do thiết bị đã liên kết → bỏ qua check-device
+        if (e.detail && e.detail.skipDeviceCheck) {
+          // deviceVerified đã được set = true trước khi dispatch
+          updateDeviceStatusBanner(linkedEmpCode);
+          return;
+        }
+
+        // Ẩn banner khi đang check (sẽ cập nhật lại sau)
+        var banner = document.getElementById('device-status-banner');
+        if (banner) { banner.className = 'hidden'; banner.style.setProperty('display', 'none', 'important'); }
+
+        var visitorId = getVisitorId();
+
+        fetch('/api/auth/check-device', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ empCode: empCode, visitorId: visitorId })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.status === 'allowed') {
+              deviceVerified = true;
+              showToast('✅ Thiết bị hợp lệ. Bạn có thể đăng ký ca làm!');
+            } else if (data.status === 'conflict') {
+              deviceVerified = false;
+              alert('❌ ' + data.message);
+              // Reset dropdown
               selectEmp.value = '';
               selectEmpText.textContent = '— Chọn nhân viên —';
               selectEmpText.classList.remove('text-gray-900');
               selectEmpText.classList.add('text-gray-500');
               showEmailSection('');
               updateDeviceStatusBanner(null);
-            });
-          }
+            } else if (data.status === 'otp_required') {
+              deviceVerified = false;
 
-          // Thử dùng Passkey xác thực trước (cross-browser recognition)
-          if (window.PublicKeyCredential) {
-            tryPasskeyAuth(empCode)
-              .then(function (resData) {
-                if (resData && resData.ok && resData.empCode) {
-                  // Passkey xác thực thành công
-                  deviceVerified = true;
-                  showToast('🔑 Nhận diện thành công qua Face ID/Vân tay. Thiết bị hợp lệ!');
-                  
-                  // Reload sysData để đồng bộ thiết bị vừa liên kết qua Passkey
-                  fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                      if (data && data.locations) {
-                        sysData = data;
-                        localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
-                        rebuildEmpDropdown();
-                      }
-                    }).catch(function() {});
-                } else {
-                  _showOtpModal(data.maskedEmail);
-                }
-              })
-              .catch(function (err) {
-                // Chưa đăng ký Passkey hoặc lỗi → fallback OTP (không hiển thị lỗi gây khó chịu)
+              function _showOtpModal(maskedEmail) {
+                var modal = document.getElementById('confirm-link-modal');
+                document.getElementById('confirm-masked-email').textContent = maskedEmail;
+                modal.classList.remove('hidden');
+
+                var confirmBtn = document.getElementById('btn-confirm-link');
+                var cancelBtn = document.getElementById('btn-cancel-link');
+
+                var newConfirmBtn = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+                var newCancelBtn = cancelBtn.cloneNode(true);
+                cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+                newConfirmBtn.addEventListener('click', function () {
+                  modal.classList.add('hidden');
+                  sendOTPCode(empCode, visitorId, maskedEmail);
+                });
+
+                newCancelBtn.addEventListener('click', function () {
+                  modal.classList.add('hidden');
+                  selectEmp.value = '';
+                  selectEmpText.textContent = '— Chọn nhân viên —';
+                  selectEmpText.classList.remove('text-gray-900');
+                  selectEmpText.classList.add('text-gray-500');
+                  showEmailSection('');
+                  updateDeviceStatusBanner(null);
+                });
+              }
+
+              // Thử dùng Passkey xác thực trước (cross-browser recognition)
+              if (window.PublicKeyCredential) {
+                tryPasskeyAuth(empCode)
+                  .then(function (resData) {
+                    if (resData && resData.ok && resData.empCode) {
+                      // Passkey xác thực thành công
+                      deviceVerified = true;
+                      showToast('🔑 Nhận diện thành công qua Face ID/Vân tay. Thiết bị hợp lệ!');
+
+                      // Reload sysData để đồng bộ thiết bị vừa liên kết qua Passkey
+                      fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                          if (data && data.locations) {
+                            sysData = data;
+                            localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
+                            rebuildEmpDropdown();
+                          }
+                        }).catch(function () { });
+                    } else {
+                      _showOtpModal(data.maskedEmail);
+                    }
+                  })
+                  .catch(function (err) {
+                    // Chưa đăng ký Passkey hoặc lỗi → fallback OTP (không hiển thị lỗi gây khó chịu)
+                    _showOtpModal(data.maskedEmail);
+                  });
+              } else {
                 _showOtpModal(data.maskedEmail);
-              });
-          } else {
-            _showOtpModal(data.maskedEmail);
-          }
-        }
-      })
-      .catch(function () {
-        deviceVerified = false;
-        showToast('❌ Lỗi kiểm tra thiết bị. Vui lòng reload trang.', 'warn');
+              }
+            }
+          })
+          .catch(function () {
+            deviceVerified = false;
+            showToast('❌ Lỗi kiểm tra thiết bị. Vui lòng reload trang.', 'warn');
+          });
       });
-    });
 
-    // Render weekly days inputs inside form
-    var daysContainer = document.getElementById('weekly-days-container');
-    var dayBlocksMap = {};
+      // Render weekly days inputs inside form
+      var daysContainer = document.getElementById('weekly-days-container');
+      var dayBlocksMap = {};
 
-    function generateTimeOptions(selectedValue) {
-      var html = '';
-      for (var h = 0; h < 24; h++) {
-        var hh = h < 10 ? '0' + h : '' + h;
-        var val1 = hh + ':00';
-        html += '<option value="' + val1 + '"' + (selectedValue === val1 ? ' selected' : '') + '>' + val1 + '</option>';
-        var val2 = hh + ':30';
-        html += '<option value="' + val2 + '"' + (selectedValue === val2 ? ' selected' : '') + '>' + val2 + '</option>';
+      function generateTimeOptions(selectedValue) {
+        var html = '';
+        for (var h = 0; h < 24; h++) {
+          var hh = h < 10 ? '0' + h : '' + h;
+          var val1 = hh + ':00';
+          html += '<option value="' + val1 + '"' + (selectedValue === val1 ? ' selected' : '') + '>' + val1 + '</option>';
+          var val2 = hh + ':30';
+          html += '<option value="' + val2 + '"' + (selectedValue === val2 ? ' selected' : '') + '>' + val2 + '</option>';
+        }
+        html += '<option value="24:00"' + (selectedValue === '24:00' ? ' selected' : '') + '>24:00</option>';
+        return html;
       }
-      html += '<option value="24:00"' + (selectedValue === '24:00' ? ' selected' : '') + '>24:00</option>';
-      return html;
-    }
 
-    DAYS.forEach(function (day, index) {
-      var dayDiv = document.createElement('div');
-      dayDiv.className = 'day-block';
-      dayDiv.dataset.day = day.key;
-      dayDiv.dataset.index = index;
-      dayDiv.innerHTML = '\
+      DAYS.forEach(function (day, index) {
+        var dayDiv = document.createElement('div');
+        dayDiv.className = 'day-block';
+        dayDiv.dataset.day = day.key;
+        dayDiv.dataset.index = index;
+        dayDiv.innerHTML = '\
       <div class="flex items-center justify-between mb-3">\
         <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-gray-700">\
           <input type="checkbox" class="day-enabled rounded text-brand-500 focus:ring-brand-500/30 w-4 h-4" style="accent-color:#0E7C66">\
@@ -1563,80 +1594,80 @@
       </div>\
       <div class="day-time-ranges space-y-2 hidden"></div>';
 
-      var chk = dayDiv.querySelector('.day-enabled');
-      var addBtn = dayDiv.querySelector('.btn-add-day-range');
-      var copyBtn = dayDiv.querySelector('.btn-copy-prev');
-      var timeRangesDiv = dayDiv.querySelector('.day-time-ranges');
+        var chk = dayDiv.querySelector('.day-enabled');
+        var addBtn = dayDiv.querySelector('.btn-add-day-range');
+        var copyBtn = dayDiv.querySelector('.btn-copy-prev');
+        var timeRangesDiv = dayDiv.querySelector('.day-time-ranges');
 
-      chk.onchange = function () {
-        if (chk.checked) {
-          addBtn.classList.remove('hidden');
-          timeRangesDiv.classList.remove('hidden');
-          if (timeRangesDiv.children.length === 0) {
-            addTimeRowToDay(timeRangesDiv);
+        chk.onchange = function () {
+          if (chk.checked) {
+            addBtn.classList.remove('hidden');
+            timeRangesDiv.classList.remove('hidden');
+            if (timeRangesDiv.children.length === 0) {
+              addTimeRowToDay(timeRangesDiv);
+            }
+          } else {
+            addBtn.classList.add('hidden');
+            timeRangesDiv.classList.add('hidden');
+            timeRangesDiv.innerHTML = '';
           }
-        } else {
-          addBtn.classList.add('hidden');
-          timeRangesDiv.classList.add('hidden');
-          timeRangesDiv.innerHTML = '';
-        }
-        updateCopyButtons();
-      };
-
-      addBtn.onclick = function () {
-        addTimeRowToDay(timeRangesDiv);
-      };
-
-      if (index > 0) {
-        copyBtn.onclick = function () {
-          var prevDayBlock = dayBlocksMap[DAYS[index - 1].key];
-          if (!prevDayBlock) return;
-          var prevRanges = prevDayBlock.querySelectorAll('.time-row');
-          if (prevRanges.length === 0) return;
-
-          timeRangesDiv.innerHTML = '';
-          prevRanges.forEach(function (row) {
-            var s = row.querySelector('.time-start').value;
-            var en = row.querySelector('.time-end').value;
-            addTimeRowToDay(timeRangesDiv, s, en);
-          });
-
-          showToast('📋 Đã sao chép khung giờ từ ' + DAYS[index - 1].label + '!');
           updateCopyButtons();
         };
+
+        addBtn.onclick = function () {
+          addTimeRowToDay(timeRangesDiv);
+        };
+
+        if (index > 0) {
+          copyBtn.onclick = function () {
+            var prevDayBlock = dayBlocksMap[DAYS[index - 1].key];
+            if (!prevDayBlock) return;
+            var prevRanges = prevDayBlock.querySelectorAll('.time-row');
+            if (prevRanges.length === 0) return;
+
+            timeRangesDiv.innerHTML = '';
+            prevRanges.forEach(function (row) {
+              var s = row.querySelector('.time-start').value;
+              var en = row.querySelector('.time-end').value;
+              addTimeRowToDay(timeRangesDiv, s, en);
+            });
+
+            showToast('📋 Đã sao chép khung giờ từ ' + DAYS[index - 1].label + '!');
+            updateCopyButtons();
+          };
+        }
+
+        dayBlocksMap[day.key] = dayDiv;
+        daysContainer.appendChild(dayDiv);
+      });
+
+      function updateCopyButtons() {
+        DAYS.forEach(function (day, index) {
+          if (index === 0) return;
+          var currentBlock = dayBlocksMap[day.key];
+          var prevBlock = dayBlocksMap[DAYS[index - 1].key];
+          if (!currentBlock || !prevBlock) return;
+
+          var currentChecked = currentBlock.querySelector('.day-enabled').checked;
+          var prevChecked = prevBlock.querySelector('.day-enabled').checked;
+          var prevHasRanges = prevBlock.querySelectorAll('.time-row').length > 0;
+
+          var copyBtn = currentBlock.querySelector('.btn-copy-prev');
+          if (currentChecked && prevChecked && prevHasRanges) {
+            copyBtn.classList.remove('hidden');
+          } else {
+            copyBtn.classList.add('hidden');
+          }
+        });
       }
 
-      dayBlocksMap[day.key] = dayDiv;
-      daysContainer.appendChild(dayDiv);
-    });
+      function addTimeRowToDay(container, startVal, endVal) {
+        startVal = startVal || '05:00';
+        endVal = endVal || '08:00';
 
-    function updateCopyButtons() {
-      DAYS.forEach(function (day, index) {
-        if (index === 0) return;
-        var currentBlock = dayBlocksMap[day.key];
-        var prevBlock = dayBlocksMap[DAYS[index - 1].key];
-        if (!currentBlock || !prevBlock) return;
-
-        var currentChecked = currentBlock.querySelector('.day-enabled').checked;
-        var prevChecked = prevBlock.querySelector('.day-enabled').checked;
-        var prevHasRanges = prevBlock.querySelectorAll('.time-row').length > 0;
-
-        var copyBtn = currentBlock.querySelector('.btn-copy-prev');
-        if (currentChecked && prevChecked && prevHasRanges) {
-          copyBtn.classList.remove('hidden');
-        } else {
-          copyBtn.classList.add('hidden');
-        }
-      });
-    }
-
-    function addTimeRowToDay(container, startVal, endVal) {
-      startVal = startVal || '05:00';
-      endVal = endVal || '08:00';
-
-      var div = document.createElement('div');
-      div.className = 'time-row flex items-center gap-2 pop';
-      div.innerHTML = '\
+        var div = document.createElement('div');
+        div.className = 'time-row flex items-center gap-2 pop';
+        div.innerHTML = '\
       <div class="flex-1 flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-2 py-1.5 focus-within:border-brand-400 transition-colors">\
         <span class="text-xs font-semibold text-gray-400 shrink-0">Từ</span>\
         <select class="time-start flex-1 bg-transparent outline-none text-xs font-bold text-gray-800 min-w-0 mono cursor-pointer">\
@@ -1652,401 +1683,422 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>\
       </button>';
 
-      div.querySelector('.btn-rm-time-row').onclick = function () {
-        if (container.children.length > 1) {
-          div.remove();
-          updateCopyButtons();
-        } else {
-          showToast('Cần ít nhất 1 khung giờ nếu đã bật ngày này', 'warn');
+        div.querySelector('.btn-rm-time-row').onclick = function () {
+          if (container.children.length > 1) {
+            div.remove();
+            updateCopyButtons();
+          } else {
+            showToast('Cần ít nhất 1 khung giờ nếu đã bật ngày này', 'warn');
+          }
+        };
+
+        div.querySelector('.time-start').onchange = updateCopyButtons;
+        div.querySelector('.time-end').onchange = updateCopyButtons;
+
+        container.appendChild(div);
+        updateCopyButtons();
+      }
+
+      // Xử lý nút Lưu Email
+      document.getElementById('btn-save-email').addEventListener('click', function () {
+        var inputEmailEl = document.getElementById('input-email');
+        var email = inputEmailEl.value.trim();
+        var empCode = selectEmp.value;
+        if (!empCode) return;
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showToast('Vui lòng nhập địa chỉ email hợp lệ.', 'error');
+          inputEmailEl.focus();
+          return;
         }
-      };
-
-      div.querySelector('.time-start').onchange = updateCopyButtons;
-      div.querySelector('.time-end').onchange = updateCopyButtons;
-
-      container.appendChild(div);
-      updateCopyButtons();
-    }
-
-    // Xử lý nút Lưu Email
-    document.getElementById('btn-save-email').addEventListener('click', function () {
-      var inputEmailEl = document.getElementById('input-email');
-      var email = inputEmailEl.value.trim();
-      var empCode = selectEmp.value;
-      if (!empCode) return;
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showToast('Vui lòng nhập địa chỉ email hợp lệ.', 'error');
-        inputEmailEl.focus();
-        return;
-      }
-      
-      // Cập nhật sysData và push lên server
-      var updated = false;
-      if (sysData && sysData.locations) {
-        sysData.locations.forEach(function(loc) {
-          if (loc.employees) {
-            loc.employees.forEach(function(emp) {
-              if (emp.code === empCode) {
-                emp.email = email;
-                updated = true;
-              }
-            });
-          }
-        });
-      }
-      if (updated) {
-        // Disable nút trong lúc lưu
-        var btnSave = document.getElementById('btn-save-email');
-        var oldText = btnSave.textContent;
-        btnSave.textContent = 'Đang lưu...';
-        btnSave.disabled = true;
-
-        fetch('/api/employee/save-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ empCode: empCode, email: email })
-        }).then(function(res) {
-          if (!res.ok) throw new Error('Save failed');
-          // Cập nhật local memory copy để hiển thị ngay
-          rebuildEmailMap();
-          showEmailSection(empCode);
-          showToast('Đã lưu email và đồng bộ vào hệ thống!');
-
-          // Nếu thiết bị chưa được xác thực → tự động kích hoạt luồng OTP ngay
-          // (check-device trước đó trả về lỗi vì chưa có email, nên OTP chưa được gửi)
-          if (!deviceVerified) {
-            var visitorId = getVisitorId();
-            var parts = email.split('@');
-            var masked = parts[0].slice(0, 2) + '***@' + parts[1];
-            // Delay nhỏ để toast "Đã lưu email" hiện trước
-            setTimeout(function () {
-              sendOTPCode(empCode, visitorId, masked);
-            }, 600);
-          }
-        }).catch(function(e) {
-          console.error(e);
-          showToast('Lỗi khi lưu email. Vui lòng thử lại.', 'error');
-        }).finally(function() {
-          btnSave.textContent = oldText;
-          btnSave.disabled = false;
-        });
-      } else {
-        showToast('Không tìm thấy nhân viên trong hệ thống.', 'error');
-      }
-    });
-
-    // Handle Form Submit
-    document.getElementById('register-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var errEl = document.getElementById('form-error');
-      var okEl = document.getElementById('form-success');
-      errEl.classList.add('hidden');
-      okEl.classList.add('hidden');
-
-      var empCode = selectEmp.value;
-      if (!empCode) { errEl.textContent = 'Vui lòng chọn tên nhân viên.'; errEl.classList.remove('hidden'); return; }
-
-      // Fallback: nếu thiết bị đã nhận diện qua linkedEmpCode (OTP/Passkey) → coi như verified
-      if (!deviceVerified && linkedEmpCode && linkedEmpCode === empCode) {
-        deviceVerified = true;
-      }
-
-      if (!deviceVerified) {
-        errEl.textContent = 'Thiết bị của bạn chưa được xác thực. Vui lòng xác thực thiết bị bằng mã OTP gửi qua email trước khi đăng ký ca!';
-        errEl.classList.remove('hidden');
-        // Mở lại modal OTP nếu cần thiết
-        var visitorId = getVisitorId();
-        var email = '';
+        // Kiểm tra xem email này đã được sử dụng bởi nhân viên nào khác chưa
+        var cleanEmail = email.toLowerCase();
+        var emailExists = false;
+        var emailOwnerName = '';
         if (sysData && sysData.locations) {
           sysData.locations.forEach(function (loc) {
             if (loc.employees) {
               loc.employees.forEach(function (emp) {
-                if (emp.code === empCode) email = emp.email;
+                if (emp.code !== empCode && emp.email && emp.email.trim().toLowerCase() === cleanEmail) {
+                  emailExists = true;
+                  emailOwnerName = emp.name;
+                }
               });
             }
           });
         }
-        if (email) {
-          var parts = email.split('@');
-          var masked = parts[0].slice(0, 2) + '***@' + parts[1];
-          sendOTPCode(empCode, visitorId, masked);
+
+        if (emailExists) {
+          showToast('❌ Email này đã được đăng ký cho ' + emailOwnerName + '. Vui lòng dùng email khác!', 'warn');
+          inputEmailEl.focus();
+          return;
         }
-        return;
-      }
-
-      var empName = empMap[empCode];
-
-      var emailMap = getEmailMap();
-      var finalEmail = emailMap[empCode];
-      
-      if (!finalEmail) {
-        errEl.textContent = 'Vui lòng nhập và bấm nút Lưu email xác nhận trước khi đăng ký ca!';
-        errEl.classList.remove('hidden');
-        var inputEmail = document.getElementById('input-email');
-        if (inputEmail && !document.getElementById('email-input-wrap').classList.contains('hidden')) {
-          inputEmail.focus();
-        }
-        return;
-      }
-
-      var daysChecked = [];
-      var validationOk = true;
-
-      // IE compatible selection
-      var dayBlocks = Array.from(document.querySelectorAll('.day-block'));
-      dayBlocks.forEach(function (dayBlock) {
-        var dayKey = dayBlock.dataset.day;
-        var isEnabled = dayBlock.querySelector('.day-enabled').checked;
-        if (isEnabled) {
-          var ranges = [];
-          dayBlock.querySelectorAll('.time-row').forEach(function (row) {
-            var s = row.querySelector('.time-start').value;
-            var en = row.querySelector('.time-end').value;
-            if (!s || !en || s >= en) {
-              validationOk = false;
-              return;
+        // Cập nhật sysData và push lên server
+        var updated = false;
+        if (sysData && sysData.locations) {
+          sysData.locations.forEach(function (loc) {
+            if (loc.employees) {
+              loc.employees.forEach(function (emp) {
+                if (emp.code === empCode) {
+                  emp.email = email;
+                  updated = true;
+                }
+              });
             }
-            ranges.push({ start: s, end: en });
           });
-          if (ranges.length > 0) {
-            daysChecked.push({ day: dayKey, timeRanges: ranges });
-          }
+        }
+        if (updated) {
+          // Disable nút trong lúc lưu
+          var btnSave = document.getElementById('btn-save-email');
+          var oldText = btnSave.textContent;
+          btnSave.textContent = 'Đang lưu...';
+          btnSave.disabled = true;
+
+          fetch('/api/employee/save-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ empCode: empCode, email: email })
+          }).then(function (res) {
+            if (!res.ok) throw new Error('Save failed');
+            // Cập nhật local memory copy để hiển thị ngay
+            rebuildEmailMap();
+            showEmailSection(empCode);
+            showToast('Đã lưu email và đồng bộ vào hệ thống!');
+
+            // Nếu thiết bị chưa được xác thực → tự động kích hoạt luồng OTP ngay
+            // (check-device trước đó trả về lỗi vì chưa có email, nên OTP chưa được gửi)
+            if (!deviceVerified) {
+              var visitorId = getVisitorId();
+              var parts = email.split('@');
+              var masked = parts[0].slice(0, 2) + '***@' + parts[1];
+              // Delay nhỏ để toast "Đã lưu email" hiện trước
+              setTimeout(function () {
+                sendOTPCode(empCode, visitorId, masked);
+              }, 600);
+            }
+          }).catch(function (e) {
+            console.error(e);
+            showToast('Lỗi khi lưu email. Vui lòng thử lại.', 'error');
+          }).finally(function () {
+            btnSave.textContent = oldText;
+            btnSave.disabled = false;
+          });
+        } else {
+          showToast('Không tìm thấy nhân viên trong hệ thống.', 'error');
         }
       });
 
-      if (!validationOk) {
-        errEl.textContent = 'Khung giờ ở các ngày đã chọn không hợp lệ — giờ kết thúc phải sau giờ bắt đầu.';
-        errEl.classList.remove('hidden');
-        return;
-      }
+      // Handle Form Submit
+      document.getElementById('register-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var errEl = document.getElementById('form-error');
+        var okEl = document.getElementById('form-success');
+        errEl.classList.add('hidden');
+        okEl.classList.add('hidden');
 
-      if (daysChecked.length === 0) {
-        errEl.textContent = 'Vui lòng chọn và thiết lập ít nhất 1 ngày làm việc.';
-        errEl.classList.remove('hidden');
-        return;
-      }
+        var empCode = selectEmp.value;
+        if (!empCode) { errEl.textContent = 'Vui lòng chọn tên nhân viên.'; errEl.classList.remove('hidden'); return; }
 
-      // Save each day as a separate registration item (or update if needed)
-      daysChecked.forEach(function (dayInfo) {
-        // Remove any existing registration for this employee/day combo
-        regData = regData.filter(function (x) {
-          return !(x.empCode === empCode && x.day === dayInfo.day);
+        // Fallback: nếu thiết bị đã nhận diện qua linkedEmpCode (OTP/Passkey) → coi như verified
+        if (!deviceVerified && linkedEmpCode && linkedEmpCode === empCode) {
+          deviceVerified = true;
+        }
+
+        if (!deviceVerified) {
+          errEl.textContent = 'Thiết bị của bạn chưa được xác thực. Vui lòng xác thực thiết bị bằng mã OTP gửi qua email trước khi đăng ký ca!';
+          errEl.classList.remove('hidden');
+          // Mở lại modal OTP nếu cần thiết
+          var visitorId = getVisitorId();
+          var email = '';
+          if (sysData && sysData.locations) {
+            sysData.locations.forEach(function (loc) {
+              if (loc.employees) {
+                loc.employees.forEach(function (emp) {
+                  if (emp.code === empCode) email = emp.email;
+                });
+              }
+            });
+          }
+          if (email) {
+            var parts = email.split('@');
+            var masked = parts[0].slice(0, 2) + '***@' + parts[1];
+            sendOTPCode(empCode, visitorId, masked);
+          }
+          return;
+        }
+
+        var empName = empMap[empCode];
+
+        var emailMap = getEmailMap();
+        var finalEmail = emailMap[empCode];
+
+        if (!finalEmail) {
+          errEl.textContent = 'Vui lòng nhập và bấm nút Lưu email xác nhận trước khi đăng ký ca!';
+          errEl.classList.remove('hidden');
+          var inputEmail = document.getElementById('input-email');
+          if (inputEmail && !document.getElementById('email-input-wrap').classList.contains('hidden')) {
+            inputEmail.focus();
+          }
+          return;
+        }
+
+        var daysChecked = [];
+        var validationOk = true;
+
+        // IE compatible selection
+        var dayBlocks = Array.from(document.querySelectorAll('.day-block'));
+        dayBlocks.forEach(function (dayBlock) {
+          var dayKey = dayBlock.dataset.day;
+          var isEnabled = dayBlock.querySelector('.day-enabled').checked;
+          if (isEnabled) {
+            var ranges = [];
+            dayBlock.querySelectorAll('.time-row').forEach(function (row) {
+              var s = row.querySelector('.time-start').value;
+              var en = row.querySelector('.time-end').value;
+              if (!s || !en || s >= en) {
+                validationOk = false;
+                return;
+              }
+              ranges.push({ start: s, end: en });
+            });
+            if (ranges.length > 0) {
+              daysChecked.push({ day: dayKey, timeRanges: ranges });
+            }
+          }
         });
-        // Add new — include email to sync lên server
-        regData.push({
-          id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
-          empCode: empCode,
-          email: finalEmail,
-          day: dayInfo.day,
-          timeRanges: dayInfo.timeRanges,
-          submittedAt: new Date().toISOString()
+
+        if (!validationOk) {
+          errEl.textContent = 'Khung giờ ở các ngày đã chọn không hợp lệ — giờ kết thúc phải sau giờ bắt đầu.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+
+        if (daysChecked.length === 0) {
+          errEl.textContent = 'Vui lòng chọn và thiết lập ít nhất 1 ngày làm việc.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+
+        // Save each day as a separate registration item (or update if needed)
+        daysChecked.forEach(function (dayInfo) {
+          // Remove any existing registration for this employee/day combo
+          regData = regData.filter(function (x) {
+            return !(x.empCode === empCode && x.day === dayInfo.day);
+          });
+          // Add new — include email to sync lên server
+          regData.push({
+            id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+            empCode: empCode,
+            email: finalEmail,
+            day: dayInfo.day,
+            timeRanges: dayInfo.timeRanges,
+            submittedAt: new Date().toISOString()
+          });
         });
+
+        rebuildEmailMap(); // Cập nhật cache sau khi push
+
+        saveRegs(empCode);
+
+        document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
+        okEl.classList.remove('hidden');
+
+        // Reset fields
+        selectEmp.value = '';
+        selectEmpText.textContent = '— Chọn nhân viên —';
+        selectEmpText.classList.add('text-gray-500');
+        selectEmpText.classList.remove('text-gray-900');
+        showEmailSection(''); // Hide email section
+
+        // Khôi phục lại việc tự động chọn nhân viên & cập nhật trạng thái thiết bị đã liên kết
+        rebuildEmpDropdown();
+
+        dayBlocks.forEach(function (dayBlock) {
+          dayBlock.querySelector('.day-enabled').checked = false;
+          dayBlock.querySelector('.btn-add-day-range').classList.add('hidden');
+          var container = dayBlock.querySelector('.day-time-ranges');
+          container.classList.add('hidden');
+          container.innerHTML = '';
+        });
+        updateCopyButtons();
+
+        renderRecentList();
+        showToast('✅ Đăng ký lịch tuần thành công!');
       });
 
-      rebuildEmailMap(); // Cập nhật cache sau khi push
+      function renderRecentList() {
+        var section = document.getElementById('recent-section');
+        var el = document.getElementById('recent-list');
+        var titleEl = document.getElementById('recent-list-title');
 
-      saveRegs(empCode);
+        // Nếu chưa liên kết thiết bị → ẩn toàn bộ section
+        if (!linkedEmpCode) {
+          if (section) section.hidden = true;
+          return;
+        }
 
-      document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
-      okEl.classList.remove('hidden');
+        // Đã liên kết → hiện section, lọc theo nhân viên
+        if (section) section.hidden = false;
+        var empName = empMap[linkedEmpCode] || linkedEmpCode;
+        if (titleEl) titleEl.textContent = 'Lịch của ' + empName;
 
-      // Reset fields
-      selectEmp.value = '';
-      selectEmpText.textContent = '— Chọn nhân viên —';
-      selectEmpText.classList.add('text-gray-500');
-      selectEmpText.classList.remove('text-gray-900');
-      showEmailSection(''); // Hide email section
-      
-      // Khôi phục lại việc tự động chọn nhân viên & cập nhật trạng thái thiết bị đã liên kết
-      rebuildEmpDropdown();
+        var recent = regData.slice().reverse()
+          .filter(function (r) { return r.empCode === linkedEmpCode; })
+          .slice(0, 8);
 
-      dayBlocks.forEach(function (dayBlock) {
-        dayBlock.querySelector('.day-enabled').checked = false;
-        dayBlock.querySelector('.btn-add-day-range').classList.add('hidden');
-        var container = dayBlock.querySelector('.day-time-ranges');
-        container.classList.add('hidden');
-        container.innerHTML = '';
-      });
-      updateCopyButtons();
+        if (!recent.length) {
+          el.innerHTML = '<p class="text-sm text-gray-400 italic">Bạn chưa có lịch đăng ký nào.</p>';
+          return;
+        }
 
-      renderRecentList();
-      showToast('✅ Đăng ký lịch tuần thành công!');
-    });
-
-    function renderRecentList() {
-      var section = document.getElementById('recent-section');
-      var el = document.getElementById('recent-list');
-      var titleEl = document.getElementById('recent-list-title');
-
-      // Nếu chưa liên kết thiết bị → ẩn toàn bộ section
-      if (!linkedEmpCode) {
-        if (section) section.hidden = true;
-        return;
-      }
-
-      // Đã liên kết → hiện section, lọc theo nhân viên
-      if (section) section.hidden = false;
-      var empName = empMap[linkedEmpCode] || linkedEmpCode;
-      if (titleEl) titleEl.textContent = 'Lịch của ' + empName;
-
-      var recent = regData.slice().reverse()
-        .filter(function (r) { return r.empCode === linkedEmpCode; })
-        .slice(0, 8);
-
-      if (!recent.length) {
-        el.innerHTML = '<p class="text-sm text-gray-400 italic">Bạn chưa có lịch đăng ký nào.</p>';
-        return;
-      }
-
-      el.innerHTML = recent.map(function (r) {
-        var dl = DAYS.find(function (d) { return d.key === r.day; }); dl = dl ? dl.label : r.day;
-        return '<div class="flex items-center gap-2.5 py-2 border-b border-gray-50 last:border-0">\
+        el.innerHTML = recent.map(function (r) {
+          var dl = DAYS.find(function (d) { return d.key === r.day; }); dl = dl ? dl.label : r.day;
+          return '<div class="flex items-center gap-2.5 py-2 border-b border-gray-50 last:border-0">\
         <span class="text-xs font-semibold text-gray-400 shrink-0">'+ esc(dl) + '</span>\
         <span class="mono text-xs text-gray-600 font-medium truncate">' + r.timeRanges.map(function (t) { return t.start + '\u2013' + t.end; }).join(' · ') + '</span>\
       </div>';
-      }).join('');
-    }
-    renderRecentList();
-    renderPublishedSchedule();
+        }).join('');
+      }
+      renderRecentList();
+      renderPublishedSchedule();
 
-    /* ====== WebAuthn Auto-Login khi tải trang ====== */
-    // Chạy ngay khi load — nếu thiết bị đã đăng ký Passkey thì tự nhận diện
-    // kể cả khi nhân viên mở bằng trình duyệt khác
-    (function tryPasskeyAutoLogin() {
-      if (!window.PublicKeyCredential) return; // Browser không hỗ trợ → bỏ qua
+      /* ====== WebAuthn Auto-Login khi tải trang ====== */
+      // Chạy ngay khi load — nếu thiết bị đã đăng ký Passkey thì tự nhận diện
+      // kể cả khi nhân viên mở bằng trình duyệt khác
+      (function tryPasskeyAutoLogin() {
+        if (!window.PublicKeyCredential) return; // Browser không hỗ trợ → bỏ qua
 
-      // Chỉ chạy nếu chưa có ai được chọn
-      if (selectEmp && selectEmp.value) return;
+        // Chỉ chạy nếu chưa có ai được chọn
+        if (selectEmp && selectEmp.value) return;
 
-      // Kiểm tra nhanh không cần user interaction (silent)
-      window.PublicKeyCredential.isConditionalMediationAvailable
-        ? window.PublicKeyCredential.isConditionalMediationAvailable()
-            .then(function(available) { if (available) _doPasskeyAutoSilent(); else _doPasskeyAutoActive(); })
-            .catch(function() { _doPasskeyAutoActive(); })
-        : _doPasskeyAutoActive();
+        // Kiểm tra nhanh không cần user interaction (silent)
+        window.PublicKeyCredential.isConditionalMediationAvailable
+          ? window.PublicKeyCredential.isConditionalMediationAvailable()
+            .then(function (available) { if (available) _doPasskeyAutoSilent(); else _doPasskeyAutoActive(); })
+            .catch(function () { _doPasskeyAutoActive(); })
+          : _doPasskeyAutoActive();
 
-      // Active mode: gọi navigator.credentials.get với mediation: 'optional'
-      function _doPasskeyAutoActive() {
-        tryPasskeyAuth()
-          .then(function(data) {
-            if (!data.empCode) return;
-            // Tìm và auto-chọn nhân viên trong dropdown
-            if (empMap[data.empCode]) {
-              selectEmp.value = data.empCode;
-              selectEmpText.textContent = empMap[data.empCode] + ' (' + data.empCode + ')';
-              selectEmpText.classList.remove('text-gray-500');
-              selectEmpText.classList.add('text-gray-900');
-              deviceVerified = true;
-              // Reload sysData để đồng bộ thiết bị vừa liên kết qua Passkey Auto-login
-              fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-                .then(function (r) { return r.json(); })
-                .then(function (d) {
-                  if (d && d.locations) {
-                    sysData = d;
-                    localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(d));
-                    rebuildEmpDropdown();
-                    selectEmp.dispatchEvent(new Event('change'));
-                    showToast('🔑 Nhận diện thành công: ' + data.empName + '. Thiết bị hợp lệ!');
-                  }
-                }).catch(function() {});
+        // Active mode: gọi navigator.credentials.get với mediation: 'optional'
+        function _doPasskeyAutoActive() {
+          tryPasskeyAuth()
+            .then(function (data) {
+              if (!data.empCode) return;
+              // Tìm và auto-chọn nhân viên trong dropdown
+              if (empMap[data.empCode]) {
+                selectEmp.value = data.empCode;
+                selectEmpText.textContent = empMap[data.empCode] + ' (' + data.empCode + ')';
+                selectEmpText.classList.remove('text-gray-500');
+                selectEmpText.classList.add('text-gray-900');
+                deviceVerified = true;
+                // Reload sysData để đồng bộ thiết bị vừa liên kết qua Passkey Auto-login
+                fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+                  .then(function (r) { return r.json(); })
+                  .then(function (d) {
+                    if (d && d.locations) {
+                      sysData = d;
+                      localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(d));
+                      rebuildEmpDropdown();
+                      selectEmp.dispatchEvent(new Event('change'));
+                      showToast('🔑 Nhận diện thành công: ' + data.empName + '. Thiết bị hợp lệ!');
+                    }
+                  }).catch(function () { });
+              }
+            })
+            .catch(function () {
+              // Thất bại → không làm gì, nhân viên chọn tay bình thường
+            });
+        }
+
+        // Silent conditional mode (Chrome 108+ trên desktop)
+        function _doPasskeyAutoSilent() {
+          // Conditional UI — browser tự quyết khi nào hỏi, không block UI
+          _doPasskeyAutoActive(); // fallback luôn vì thiết bị mobile không cần conditional
+        }
+      })();
+
+      /* ====== Kiểm tra khóa đăng ký ====== */
+      function checkRegistrationLock() {
+        var LOCK_REG_KEY = 'cfhm-registration-lock-config';
+        var cfg = { enabled: false };
+        try {
+          var raw = localStorage.getItem(LOCK_REG_KEY);
+          if (raw) cfg = JSON.parse(raw);
+        } catch (e) { }
+
+        // Fetch lock config từ server để đảm bảo mới nhất (tránh cache CDN/Browser)
+        fetch('/data/lock_config.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data && typeof data === 'object') {
+              var oldRaw = localStorage.getItem(LOCK_REG_KEY);
+              var newRaw = JSON.stringify(data);
+              if (oldRaw !== newRaw) {
+                localStorage.setItem(LOCK_REG_KEY, newRaw);
+                checkRegistrationLock(); // Tự gọi lại hàm để update giao diện nếu có thay đổi
+              }
             }
-          })
-          .catch(function() {
-            // Thất bại → không làm gì, nhân viên chọn tay bình thường
-          });
+          }).catch(function () { });
+
+        if (!cfg.enabled) {
+          // Mở khoá
+          document.getElementById('form-container').classList.remove('hidden');
+          document.getElementById('lock-container').classList.add('hidden');
+          return;
+        }
+
+
+        var now = new Date();
+        var day = now.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+        var hour = now.getHours();
+        var min = now.getMinutes();
+
+        function toMinutes(dayStr, timeStr) {
+          var dayMap = { 'T2': 1, 'T3': 2, 'T4': 3, 'T5': 4, 'T6': 5, 'T7': 6, 'CN': 0 };
+          var dayNum = dayMap[dayStr] !== undefined ? dayMap[dayStr] : 0;
+          var daysSinceMonday = (dayNum + 6) % 7;
+          var timeParts = timeStr.split(':');
+          var h = parseInt(timeParts[0] || '0', 10);
+          var m = parseInt(timeParts[1] || '0', 10);
+          return daysSinceMonday * 24 * 60 + h * 60 + m;
+        }
+
+        var currentDaysSinceMonday = (day + 6) % 7;
+        var currentMinutes = currentDaysSinceMonday * 24 * 60 + hour * 60 + min;
+
+        var startMin = toMinutes(cfg.startDay, cfg.startTime);
+        var endMin = toMinutes(cfg.endDay, cfg.endTime);
+
+        var isOpen = false;
+        if (startMin <= endMin) {
+          isOpen = currentMinutes >= startMin && currentMinutes <= endMin;
+        } else {
+          isOpen = currentMinutes >= startMin || currentMinutes <= endMin;
+        }
+
+        if (!isOpen) {
+          // Khi khoá: Giữ tab nút Đăng ký, chỉ ẩn form và hiện màn hình khoá
+          document.getElementById('form-container').classList.add('hidden');
+          document.getElementById('lock-container').classList.remove('hidden');
+
+          var dayLabels = { 'T2': 'Thứ 2', 'T3': 'Thứ 3', 'T4': 'Thứ 4', 'T5': 'Thứ 5', 'T6': 'Thứ 6', 'T7': 'Thứ 7', 'CN': 'Chủ Nhật' };
+          var startLabel = (dayLabels[cfg.startDay] || cfg.startDay) + ' ' + cfg.startTime;
+          var endLabel = (dayLabels[cfg.endDay] || cfg.endDay) + ' ' + cfg.endTime;
+
+          document.getElementById('lock-time-window').textContent = startLabel + ' đến ' + endLabel;
+        }
       }
+      checkRegistrationLock();
 
-      // Silent conditional mode (Chrome 108+ trên desktop)
-      function _doPasskeyAutoSilent() {
-        // Conditional UI — browser tự quyết khi nào hỏi, không block UI
-        _doPasskeyAutoActive(); // fallback luôn vì thiết bị mobile không cần conditional
+
+      var toastT;
+      function showToast(msg, type) {
+        var el = document.getElementById('toast');
+        el.textContent = msg;
+        el.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full shadow-xl text-sm font-semibold ' +
+          (type === 'warn' ? 'bg-amber-600 text-white' : 'bg-gray-900 text-white');
+        clearTimeout(toastT);
+        toastT = setTimeout(function () { el.classList.add('hidden'); }, 2800);
       }
-    })();
-
-    /* ====== Kiểm tra khóa đăng ký ====== */
-    function checkRegistrationLock() {
-      var LOCK_REG_KEY = 'cfhm-registration-lock-config';
-      var cfg = { enabled: false };
-      try {
-        var raw = localStorage.getItem(LOCK_REG_KEY);
-        if (raw) cfg = JSON.parse(raw);
-      } catch (e) { }
-
-      // Fetch lock config từ server để đảm bảo mới nhất (tránh cache CDN/Browser)
-      fetch('/data/lock_config.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data && typeof data === 'object') {
-            var oldRaw = localStorage.getItem(LOCK_REG_KEY);
-            var newRaw = JSON.stringify(data);
-            if (oldRaw !== newRaw) {
-              localStorage.setItem(LOCK_REG_KEY, newRaw);
-              checkRegistrationLock(); // Tự gọi lại hàm để update giao diện nếu có thay đổi
-            }
-          }
-        }).catch(function () { });
-
-      if (!cfg.enabled) {
-        // Mở khoá
-        document.getElementById('form-container').classList.remove('hidden');
-        document.getElementById('lock-container').classList.add('hidden');
-        return;
-      }
-
-
-      var now = new Date();
-      var day = now.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
-      var hour = now.getHours();
-      var min = now.getMinutes();
-
-      function toMinutes(dayStr, timeStr) {
-        var dayMap = { 'T2': 1, 'T3': 2, 'T4': 3, 'T5': 4, 'T6': 5, 'T7': 6, 'CN': 0 };
-        var dayNum = dayMap[dayStr] !== undefined ? dayMap[dayStr] : 0;
-        var daysSinceMonday = (dayNum + 6) % 7;
-        var timeParts = timeStr.split(':');
-        var h = parseInt(timeParts[0] || '0', 10);
-        var m = parseInt(timeParts[1] || '0', 10);
-        return daysSinceMonday * 24 * 60 + h * 60 + m;
-      }
-
-      var currentDaysSinceMonday = (day + 6) % 7;
-      var currentMinutes = currentDaysSinceMonday * 24 * 60 + hour * 60 + min;
-
-      var startMin = toMinutes(cfg.startDay, cfg.startTime);
-      var endMin = toMinutes(cfg.endDay, cfg.endTime);
-
-      var isOpen = false;
-      if (startMin <= endMin) {
-        isOpen = currentMinutes >= startMin && currentMinutes <= endMin;
-      } else {
-        isOpen = currentMinutes >= startMin || currentMinutes <= endMin;
-      }
-
-      if (!isOpen) {
-        // Khi khoá: Giữ tab nút Đăng ký, chỉ ẩn form và hiện màn hình khoá
-        document.getElementById('form-container').classList.add('hidden');
-        document.getElementById('lock-container').classList.remove('hidden');
-
-        var dayLabels = { 'T2': 'Thứ 2', 'T3': 'Thứ 3', 'T4': 'Thứ 4', 'T5': 'Thứ 5', 'T6': 'Thứ 6', 'T7': 'Thứ 7', 'CN': 'Chủ Nhật' };
-        var startLabel = (dayLabels[cfg.startDay] || cfg.startDay) + ' ' + cfg.startTime;
-        var endLabel = (dayLabels[cfg.endDay] || cfg.endDay) + ' ' + cfg.endTime;
-
-        document.getElementById('lock-time-window').textContent = startLabel + ' đến ' + endLabel;
-      }
-    }
-    checkRegistrationLock();
-
-
-    var toastT;
-    function showToast(msg, type) {
-      var el = document.getElementById('toast');
-      el.textContent = msg;
-      el.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full shadow-xl text-sm font-semibold ' +
-        (type === 'warn' ? 'bg-amber-600 text-white' : 'bg-gray-900 text-white');
-      clearTimeout(toastT);
-      toastT = setTimeout(function () { el.classList.add('hidden'); }, 2800);
-    }
-  </script>
+    </script>
 </body>
 
 </html>

@@ -86,8 +86,42 @@ function nameToCode(name) {
   return str;
 }
 
+// Hàm tìm mã duy nhất trong toàn hệ thống (across all locations)
+function getUniqueEmpCode(name, excludeEmpId = null) {
+  let baseCode = nameToCode(name);
+  if (!baseCode) baseCode = "NV";
+  let code = baseCode;
+  let suffix = 2;
+  
+  const isCodeTaken = (c) => {
+    const data = state.data;
+    if (!data || !data.locations) return false;
+    return data.locations.some(loc => 
+      (loc.employees || []).some(emp => emp.code === c && emp.id !== excludeEmpId)
+    );
+  };
+  
+  while (isCodeTaken(code)) {
+    code = baseCode + suffix;
+    suffix++;
+  }
+  return code;
+}
+
+// Hàm kiểm tra trùng email trong toàn hệ thống (across all locations)
+function isEmailTaken(email, excludeEmpId = null) {
+  if (!email) return false;
+  const cleanEmail = email.trim().toLowerCase();
+  const data = state.data;
+  if (!data || !data.locations) return false;
+  return data.locations.some(loc => 
+    (loc.employees || []).some(emp => emp.email && emp.email.trim().toLowerCase() === cleanEmail && emp.id !== excludeEmpId)
+  );
+}
+
 function addEmployeeToLocation(loc, name, ensureShape = true, email = '') {
-  const code = nameToCode(name);
+  // Sinh mã nhân viên duy nhất trong toàn hệ thống
+  const code = getUniqueEmpCode(name);
   const emp = { id: uid(), code, name: name.trim(), email: (email || '').trim() };
   loc.employees.push(emp);
   if (ensureShape) ensureScheduleShape(loc);
@@ -99,10 +133,6 @@ function ensureScheduleShape(loc) {
     if (!loc.schedule[d.key]) loc.schedule[d.key] = {};
     loc.employees.forEach(emp => {
       if (!loc.schedule[d.key][emp.id]) loc.schedule[d.key][emp.id] = [];
-      // Lưu ý: KHÔNG khởi tạo registeredDevices / passkeyCredentials ở đây.
-      // Nếu thêm [] mặc định → khi saveData() gửi lên API, hasOwnProperty = true
-      // → API merge sẽ không fill từ R2 → xóa sạch device thực.
-      // Để trống: merge API sẽ tự fill từ R2 khi field không tồn tại.
     });
   });
 }
@@ -931,10 +961,17 @@ function startRenameEmployee(li, loc, emp) {
   let settled = false;
   const commit = () => {
     if (settled) return;
-    settled = true;
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
-    
+
+    // Check trùng email trước khi commit
+    if (email && isEmailTaken(email, emp.id)) {
+      alert(`❌ Email "${email}" đã được đăng ký cho nhân viên khác trong hệ thống. Vui lòng sử dụng email khác!`);
+      emailInput.focus();
+      return;
+    }
+
+    settled = true;
     if (name && (name !== originalName || email !== originalEmail)) {
       showConfirm({
         title: 'Xác nhận thay đổi',
@@ -942,7 +979,10 @@ function startRenameEmployee(li, loc, emp) {
         onConfirm: () => { 
           emp.name = name; 
           emp.email = email;
-          emp.code = nameToCode(name);
+          // Tự động sinh mã nhân viên mới không trùng nếu tên thay đổi
+          if (name !== originalName) {
+            emp.code = getUniqueEmpCode(name, emp.id);
+          }
           saveData(); 
           renderEmployeeList(); 
           renderTable(); 
@@ -987,6 +1027,14 @@ function handleAddEmployee() {
   const name = input.value.trim();
   const email = inputEmail.value.trim();
   if (!name) return;
+
+  // Check trùng email trước khi add
+  if (email && isEmailTaken(email)) {
+    alert(`❌ Email "${email}" đã được đăng ký cho nhân viên khác trong hệ thống. Vui lòng sử dụng email khác!`);
+    inputEmail.focus();
+    return;
+  }
+
   const loc = getActiveLocation();
   const emp = addEmployeeToLocation(loc, name, true, email);
   saveData();
