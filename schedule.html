@@ -1704,6 +1704,18 @@
           rebuildEmailMap();
           showEmailSection(empCode);
           showToast('Đã lưu email và đồng bộ vào hệ thống!');
+
+          // Nếu thiết bị chưa được xác thực → tự động kích hoạt luồng OTP ngay
+          // (check-device trước đó trả về lỗi vì chưa có email, nên OTP chưa được gửi)
+          if (!deviceVerified) {
+            var visitorId = getVisitorId();
+            var parts = email.split('@');
+            var masked = parts[0].slice(0, 2) + '***@' + parts[1];
+            // Delay nhỏ để toast "Đã lưu email" hiện trước
+            setTimeout(function () {
+              sendOTPCode(empCode, visitorId, masked);
+            }, 600);
+          }
         }).catch(function(e) {
           console.error(e);
           showToast('Lỗi khi lưu email. Vui lòng thử lại.', 'error');
