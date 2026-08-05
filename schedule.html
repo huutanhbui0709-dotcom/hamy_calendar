@@ -1199,7 +1199,7 @@
         selectEmpText.classList.add('text-gray-500');
         showEmailSection('');
         deviceVerified = false;
-        updateDeviceStatusBanner(null);
+        updateDeviceStatusBanner(linkedEmpCode);
       });
 
       document.getElementById('btn-resend-otp').addEventListener('click', function () {
@@ -1465,7 +1465,7 @@
         showEmailSection(empCode);
         if (!empCode) {
           deviceVerified = false;
-          updateDeviceStatusBanner(null);
+          updateDeviceStatusBanner(linkedEmpCode);
           return;
         }
 
@@ -1501,7 +1501,7 @@
               selectEmpText.classList.remove('text-gray-900');
               selectEmpText.classList.add('text-gray-500');
               showEmailSection('');
-              updateDeviceStatusBanner(null);
+              updateDeviceStatusBanner(linkedEmpCode);
             } else if (data.status === 'otp_required') {
               deviceVerified = false;
 
@@ -1530,7 +1530,7 @@
                   selectEmpText.classList.remove('text-gray-900');
                   selectEmpText.classList.add('text-gray-500');
                   showEmailSection('');
-                  updateDeviceStatusBanner(null);
+                  updateDeviceStatusBanner(linkedEmpCode);
                 });
               }
 
