@@ -11,60 +11,109 @@
           "code": "TANH",
           "name": "Tánh",
           "email": "samnach52@gmail.com",
-          "registeredDevices": []
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-102",
           "code": "AIVY",
           "name": "Ái Vy",
-          "email": "aivy@gmail.com"
+          "email": "aivy@gmail.com",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-103",
           "code": "HAVY",
           "name": "Hà Vy",
-          "email": ""
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-104",
           "code": "MUOI",
           "name": "Muội",
-          "email": ""
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-105",
           "code": "LANANH",
-          "name": "Lan Anh"
+          "name": "Lan Anh",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-106",
           "code": "THUYANH",
-          "name": "Thuý Anh"
+          "name": "Thuý Anh",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-107",
           "code": "NGOCTHAO",
-          "name": "Ngọc Thảo"
+          "name": "Ngọc Thảo",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-108",
           "code": "HUONG",
-          "name": "Hương"
+          "name": "Hương",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-109",
           "code": "DIMY",
-          "name": "Dì My"
+          "name": "Dì My",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-201",
+          "code": "HOA",
+          "name": "Hoa",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-202",
+          "code": "CHI",
+          "name": "Chi",
+          "email": "chi@gmail.com",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-205",
+          "code": "HIEN",
+          "name": "Hiền",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-207",
+          "code": "GIAPHAT",
+          "name": "Gia Phát",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         }
       ],
       "schedule": {
         "T2": {
-          "emp-101": [
-            {
-              "s": 300,
-              "e": 480
-            }
-          ],
+          "emp-101": [],
           "emp-102": [],
           "emp-103": [],
           "emp-104": [],
@@ -72,7 +121,11 @@
           "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         },
         "T3": {
           "emp-101": [],
@@ -83,48 +136,26 @@
           "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         },
         "T4": {
-          "emp-101": [
-            {
-              "s": 300,
-              "e": 480
-            }
-          ],
-          "emp-102": [
-            {
-              "s": 480,
-              "e": 1020
-            }
-          ],
-          "emp-103": [
-            {
-              "s": 330,
-              "e": 720
-            }
-          ],
-          "emp-104": [
-            {
-              "s": 1020,
-              "e": 1320
-            }
-          ],
-          "emp-105": [
-            {
-              "s": 720,
-              "e": 1320
-            }
-          ],
-          "emp-106": [
-            {
-              "s": 330,
-              "e": 720
-            }
-          ],
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         },
         "T5": {
           "emp-101": [],
@@ -135,7 +166,11 @@
           "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         },
         "T6": {
           "emp-101": [],
@@ -146,7 +181,11 @@
           "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         },
         "T7": {
           "emp-101": [],
@@ -157,7 +196,11 @@
           "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         },
         "CN": {
           "emp-101": [],
@@ -168,7 +211,11 @@
           "emp-106": [],
           "emp-107": [],
           "emp-108": [],
-          "emp-109": []
+          "emp-109": [],
+          "emp-201": [],
+          "emp-202": [],
+          "emp-205": [],
+          "emp-207": []
         }
       }
     },
@@ -179,143 +226,215 @@
       "require3Before9": true,
       "employees": [
         {
+          "id": "emp-101",
+          "code": "TANH",
+          "name": "Tánh",
+          "email": "samnach52@gmail.com",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-102",
+          "code": "AIVY",
+          "name": "Ái Vy",
+          "email": "aivy@gmail.com",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-103",
+          "code": "HAVY",
+          "name": "Hà Vy",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-104",
+          "code": "MUOI",
+          "name": "Muội",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-105",
+          "code": "LANANH",
+          "name": "Lan Anh",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-106",
+          "code": "THUYANH",
+          "name": "Thuý Anh",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-107",
+          "code": "NGOCTHAO",
+          "name": "Ngọc Thảo",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-108",
+          "code": "HUONG",
+          "name": "Hương",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
+          "id": "emp-109",
+          "code": "DIMY",
+          "name": "Dì My",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
+        },
+        {
           "id": "emp-201",
           "code": "HOA",
-          "name": "Hoa"
+          "name": "Hoa",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-202",
           "code": "CHI",
           "name": "Chi",
-          "email": "chi@gmail.com"
-        },
-        {
-          "id": "emp-203",
-          "code": "HAVY",
-          "name": "Hà Vy",
-          "email": "havy@gmail.com"
-        },
-        {
-          "id": "emp-204",
-          "code": "MUOI",
-          "name": "Muội"
+          "email": "chi@gmail.com",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-205",
           "code": "HIEN",
-          "name": "Hiền"
-        },
-        {
-          "id": "emp-206",
-          "code": "NGOCTHAO",
-          "name": "Ngọc Thảo"
+          "name": "Hiền",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         },
         {
           "id": "emp-207",
           "code": "GIAPHAT",
-          "name": "Gia Phát"
-        },
-        {
-          "id": "emp-208",
-          "code": "DIMY",
-          "name": "Dì My"
-        },
-        {
-          "id": "emp-209",
-          "code": "HUONG",
-          "name": "Hương"
-        },
-        {
-          "id": "7f1o8rono36",
-          "code": "AIVY",
-          "name": "Ái vy",
-          "email": "aivy@gmail.com"
+          "name": "Gia Phát",
+          "email": "",
+          "registeredDevices": [],
+          "passkeyCredentials": []
         }
       ],
       "schedule": {
         "T2": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         },
         "T3": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         },
         "T4": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         },
         "T5": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         },
         "T6": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         },
         "T7": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         },
         "CN": {
+          "emp-101": [],
+          "emp-102": [],
+          "emp-103": [],
+          "emp-104": [],
+          "emp-105": [],
+          "emp-106": [],
+          "emp-107": [],
+          "emp-108": [],
+          "emp-109": [],
           "emp-201": [],
           "emp-202": [],
-          "emp-203": [],
-          "emp-204": [],
           "emp-205": [],
-          "emp-206": [],
-          "emp-207": [],
-          "emp-208": [],
-          "emp-209": [],
-          "7f1o8rono36": []
+          "emp-207": []
         }
       }
     }

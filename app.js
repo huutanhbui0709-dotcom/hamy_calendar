@@ -690,7 +690,28 @@ function renderSuggestedList(loc, dayKey) {
       if (idx >= 0) empColor = EMP_COLORS_DARK[idx % EMP_COLORS_DARK.length];
     }
 
-    const times = (reg.timeRanges || []);
+    const rawTimes = (reg.timeRanges || []);
+    // Lọc bỏ những khung giờ bị trùng với lịch đã xếp ở bất kỳ quán nào
+    const validTimes = rawTimes.filter(t => {
+      const sMin = inputTimeToMinutes(t.start);
+      const eMin = inputTimeToMinutes(t.end);
+      const testShift = { s: sMin, e: eMin };
+
+      let isOverlapping = false;
+      state.data.locations.forEach(l => {
+        const matchingEmp = l.employees.find(e => e.code === empCode);
+        if (matchingEmp) {
+          const lShifts = l.schedule[dayKey][matchingEmp.id] || [];
+          if (lShifts.some(sh => overlaps(sh, testShift))) {
+            isOverlapping = true;
+          }
+        }
+      });
+      return !isOverlapping;
+    });
+
+    if (validTimes.length === 0) return; // Ẩn hoàn toàn khỏi gợi ý nếu tất cả các ca đều trùng
+
     const card = document.createElement('div');
     card.className = 'suggest-card';
     card.style.cursor = 'default';
@@ -709,7 +730,7 @@ function renderSuggestedList(loc, dayKey) {
     const timesContainer = document.createElement('span');
     timesContainer.className = 'suggest-times';
 
-    times.forEach(t => {
+    validTimes.forEach(t => {
       const badge = document.createElement('button');
       badge.type = 'button';
       badge.className = 'suggest-time-badge';
@@ -845,10 +866,32 @@ function handleAddShift() {
   const { locId, dayKey, draft } = state.drawer;
   const newShift = { empId, s, e };
 
+  // 1. Kiểm tra trùng ca trên CÙNG MỘT QUÁN (dưới local draft hiện tại)
   if (draft.some(sh => sh.empId === empId && overlaps(sh, newShift))) {
     errEl.hidden = false;
     errEl.textContent = 'Nhân viên này có ca làm việc bị trùng.';
     return;
+  }
+
+  // 2. Kiểm tra trùng ca trên CÁC QUÁN KHÁC (đồng bộ theo email/code nhân viên)
+  const currentLoc = state.data.locations.find(l => l.id === locId);
+  const currentEmp = currentLoc.employees.find(e => e.id === empId);
+  if (currentEmp) {
+    for (const otherLoc of state.data.locations) {
+      if (otherLoc.id === locId) continue; // bỏ qua quán hiện tại
+
+      // Tìm nhân viên có cùng code/email ở quán khác
+      const otherEmp = otherLoc.employees.find(e => e.code === currentEmp.code);
+      if (otherEmp) {
+        const otherShifts = otherLoc.schedule[dayKey][otherEmp.id] || [];
+        const overlapShift = otherShifts.find(sh => overlaps(sh, newShift));
+        if (overlapShift) {
+          errEl.hidden = false;
+          errEl.textContent = `Trùng ca: Nhân viên ${currentEmp.name} đã có lịch làm việc ${shiftLabel(overlapShift)} ở ${otherLoc.name} trong ngày này.`;
+          return;
+        }
+      }
+    }
   }
 
   const loc2 = state.data.locations.find(l => l.id === locId);
