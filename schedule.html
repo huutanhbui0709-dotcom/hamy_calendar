@@ -776,28 +776,65 @@
       }
 
       // Load app system locations and employees — từ server (đồng bộ tất cả thiết bị)
-      var sysData = (function () {
-        try {
-          var raw = localStorage.getItem(CORE_STORAGE_KEY);
-          return raw ? JSON.parse(raw) : { locations: [] };
-        } catch (e) { return { locations: [] }; }
-      })();
-      // Nạp sysData mới nhất từ server
+      // Khởi tạo rỗng trước (KHÔNG dùng localStorage làm nguồn chính để tránh data cũ)
+      var sysData = { locations: [] };
+
+      // Nạp sysData từ server ngay khi load (bắt buộc fetch mới nhất để tránh cache localStorage cũ)
       fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.json(); })
         .then(function (data) {
           if (data && data.locations) {
+            // Kiểm tra xem data có thay đổi so với cache không (so sánh fingerprint nhân viên)
+            var newCodes = [];
+            data.locations.forEach(function(loc) {
+              (loc.employees || []).forEach(function(emp) {
+                if (!newCodes.includes(emp.code)) newCodes.push(emp.code);
+              });
+            });
+            var fingerprint = newCodes.sort().join(',');
+
+            var cachedRaw = localStorage.getItem(CORE_STORAGE_KEY);
+            var cachedFingerprint = '';
+            if (cachedRaw) {
+              try {
+                var cachedData = JSON.parse(cachedRaw);
+                var cachedCodes = [];
+                (cachedData.locations || []).forEach(function(loc) {
+                  (loc.employees || []).forEach(function(emp) {
+                    if (!cachedCodes.includes(emp.code)) cachedCodes.push(emp.code);
+                  });
+                });
+                cachedFingerprint = cachedCodes.sort().join(',');
+              } catch(e) {}
+            }
+
+            // Nếu fingerprint khác → xóa cache cũ, dùng data mới
+            if (fingerprint !== cachedFingerprint) {
+              console.log('[schedule] Phát hiện danh sách nhân viên thay đổi, xóa cache cũ.');
+              localStorage.removeItem(CORE_STORAGE_KEY);
+            }
+
             sysData = data;
             localStorage.setItem(CORE_STORAGE_KEY, JSON.stringify(data));
             rebuildEmailMap(); // Cập nhật lại email map khi có dữ liệu admin mới nhất
             // Cập nhật lại dropdown nhân viên
             rebuildEmpDropdown();
             // Cập nhật lại giao diện hiển thị email
-            if (typeof selectEmp !== 'undefined' && selectEmp) {
+            if (typeof selectEmp !== 'undefined' && selectEmp && selectEmp.value) {
               showEmailSection(selectEmp.value);
             }
           }
-        }).catch(function () { });
+        }).catch(function () {
+          // Fallback: nếu server không khả dụng, dùng cache localStorage
+          try {
+            var raw = localStorage.getItem(CORE_STORAGE_KEY);
+            if (raw) {
+              sysData = JSON.parse(raw);
+              rebuildEmailMap();
+              rebuildEmpDropdown();
+            }
+          } catch(e) {}
+        });
 
       // Load current registered schedule data — từ server
       var regData = (function () { try { return JSON.parse(localStorage.getItem(REG_KEY)) || []; } catch (e) { return []; } })();
