@@ -1895,12 +1895,13 @@
           return;
         }
 
+        // Xóa sạch toàn bộ lịch cũ của nhân viên này trong tất cả các ngày trong tuần trước khi thêm lịch mới
+        regData = regData.filter(function (x) {
+          return x.empCode !== empCode;
+        });
+
         // Save each day as a separate registration item (or update if needed)
         daysChecked.forEach(function (dayInfo) {
-          // Remove any existing registration for this employee/day combo
-          regData = regData.filter(function (x) {
-            return !(x.empCode === empCode && x.day === dayInfo.day);
-          });
           // Add new — include email to sync lên server
           regData.push({
             id: Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
