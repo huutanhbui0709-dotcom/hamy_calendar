@@ -1003,8 +1003,79 @@
 
       document.getElementById('reg-search').addEventListener('input', function () { document.getElementById('reg-dropdown').value = ''; renderAdminReg(); });
       document.getElementById('reg-dropdown').addEventListener('change', function () { document.getElementById('reg-search').value = ''; renderAdminReg(); });
-      document.getElementById('btn-refresh-weekly').addEventListener('click', function () { renderWeeklyReg(); });
-      document.getElementById('btn-refresh-admin').addEventListener('click', function () { populateDropdown(); renderAdminReg(); });
+
+      // Hàm tải lại employee_registrations từ server
+      function refreshRegistrationsFromServer(callback) {
+        var btnWeekly = document.getElementById('btn-refresh-weekly');
+        var btnAdmin = document.getElementById('btn-refresh-admin');
+        if (btnWeekly) btnWeekly.disabled = true;
+        if (btnAdmin) btnAdmin.disabled = true;
+
+        fetch('/data/employee_registrations.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (Array.isArray(data)) {
+              localStorage.setItem(REG_KEY, JSON.stringify(data));
+              if (callback) callback();
+              showToast('Làm mới lịch đăng ký thành công!');
+            }
+          })
+          .catch(function (e) {
+            console.error('Lỗi làm mới registrations:', e);
+            showToast('Không thể tải lịch mới nhất từ server.', 'error');
+          })
+          .finally(function () {
+            if (btnWeekly) btnWeekly.disabled = false;
+            if (btnAdmin) btnAdmin.disabled = false;
+          });
+      }
+
+      document.getElementById('btn-refresh-weekly').addEventListener('click', function () {
+        refreshRegistrationsFromServer(function () {
+          renderWeeklyReg();
+        });
+      });
+
+      document.getElementById('btn-refresh-admin').addEventListener('click', function () {
+        refreshRegistrationsFromServer(function () {
+          populateDropdown();
+          renderAdminReg();
+        });
+      });
+
+      // Làm mới danh sách thiết bị
+      document.getElementById('btn-refresh-devices').addEventListener('click', function () {
+        var btnDevices = document.getElementById('btn-refresh-devices');
+        if (btnDevices) btnDevices.disabled = true;
+
+        fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
+          .then(function (data) {
+            if (data && data.locations) {
+              // Lưu vào cả memory state và localStorage
+              if (window.state) window.state.data = data;
+              localStorage.setItem('lich-lam-viec:data:v2', JSON.stringify(data));
+              
+              // Re-build map của Admin index.html
+              if (typeof buildNameMap === 'function') {
+                buildNameMap('lich-lam-viec:data:v2');
+              }
+              
+              // Render lại giao diện
+              if (typeof window.renderDeviceManagement === 'function') {
+                window.renderDeviceManagement();
+              }
+              showToast('Làm mới danh sách thiết bị thành công!');
+            }
+          })
+          .catch(function (e) {
+            console.error('Lỗi làm mới thiết bị:', e);
+            showToast('Không thể tải dữ liệu thiết bị từ server.', 'error');
+          })
+          .finally(function () {
+            if (btnDevices) btnDevices.disabled = false;
+          });
+      });
 
       /* ====== Xóa tất cả lịch đăng ký ====== */
       var AUTO_CLEAR_KEY = 'cfhm-auto-clear-enabled';
