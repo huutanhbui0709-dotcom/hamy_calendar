@@ -770,13 +770,20 @@
 
     // Load current registered schedule data — từ server
     var regData = (function () { try { return JSON.parse(localStorage.getItem(REG_KEY)) || []; } catch (e) { return []; } })();
-    var saveRegs = function () {
+    var saveRegs = function (empCode) {
       localStorage.setItem(REG_KEY, JSON.stringify(regData));
-      // Lưu vào server (đồng bộ tất cả thiết bị)
+      
+      // Nếu gửi từ client nhân viên → chỉ POST lịch của chính nhân viên đó để server merge
+      // Tránh việc gửi đè/khôi phục lại các lịch cũ của nhân viên khác (hoặc lịch đã bị Admin xóa)
+      var payload = regData;
+      if (empCode) {
+        payload = regData.filter(function (x) { return x.empCode === empCode; });
+      }
+
       fetch('/data/employee_registrations.json', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(regData)
+        body: JSON.stringify(payload)
       }).catch(function (e) { console.warn('Không lưu registrations:', e); });
     };
     // Nạp regData mới nhất từ server
@@ -1838,7 +1845,7 @@
 
       rebuildEmailMap(); // Cập nhật cache sau khi push
 
-      saveRegs();
+      saveRegs(empCode);
 
       document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
       okEl.classList.remove('hidden');
