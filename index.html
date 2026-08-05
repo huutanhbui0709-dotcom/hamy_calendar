@@ -780,11 +780,10 @@
           body: JSON.stringify(arr)
         }).catch(function (e) { console.warn('Không lưu được registrations:', e); });
       }
-      // Lấy registrations mới nhất từ server khi tải trang
       fetch('/data/employee_registrations.json')
         .then(function (r) { return r.json(); })
         .then(function (data) {
-          if (Array.isArray(data) && data.length) {
+          if (Array.isArray(data)) {
             localStorage.setItem(REG_KEY, JSON.stringify(data));
             if (typeof renderAdminTable === 'function') renderAdminTable();
           }
