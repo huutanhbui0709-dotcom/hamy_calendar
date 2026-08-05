@@ -1052,16 +1052,16 @@
           .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
           .then(function (data) {
             if (data && data.locations) {
-              // Lưu vào cả memory state và localStorage
-              if (window.state) window.state.data = data;
+              // Lưu vào localStorage để app.js's state được cập nhật qua renderAll
               localStorage.setItem('lich-lam-viec:data:v2', JSON.stringify(data));
-              
+
               // Re-build map của Admin index.html
               if (typeof buildNameMap === 'function') {
                 buildNameMap('lich-lam-viec:data:v2');
               }
-              
-              // Render lại giao diện
+
+              // Render lại toàn bộ giao diện (renderAll trong app.js sẽ cập nhật state)
+              if (typeof renderAll === 'function') renderAll();
               if (typeof window.renderDeviceManagement === 'function') {
                 window.renderDeviceManagement();
               }
@@ -1070,7 +1070,11 @@
           })
           .catch(function (e) {
             console.error('Lỗi làm mới thiết bị:', e);
-            showToast('Không thể tải dữ liệu thiết bị từ server.', 'error');
+            // Fallback: render lại từ localStorage nếu server không khả dụng
+            if (typeof window.renderDeviceManagement === 'function') {
+              window.renderDeviceManagement();
+            }
+            showToast('Không thể tải từ server. Đang dùng dữ liệu đã lưu.', 'error');
           })
           .finally(function () {
             if (btnDevices) btnDevices.disabled = false;

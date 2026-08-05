@@ -133,14 +133,13 @@ function addEmployeeToLocation(loc, name, ensureShape = true, email = '') {
   const data = (typeof state !== 'undefined' && state) ? state.data : null;
   if (data && data.locations) {
     data.locations.forEach(l => {
-      // Tránh copy reference trực tiếp để độc lập về devices/credentials nếu admin sửa riêng lẻ, nhưng clone các thuộc tính cơ bản
+      // Chỉ clone các thuộc tính cơ bản, KHÔNG clone registeredDevices/passkeyCredentials
+      // để server R2 tự động merge device (không ghi đè thiết bị đã đăng ký)
       const empClone = {
         id: emp.id,
         code: emp.code,
         name: emp.name,
-        email: emp.email,
-        registeredDevices: [],
-        passkeyCredentials: []
+        email: emp.email
       };
       l.employees.push(empClone);
       if (ensureShape) ensureScheduleShape(l);
@@ -1287,20 +1286,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btn-copy').addEventListener('click', copyTable);
   $('#btn-download').addEventListener('click', downloadCSV);
 
-  const btnRefreshDev = $('#btn-refresh-devices');
-  if (btnRefreshDev) {
-    btnRefreshDev.addEventListener('click', () => {
-      fetch('/data/admin_schedule.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.locations) {
-            state.data = data;
-            window.renderDeviceManagement();
-            showToast('✅ Đã làm mới danh sách thiết bị!');
-          }
-        });
-    });
-  }
+  // Listener cho btn-refresh-devices được xử lý đầy đủ trong index.html (có error handling)
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
