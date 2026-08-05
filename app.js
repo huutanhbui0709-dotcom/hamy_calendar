@@ -94,7 +94,8 @@ function getUniqueEmpCode(name, excludeEmpId = null) {
   let suffix = 2;
   
   const isCodeTaken = (c) => {
-    const data = state.data;
+    // Kiểm tra an toàn xem state đã được khai báo chưa để tránh lỗi ReferenceError khi loadData() chạy ban đầu
+    const data = (typeof state !== 'undefined' && state) ? state.data : null;
     if (!data || !data.locations) return false;
     return data.locations.some(loc => 
       (loc.employees || []).some(emp => emp.code === c && emp.id !== excludeEmpId)
@@ -112,7 +113,7 @@ function getUniqueEmpCode(name, excludeEmpId = null) {
 function isEmailTaken(email, excludeEmpId = null) {
   if (!email) return false;
   const cleanEmail = email.trim().toLowerCase();
-  const data = state.data;
+  const data = (typeof state !== 'undefined' && state) ? state.data : null;
   if (!data || !data.locations) return false;
   return data.locations.some(loc => 
     (loc.employees || []).some(emp => emp.email && emp.email.trim().toLowerCase() === cleanEmail && emp.id !== excludeEmpId)
