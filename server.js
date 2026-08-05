@@ -813,7 +813,25 @@ const server = http.createServer(async (req, res) => {
         req.on('data', chunk => { body += chunk.toString(); });
         req.on('end', () => {
           try {
-            const data = JSON.parse(body);
+            let data = JSON.parse(body);
+
+            // Merge employee_registrations: giữ lại records của nhân viên khác
+            if (fileName === 'employee_registrations.json' && Array.isArray(data)) {
+              try {
+                let existing = [];
+                if (fs.existsSync(filePath)) {
+                  existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                }
+                if (Array.isArray(existing)) {
+                  const submittedCodes = new Set(data.map(r => r.empCode).filter(Boolean));
+                  const others = existing.filter(r => !submittedCodes.has(r.empCode));
+                  data = [...others, ...data];
+                }
+              } catch (mergeErr) {
+                console.warn('  ⚠ Merge regs warn:', mergeErr.message);
+              }
+            }
+
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
             console.log(`  💾 Saved: ${fileName}`);
             res.writeHead(200, { 'Content-Type': 'application/json' });

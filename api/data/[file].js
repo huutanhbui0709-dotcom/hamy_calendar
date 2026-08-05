@@ -100,6 +100,25 @@ export default async function handler(req, res) {
         return;
       }
 
+      // Merge employee_registrations: giữ lại các bản ghi của nhân viên khác
+      // tránh trường hợp client ghi đè mất dữ liệu
+      if (fileName === 'employee_registrations.json') {
+        try {
+          const existingRegs = await loadJson(r2Key);
+          if (Array.isArray(existingRegs) && Array.isArray(body)) {
+            // Tìm các empCode có trong body (của client gửi lên)
+            const submittedEmpCodes = new Set(body.map(r => r.empCode).filter(Boolean));
+            // Giữ lại tất cả records của nhân viên khác
+            const others = existingRegs.filter(r => !submittedEmpCodes.has(r.empCode));
+            // Ghi đè records của empCode đang gửi lên bằng dữ liệu mới
+            body = [...others, ...body];
+          }
+        } catch (mergeErr) {
+          console.warn('[Merge Regs Warn]', mergeErr.message);
+          // Fallback: dùng body gốc nếu merge lỗi
+        }
+      }
+
       // Merge device: bổ sung các thiết bị từ R2 vào body nếu body của nhân viên KHÔNG có field đó
       // (tránh mất khi các API khác ghi lịch mà không biết về devices)
       // Nhưng NẾU body đã có field registeredDevices/passkeyCredentials (kể cả mảng rỗng),
