@@ -946,6 +946,26 @@
         renderRecentList();
       }
 
+      function resetToLinkedEmployee() {
+        if (linkedEmpCode && empMap[linkedEmpCode]) {
+          selectEmp.value = linkedEmpCode;
+          selectEmpText.textContent = empMap[linkedEmpCode] + ' (' + linkedEmpCode + ')';
+          selectEmpText.classList.remove('text-gray-500');
+          selectEmpText.classList.add('text-gray-900');
+          showEmailSection(linkedEmpCode);
+          deviceVerified = true;
+          updateDeviceStatusBanner(linkedEmpCode);
+        } else {
+          selectEmp.value = '';
+          selectEmpText.textContent = '— Chọn nhân viên —';
+          selectEmpText.classList.remove('text-gray-900');
+          selectEmpText.classList.add('text-gray-500');
+          showEmailSection('');
+          deviceVerified = false;
+          updateDeviceStatusBanner(null);
+        }
+      }
+
       function updateDeviceStatusBanner(linkedEmpCode) {
         var banner = document.getElementById('device-status-banner');
         if (!banner) return;
@@ -1192,14 +1212,7 @@
 
       document.getElementById('btn-cancel-otp').addEventListener('click', function () {
         document.getElementById('otp-modal').classList.add('hidden');
-        // Reset dropdown
-        selectEmp.value = '';
-        selectEmpText.textContent = '— Chọn nhân viên —';
-        selectEmpText.classList.remove('text-gray-900');
-        selectEmpText.classList.add('text-gray-500');
-        showEmailSection('');
-        deviceVerified = false;
-        updateDeviceStatusBanner(linkedEmpCode);
+        resetToLinkedEmployee();
       });
 
       document.getElementById('btn-resend-otp').addEventListener('click', function () {
@@ -1495,13 +1508,7 @@
             } else if (data.status === 'conflict') {
               deviceVerified = false;
               alert('❌ ' + data.message);
-              // Reset dropdown
-              selectEmp.value = '';
-              selectEmpText.textContent = '— Chọn nhân viên —';
-              selectEmpText.classList.remove('text-gray-900');
-              selectEmpText.classList.add('text-gray-500');
-              showEmailSection('');
-              updateDeviceStatusBanner(linkedEmpCode);
+              resetToLinkedEmployee();
             } else if (data.status === 'otp_required') {
               deviceVerified = false;
 
@@ -1525,12 +1532,7 @@
 
                 newCancelBtn.addEventListener('click', function () {
                   modal.classList.add('hidden');
-                  selectEmp.value = '';
-                  selectEmpText.textContent = '— Chọn nhân viên —';
-                  selectEmpText.classList.remove('text-gray-900');
-                  selectEmpText.classList.add('text-gray-500');
-                  showEmailSection('');
-                  updateDeviceStatusBanner(linkedEmpCode);
+                  resetToLinkedEmployee();
                 });
               }
 
@@ -1934,15 +1936,8 @@
             document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
             okEl.classList.remove('hidden');
 
-            // Reset fields
-            selectEmp.value = '';
-            selectEmpText.textContent = '— Chọn nhân viên —';
-            selectEmpText.classList.add('text-gray-500');
-            selectEmpText.classList.remove('text-gray-900');
-            showEmailSection(''); // Ẩn email section
-
-            // Khôi phục lại việc tự động chọn nhân viên & cập nhật trạng thái thiết bị đã liên kết
-            rebuildEmpDropdown();
+            // Reset fields về trạng thái của nhân viên đã liên kết thiết bị
+            resetToLinkedEmployee();
           })
           .catch(function (e) {
             console.error('Lỗi đồng bộ lịch trước khi lưu:', e);
