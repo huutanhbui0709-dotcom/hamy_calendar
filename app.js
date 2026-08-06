@@ -1449,55 +1449,67 @@ window.renderDeviceManagement = function() {
   let count = 0;
 
   if (state.data && state.data.locations) {
+    // Deduplicate: gom nhân viên theo emp.code, tránh hiển thị trùng khi
+    // cùng 1 nhân viên xuất hiện ở nhiều quán
+    const seenCodes = new Set();
+    const uniqueEmployees = []; // [{ emp, loc }]
+
     state.data.locations.forEach(loc => {
       if (loc.employees) {
         loc.employees.forEach(emp => {
-          // Lấy cả thiết bị OTP và Passkey
-          const otpDevices = (emp.registeredDevices || []).map(d => Object.assign({}, d, { type: 'OTP' }));
-          const passkeyDevices = (emp.passkeyCredentials || []).map(c => Object.assign({}, c, { 
-            visitorId: c.credentialId, // Dùng credentialId làm visitorId hiển thị
-            type: 'Passkey',
-            deviceName: c.deviceName || 'Passkey (FaceID/Vân tay)'
-          }));
-          
-          const allDevices = [].concat(otpDevices, passkeyDevices);
-
-          allDevices.forEach(dev => {
-            count++;
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid var(--line)';
-            
-            // Icon tuỳ loại
-            const typeIcon = dev.type === 'Passkey' ? '🔑' : '📱';
-            const typeBadge = dev.type === 'Passkey' 
-              ? `<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px;">Passkey</span>` 
-              : `<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px;">OTP</span>`;
-
-            tr.innerHTML = `
-              <td style="padding: 12px 16px; font-weight: 700; color: var(--ink-dark);">
-                ${escapeHtml(emp.name)} <span style="font-size:11px; color: var(--ink-soft); font-weight:500;">(${emp.code})</span>
-                <div style="font-size: 11px; color: var(--primary); font-weight: 500; margin-top: 2px;">${escapeHtml(loc.name)}</div>
-              </td>
-              <td style="padding: 12px 16px; font-weight: 600; color: #475569;">
-                ${typeIcon} ${escapeHtml(dev.deviceName || 'Thiết bị không tên')} ${typeBadge}
-              </td>
-              <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; color: #64748b; letter-spacing: 0.5px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(dev.visitorId)}">
-                ${escapeHtml(dev.visitorId)}
-              </td>
-              <td style="padding: 12px 16px; color: #64748b;">
-                ${new Date(dev.addedAt).toLocaleString('vi-VN')}
-              </td>
-              <td style="padding: 12px 16px; text-align: center;">
-                <button class="btn" style="padding: 4px 10px; font-size: 11.5px; background: var(--danger); color: #fff; border: none; cursor: pointer; display: inline-flex; items-center; gap: 4px;"
-                  onclick="unlinkDevice('${emp.code}', '${dev.visitorId}', '${dev.type}')">
-                  <i class="fa-solid fa-link-slash"></i> Hủy liên kết
-                </button>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
+          if (!seenCodes.has(emp.code)) {
+            seenCodes.add(emp.code);
+            uniqueEmployees.push({ emp, loc });
+          }
         });
       }
+    });
+
+    uniqueEmployees.forEach(({ emp, loc }) => {
+      // Lấy cả thiết bị OTP và Passkey
+      const otpDevices = (emp.registeredDevices || []).map(d => Object.assign({}, d, { type: 'OTP' }));
+      const passkeyDevices = (emp.passkeyCredentials || []).map(c => Object.assign({}, c, { 
+        visitorId: c.credentialId, // Dùng credentialId làm visitorId hiển thị
+        type: 'Passkey',
+        deviceName: c.deviceName || 'Passkey (FaceID/Vân tay)'
+      }));
+      
+      const allDevices = [].concat(otpDevices, passkeyDevices);
+
+      allDevices.forEach(dev => {
+        count++;
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--line)';
+        
+        // Icon tuỳ loại
+        const typeIcon = dev.type === 'Passkey' ? '🔑' : '📱';
+        const typeBadge = dev.type === 'Passkey' 
+          ? `<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px;">Passkey</span>` 
+          : `<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px;">OTP</span>`;
+
+        tr.innerHTML = `
+          <td style="padding: 12px 16px; font-weight: 700; color: var(--ink-dark);">
+            ${escapeHtml(emp.name)} <span style="font-size:11px; color: var(--ink-soft); font-weight:500;">(${emp.code})</span>
+            <div style="font-size: 11px; color: var(--primary); font-weight: 500; margin-top: 2px;">${escapeHtml(loc.name)}</div>
+          </td>
+          <td style="padding: 12px 16px; font-weight: 600; color: #475569;">
+            ${typeIcon} ${escapeHtml(dev.deviceName || 'Thiết bị không tên')} ${typeBadge}
+          </td>
+          <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; color: #64748b; letter-spacing: 0.5px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(dev.visitorId)}">
+            ${escapeHtml(dev.visitorId)}
+          </td>
+          <td style="padding: 12px 16px; color: #64748b;">
+            ${new Date(dev.addedAt).toLocaleString('vi-VN')}
+          </td>
+          <td style="padding: 12px 16px; text-align: center;">
+            <button class="btn" style="padding: 4px 10px; font-size: 11.5px; background: var(--danger); color: #fff; border: none; cursor: pointer; display: inline-flex; items-center; gap: 4px;"
+              onclick="unlinkDevice('${emp.code}', '${dev.visitorId}', '${dev.type}')">
+              <i class="fa-solid fa-link-slash"></i> Hủy liên kết
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
     });
   }
 
