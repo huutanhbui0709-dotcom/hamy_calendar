@@ -317,8 +317,10 @@ function analyzeShifts(shifts, require3Before9 = true) {
           }
         }
       } else {
-        // General morning rule (2-person rule) for h >= 9 (9h-12h)
-        if (hasShifts && count < 2) {
+        // Khi tắt bắt buộc 3 NV: h=5 (5-6h) và h>=11 (sau 11h) chỉ cần 1 NV
+        const allow1 = !require3Before9 && (h === 5 || h >= 11);
+        const minRequired = allow1 ? 1 : 2;
+        if (hasShifts && count < minRequired) {
           if (count === 0) {
             warnHoursA_0.push(h);
           } else {
@@ -328,8 +330,9 @@ function analyzeShifts(shifts, require3Before9 = true) {
       }
     } else {
       maxB = Math.max(maxB, count);
-      // General afternoon rule (2-person rule)
-      if (hasShifts && count < MIN_STAFF) {
+      // Khi tắt bắt buộc 3 NV: sau 11h (h>=12) chỉ cần 1 NV
+      const minB = require3Before9 ? MIN_STAFF : 1;
+      if (hasShifts && count < minB) {
         if (count === 0) {
           warnHoursB_0.push(h);
         } else {

@@ -49,6 +49,46 @@ function verifyPassword(password, storedHash) {
 const PORT = 3000;
 const ROOT = __dirname;
 
+let r2Module = null;
+async function getR2() {
+  if (!r2Module) {
+    r2Module = await import('./lib/r2.js');
+  }
+  return r2Module;
+}
+
+async function loadJsonLocal(fileName) {
+  const r2Key = `cfhm/${fileName}`;
+  if (process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.env.R2_BUCKET_NAME) {
+    try {
+      const r2 = await getR2();
+      const data = await r2.loadJson(r2Key);
+      if (data !== null) return data;
+    } catch (e) {
+      console.error(`[R2 Load Error] ${fileName}:`, e.message);
+    }
+  }
+  const filePath = path.join(ROOT, fileName);
+  if (fs.existsSync(filePath)) {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  }
+  return null;
+}
+
+async function saveJsonLocal(fileName, data) {
+  const r2Key = `cfhm/${fileName}`;
+  if (process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.env.R2_BUCKET_NAME) {
+    try {
+      const r2 = await getR2();
+      await r2.saveJson(r2Key, data);
+    } catch (e) {
+      console.error(`[R2 Save Error] ${fileName}:`, e.message);
+    }
+  }
+  const filePath = path.join(ROOT, fileName);
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+}
+
 const JWT_SECRET = process.env.JWT_SECRET || 'cfhm-calendar-super-secret-key-1234567890';
 const SECRET_KEY = new TextEncoder().encode(JWT_SECRET);
 
@@ -313,11 +353,7 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: 'Thiếu thông tin' }));
         return;
       }
-      const dataPath = path.join(__dirname, 'admin_schedule.json');
-      let sysData = { locations: [] };
-      if (fs.existsSync(dataPath)) {
-        sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-      }
+      let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
       let updated = false;
       if (sysData && sysData.locations) {
         sysData.locations.forEach(loc => {
@@ -336,7 +372,7 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: 'Không tìm thấy nhân viên' }));
         return;
       }
-      fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
+      await saveJsonLocal('admin_schedule.json', sysData);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true }));
       return;
@@ -357,11 +393,7 @@ const server = http.createServer(async (req, res) => {
           res.end(JSON.stringify({ error: 'Thiếu mã nhân viên hoặc mã thiết bị.' }));
           return;
         }
-        const dataPath = path.join(__dirname, 'admin_schedule.json');
-        let sysData = { locations: [] };
-        if (fs.existsSync(dataPath)) {
-          sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-        }
+        let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
         let targetEmployee = null;
         let conflictsWithName = null;
         let isMatched = false;
@@ -431,11 +463,7 @@ const server = http.createServer(async (req, res) => {
           res.end(JSON.stringify({ error: 'Thiếu mã nhân viên hoặc mã thiết bị.' }));
           return;
         }
-        const dataPath = path.join(__dirname, 'admin_schedule.json');
-        let sysData = { locations: [] };
-        if (fs.existsSync(dataPath)) {
-          sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-        }
+        let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
         let targetEmployee = null;
         if (sysData && sysData.locations) {
           sysData.locations.forEach(loc => {
@@ -548,11 +576,7 @@ const server = http.createServer(async (req, res) => {
 
         delete global.localOtpData[key];
 
-        const dataPath = path.join(__dirname, 'admin_schedule.json');
-        let sysData = { locations: [] };
-        if (fs.existsSync(dataPath)) {
-          sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-        }
+        let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
         let updated = false;
 
         if (sysData && sysData.locations) {
@@ -581,7 +605,7 @@ const server = http.createServer(async (req, res) => {
           return;
         }
 
-        fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
+        await saveJsonLocal('admin_schedule.json', sysData);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true, message: 'Xác thực thiết bị thành công!' }));
       }
@@ -608,9 +632,7 @@ const server = http.createServer(async (req, res) => {
           challenge, empCode, visitorId: visitorId || null, expiresAt: Date.now() + 5 * 60 * 1000
         };
 
-        const dataPath = path.join(__dirname, 'admin_schedule.json');
-        let sysData = { locations: [] };
-        if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
         let empName = empCode;
         sysData.locations.forEach(loc => {
           (loc.employees || []).forEach(emp => { if (emp.code === empCode) empName = emp.name; });
@@ -639,9 +661,7 @@ const server = http.createServer(async (req, res) => {
         };
 
         const allowCredentials = [];
-        const dataPath = path.join(__dirname, 'admin_schedule.json');
-        let sysData = { locations: [] };
-        if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
         sysData.locations.forEach(loc => {
           (loc.employees || []).forEach(emp => {
             if (!empCode || emp.code === empCode) {
@@ -697,9 +717,7 @@ const server = http.createServer(async (req, res) => {
       }
       delete global.localWebauthnChallenges[`reg:${empCode}`];
 
-      const dataPath = path.join(__dirname, 'admin_schedule.json');
-      let sysData = { locations: [] };
-      if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
       let updated = false;
       let empName = empCode;
 
@@ -727,7 +745,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: 'Không tìm thấy nhân viên.' }));
       }
-      fs.writeFileSync(dataPath, JSON.stringify(sysData, null, 2), 'utf8');
+      await saveJsonLocal('admin_schedule.json', sysData);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ ok: true, message: `✅ Đã đăng ký Passkey thành công cho ${empName}!` }));
     }
@@ -757,9 +775,7 @@ const server = http.createServer(async (req, res) => {
       }
       delete global.localWebauthnChallenges[challengeKey];
 
-      const dataPath = path.join(__dirname, 'admin_schedule.json');
-      let sysData = { locations: [] };
-      if (fs.existsSync(dataPath)) sysData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      let sysData = (await loadJsonLocal('admin_schedule.json')) || { locations: [] };
       let matchedEmp = null;
       let matchedCredential = null;
 
@@ -805,12 +821,17 @@ const server = http.createServer(async (req, res) => {
       // GET /data/:file — đọc file (công khai)
       if (req.method === 'GET') {
         try {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const data = await loadJsonLocal(fileName);
+          if (data === null) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'File chưa có dữ liệu' }));
+            return;
+          }
           res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
-          res.end(content);
+          res.end(JSON.stringify(data));
         } catch (e) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'File chưa có dữ liệu' }));
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: e.message }));
         }
         return;
       }
@@ -837,10 +858,7 @@ const server = http.createServer(async (req, res) => {
               try {
                 const isAdmin = await checkAdminAuthLocal(req);
                 if (!isAdmin) {
-                  let existing = [];
-                  if (fs.existsSync(filePath)) {
-                    existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-                  }
+                  let existing = await loadJsonLocal(fileName);
                   if (Array.isArray(existing)) {
                     const submittedCodes = new Set(data.map(r => r.empCode).filter(Boolean));
                     const others = existing.filter(r => !submittedCodes.has(r.empCode));
@@ -852,7 +870,7 @@ const server = http.createServer(async (req, res) => {
               }
             }
 
-            fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+            await saveJsonLocal(fileName, data);
             console.log(`  💾 Saved: ${fileName}`);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ ok: true, file: fileName }));

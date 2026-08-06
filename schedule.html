@@ -786,8 +786,8 @@
           if (data && data.locations) {
             // Kiểm tra xem data có thay đổi so với cache không (so sánh fingerprint nhân viên)
             var newCodes = [];
-            data.locations.forEach(function(loc) {
-              (loc.employees || []).forEach(function(emp) {
+            data.locations.forEach(function (loc) {
+              (loc.employees || []).forEach(function (emp) {
                 if (!newCodes.includes(emp.code)) newCodes.push(emp.code);
               });
             });
@@ -799,13 +799,13 @@
               try {
                 var cachedData = JSON.parse(cachedRaw);
                 var cachedCodes = [];
-                (cachedData.locations || []).forEach(function(loc) {
-                  (loc.employees || []).forEach(function(emp) {
+                (cachedData.locations || []).forEach(function (loc) {
+                  (loc.employees || []).forEach(function (emp) {
                     if (!cachedCodes.includes(emp.code)) cachedCodes.push(emp.code);
                   });
                 });
                 cachedFingerprint = cachedCodes.sort().join(',');
-              } catch(e) {}
+              } catch (e) { }
             }
 
             // Nếu fingerprint khác → xóa cache cũ, dùng data mới
@@ -833,7 +833,7 @@
               rebuildEmailMap();
               rebuildEmpDropdown();
             }
-          } catch(e) {}
+          } catch (e) { }
         });
 
       // Load current registered schedule data — từ server
@@ -1910,7 +1910,7 @@
             }
 
             // BƯỚC 2: Chỉ cập nhật (ghi đè) những ngày có trong daysChecked
-            var daysToUpdate = daysChecked.map(function(d) { return d.day; });
+            var daysToUpdate = daysChecked.map(function (d) { return d.day; });
             regData = regData.filter(function (x) {
               // Giữ lại ca của nhân viên khác, HOẶC ca của nhân viên này ở những ngày KHÔNG được chọn cập nhật lần này
               return !(x.empCode === empCode && daysToUpdate.includes(x.day));
@@ -1975,7 +1975,7 @@
         // Đã liên kết → hiện section, lọc theo nhân viên
         if (section) section.hidden = false;
         var empName = empMap[linkedEmpCode] || linkedEmpCode;
-        if (titleEl) titleEl.textContent = 'Lịch của ' + empName;
+        if (titleEl) titleEl.textContent = 'Lịch đã đăng ký của ' + empName;
 
         var recent = regData.slice().reverse()
           .filter(function (r) { return r.empCode === linkedEmpCode; })
