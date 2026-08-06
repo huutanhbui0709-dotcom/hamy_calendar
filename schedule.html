@@ -848,7 +848,8 @@
           payload = regData.filter(function (x) { return x.empCode === empCode; });
         }
 
-        fetch('/data/employee_registrations.json', {
+        // Trả về Promise để caller có thể chờ POST xong rồi fetch lại R2
+        return fetch('/data/employee_registrations.json', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1930,8 +1931,23 @@
 
             rebuildEmailMap(); // Cập nhật cache email
 
-            // BƯỚC 3: Lưu lên server và local
-            saveRegs(empCode);
+            // BƯỚC 3: Lưu lên server và local, sau đó fetch lại R2 để hiển thị mới nhất
+            saveRegs(empCode).then(function () {
+              return fetch('/data/employee_registrations.json?t=' + Date.now(), { cache: 'no-store' });
+            }).then(function (r) {
+              return r.json();
+            }).then(function (freshData) {
+              if (Array.isArray(freshData)) {
+                regData = freshData;
+                localStorage.setItem(REG_KEY, JSON.stringify(freshData));
+                rebuildEmailMap();
+              }
+            }).catch(function () {
+              // Nếu fetch lại thất bại vẫn dùng regData local đã cập nhật
+            }).finally(function () {
+              renderRecentList();
+              showToast('✅ Đăng ký lịch tuần thành công!');
+            });
 
             document.getElementById('success-msg').textContent = 'Đã gửi đăng ký lịch tuần thành công cho ' + empName + ' (' + empCode + ')!';
             okEl.classList.remove('hidden');
@@ -1956,9 +1972,6 @@
           container.innerHTML = '';
         });
         updateCopyButtons();
-
-        renderRecentList();
-        showToast('✅ Đăng ký lịch tuần thành công!');
       });
 
       function renderRecentList() {
