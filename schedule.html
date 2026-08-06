@@ -1932,6 +1932,33 @@
           return;
         }
 
+        // Kiểm tra trùng giờ giữa các ca trong cùng một ngày
+        var overlapDetected = false;
+        var overlapDayLabel = '';
+        for (var d = 0; d < daysChecked.length; d++) {
+          var dayInfo = daysChecked[d];
+          var ranges = dayInfo.timeRanges;
+          for (var i = 0; i < ranges.length; i++) {
+            for (var j = i + 1; j < ranges.length; j++) {
+              // So sánh chuỗi thời gian trực tiếp (ví dụ: "05:00" < "08:00")
+              if (ranges[i].start < ranges[j].end && ranges[j].start < ranges[i].end) {
+                overlapDetected = true;
+                var dl = DAYS.find(function (x) { return x.key === dayInfo.day; });
+                overlapDayLabel = dl ? dl.label : dayInfo.day;
+                break;
+              }
+            }
+            if (overlapDetected) break;
+          }
+          if (overlapDetected) break;
+        }
+
+        if (overlapDetected) {
+          errEl.textContent = 'Lỗi: Bạn không thể đăng ký các ca trùng giờ nhau trong cùng ngày ' + overlapDayLabel + '.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+
         if (daysChecked.length === 0) {
           errEl.textContent = 'Vui lòng chọn và thiết lập ít nhất 1 ngày làm việc.';
           errEl.classList.remove('hidden');
