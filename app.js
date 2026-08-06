@@ -1490,7 +1490,6 @@ window.renderDeviceManagement = function() {
         tr.innerHTML = `
           <td style="padding: 12px 16px; font-weight: 700; color: var(--ink-dark);">
             ${escapeHtml(emp.name)} <span style="font-size:11px; color: var(--ink-soft); font-weight:500;">(${emp.code})</span>
-            <div style="font-size: 11px; color: var(--primary); font-weight: 500; margin-top: 2px;">${escapeHtml(loc.name)}</div>
           </td>
           <td style="padding: 12px 16px; font-weight: 600; color: #475569;">
             ${typeIcon} ${escapeHtml(dev.deviceName || 'Thiết bị không tên')} ${typeBadge}
