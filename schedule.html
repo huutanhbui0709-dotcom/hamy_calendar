@@ -346,9 +346,8 @@
               <!-- Banner trạng thái thiết bị -->
               <div id="device-status-banner" class="hidden rounded-xl px-4 py-3 flex items-start gap-3 mb-1"
                 style="display:none!important"></div>
-
               <!-- Chọn Nhân Viên -->
-              <div>
+              <div id="select-emp-wrap">
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5"
                   for="select-emp-btn">
                   Chọn Tên Bạn (Mã nhân viên) <span class="text-red-400">*</span>
@@ -965,13 +964,17 @@
           deviceVerified = false;
           updateDeviceStatusBanner(null);
         }
-      }
-
       function updateDeviceStatusBanner(linkedEmpCode) {
         var banner = document.getElementById('device-status-banner');
+        var selectEmpWrap = document.getElementById('select-emp-wrap');
+        var emailSection = document.getElementById('email-section');
         if (!banner) return;
 
         if (linkedEmpCode && empMap[linkedEmpCode]) {
+          // Ẩn Chọn Tên và Email nếu thiết bị đã liên kết
+          if (selectEmpWrap) selectEmpWrap.classList.add('hidden');
+          if (emailSection) emailSection.classList.add('hidden');
+
           // Kiểm tra nhân viên đã có Passkey chưa
           var hasPasskey = false;
           if (sysData && sysData.locations) {
@@ -1001,25 +1004,30 @@
             '<p class="text-emerald-700 text-xs mt-0.5">Nhận diện là <span class="font-semibold">' + esc(empMap[linkedEmpCode]) + '</span>. Bạn có thể đăng ký lịch ngay.</p>' +
             passkeyNote +
             '</div>';
-        } else if (!selectEmp.value) {
-          // Thiết bị chưa liên kết — hiện thông báo cam
-          banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-orange-50 border border-orange-200';
-          banner.style.removeProperty('display');
-          banner.innerHTML =
-            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
-            '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
-            '</svg>' +
-            '<div class="text-sm">' +
-            '<p class="font-bold text-orange-800">Thiết bị chưa được liên kết</p>' +
-            '<p class="text-orange-700 text-xs mt-0.5">Chọn tên của bạn bên dưới để xác thực và liên kết thiết bị này với tài khoản.</p>' +
-            '</div>';
         } else {
-          // Đã chọn nhân viên — ẩn banner
-          banner.className = 'hidden';
-          banner.style.setProperty('display', 'none', 'important');
-        }
-      }
+          // Hiện lại Chọn nhân viên nếu chưa liên kết thiết bị
+          if (selectEmpWrap) selectEmpWrap.classList.remove('hidden');
 
+          if (!selectEmp.value) {
+            // Thiết bị chưa liên kết — hiện thông báo cam
+            if (emailSection) emailSection.classList.add('hidden');
+            banner.className = 'rounded-xl px-4 py-3 flex items-start gap-3 bg-orange-50 border border-orange-200';
+            banner.style.removeProperty('display');
+            banner.innerHTML =
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5">' +
+              '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
+              '</svg>' +
+              '<div class="text-sm">' +
+              '<p class="font-bold text-orange-800">Thiết bị chưa được liên kết</p>' +
+              '<p class="text-orange-700 text-xs mt-0.5">Chọn tên của bạn bên dưới để xác thực và liên kết thiết bị này với tài khoản.</p>' +
+              '</div>';
+          } else {
+            // Đã chọn nhân viên thủ công nhưng chưa liên kết thiết bị — ẩn banner và hiện Email
+            banner.className = 'hidden';
+            banner.style.setProperty('display', 'none', 'important');
+            showEmailSection(selectEmp.value);
+          }
+        }
       window.offerPasskeyFromBanner = function (empCode) {
         if (!window.PublicKeyCredential) {
           showToast('❌ Trình duyệt hoặc thiết bị không hỗ trợ Passkey', 'error');
