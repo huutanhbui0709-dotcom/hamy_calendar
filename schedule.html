@@ -1657,7 +1657,18 @@
 
         if (index > 0) {
           copyBtn.onclick = function () {
-            var prevDayBlock = dayBlocksMap[DAYS[index - 1].key];
+            // Tìm ngày gần nhất trước đó có tick chọn
+            var prevIdx = -1;
+            for (var i = index - 1; i >= 0; i--) {
+              var block = dayBlocksMap[DAYS[i].key];
+              if (block && block.querySelector('.day-enabled').checked) {
+                prevIdx = i;
+                break;
+              }
+            }
+            if (prevIdx === -1) return;
+
+            var prevDayBlock = dayBlocksMap[DAYS[prevIdx].key];
             if (!prevDayBlock) return;
             var prevRanges = prevDayBlock.querySelectorAll('.time-row');
             if (prevRanges.length === 0) return;
@@ -1669,7 +1680,7 @@
               addTimeRowToDay(timeRangesDiv, s, en);
             });
 
-            showToast('📋 Đã sao chép khung giờ từ ' + DAYS[index - 1].label + '!');
+            showToast('📋 Đã sao chép khung giờ từ ' + DAYS[prevIdx].label + '!');
             updateCopyButtons();
           };
         }
@@ -1682,19 +1693,31 @@
         DAYS.forEach(function (day, index) {
           if (index === 0) return;
           var currentBlock = dayBlocksMap[day.key];
-          var prevBlock = dayBlocksMap[DAYS[index - 1].key];
-          if (!currentBlock || !prevBlock) return;
+          if (!currentBlock) return;
 
           var currentChecked = currentBlock.querySelector('.day-enabled').checked;
-          var prevChecked = prevBlock.querySelector('.day-enabled').checked;
-          var prevHasRanges = prevBlock.querySelectorAll('.time-row').length > 0;
-
           var copyBtn = currentBlock.querySelector('.btn-copy-prev');
-          if (currentChecked && prevChecked && prevHasRanges) {
-            copyBtn.classList.remove('hidden');
-          } else {
-            copyBtn.classList.add('hidden');
+
+          // Tìm ngày gần nhất trước đó có tick chọn
+          var prevIdx = -1;
+          for (var i = index - 1; i >= 0; i--) {
+            var block = dayBlocksMap[DAYS[i].key];
+            if (block && block.querySelector('.day-enabled').checked) {
+              prevIdx = i;
+              break;
+            }
           }
+
+          if (currentChecked && prevIdx !== -1) {
+            var prevBlock = dayBlocksMap[DAYS[prevIdx].key];
+            var prevHasRanges = prevBlock ? prevBlock.querySelectorAll('.time-row').length > 0 : false;
+            if (prevHasRanges) {
+              copyBtn.innerHTML = '📋 Sao chép từ ' + DAYS[prevIdx].label;
+              copyBtn.classList.remove('hidden');
+              return;
+            }
+          }
+          copyBtn.classList.add('hidden');
         });
       }
 
