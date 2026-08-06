@@ -1120,6 +1120,12 @@
           return;
         }
 
+        // Nếu thiết bị đã được liên kết với nhân viên này, ẩn hẳn phần Email
+        if (linkedEmpCode && empCode === linkedEmpCode) {
+          emailSection.classList.add('hidden');
+          return;
+        }
+
         // Tìm email trực tiếp trong sysData (luôn lấy trực tiếp từ R2)
         var stored = null;
         if (sysData && sysData.locations) {
