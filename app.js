@@ -1020,25 +1020,70 @@ function renderEmployeeList() {
 
 
 function startRenameEmployee(li, loc, emp) {
-  const wrap = $('.emp-name-wrap', li);
+  const originalHtml = li.innerHTML;
   const originalName = emp.name;
   const originalEmail = emp.email || '';
   
-  wrap.innerHTML = `
-    <input type="text" class="emp-name-input" placeholder="Tên" value="${escapeHtml(originalName)}" maxlength="40" style="margin-bottom:4px; font-weight:700;">
-    <input type="email" class="emp-email-input" placeholder="Email (Tùy chọn)" value="${escapeHtml(originalEmail)}" maxlength="60" style="font-size:12px; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius:4px;">
-    <span class="emp-code" style="font-size:11px; color:#64748b; margin-top:4px;">Mã: ${emp.code}</span>
+  li.innerHTML = `
+    <div class="emp-edit-container" style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%; align-items: center; justify-content: space-between; padding: 4px 0;">
+      <div style="display: flex; gap: 10px; align-items: center; flex: 1; min-width: 240px;">
+        <span class="emp-avatar">${initials(emp.name)}</span>
+        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0;">
+          <input type="text" class="emp-name-input" placeholder="Tên nhân viên" value="${escapeHtml(originalName)}" maxlength="40" style="width: 100%; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1.5px solid var(--primary); outline: none; background: #fff;">
+          <input type="email" class="emp-email-input" placeholder="Email (Không bắt buộc)" value="${escapeHtml(originalEmail)}" maxlength="60" style="width: 100%; padding: 6px 10px; border-radius: 6px; border: 1.5px solid var(--line-strong); font-size: 12.5px; outline: none; background: #fff;">
+          <span class="emp-code" style="font-size: 11px; color:#64748b; font-weight:500;">Mã: ${emp.code}</span>
+        </div>
+      </div>
+      <div class="emp-edit-actions" style="display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-left: auto;">
+        <button class="btn-save-emp" style="padding: 7px 14px; font-size: 13px; font-weight: 700; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: opacity 0.15s;">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu
+        </button>
+        <button class="btn-cancel-emp" style="padding: 7px 14px; font-size: 13px; font-weight: 600; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: opacity 0.15s;">
+          Hủy
+        </button>
+      </div>
+    </div>
   `;
   
-  const nameInput = $('.emp-name-input', wrap);
-  const emailInput = $('.emp-email-input', wrap);
+  const nameInput = $('.emp-name-input', li);
+  const emailInput = $('.emp-email-input', li);
+  const saveBtn = $('.btn-save-emp', li);
+  const cancelBtn = $('.btn-cancel-emp', li);
+  
   nameInput.focus();
   
-  let settled = false;
+  const cancel = () => {
+    li.innerHTML = originalHtml;
+    // Gắn lại sự kiện ban đầu
+    $('[data-action="rename"]', li).addEventListener('click', () => startRenameEmployee(li, loc, emp));
+    $('[data-action="delete"]', li).addEventListener('click', () => {
+      showConfirm({
+        title: `Xoá ${emp.name}?`,
+        message: `Toàn bộ ca làm việc đã xếp cho ${emp.name} (${emp.code}) trong tuần ở tất cả các quán sẽ bị xoá theo. Hành động này không thể hoàn tác.`,
+        onConfirm: () => {
+          state.data.locations.forEach(l => {
+            l.employees = l.employees.filter(e => e.id !== emp.id);
+            DAYS.forEach(d => { delete l.schedule[d.key][emp.id]; });
+          });
+          saveData();
+          renderEmployeeList();
+          renderTable();
+          renderLocTabs();
+          showToast(`Đã xoá ${emp.name}.`);
+        }
+      });
+    });
+  };
+
   const commit = () => {
-    if (settled) return;
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
+
+    if (!name) {
+      alert('❌ Tên nhân viên không được để trống!');
+      nameInput.focus();
+      return;
+    }
 
     // Check trùng email trước khi commit
     if (email && isEmailTaken(email, emp.id)) {
@@ -1054,8 +1099,7 @@ function startRenameEmployee(li, loc, emp) {
     const isEmailChanged = originalEmail && email !== originalEmail;
 
     const proceedWithSave = () => {
-      settled = true;
-      if (name && (name !== originalName || email !== originalEmail)) {
+      if (name !== originalName || email !== originalEmail) {
         showConfirm({
           title: 'Xác nhận thay đổi',
           message: `Cập nhật thông tin nhân viên?`,
@@ -1080,10 +1124,10 @@ function startRenameEmployee(li, loc, emp) {
             renderEmployeeList(); 
             renderTable(); 
           },
-          onCancel: () => renderEmployeeList()
+          onCancel: () => cancel()
         });
       } else {
-        renderEmployeeList();
+        cancel();
       }
     };
 
@@ -1094,38 +1138,24 @@ function startRenameEmployee(li, loc, emp) {
         onConfirm: () => {
           proceedWithSave();
         },
-        onCancel: () => renderEmployeeList()
+        onCancel: () => cancel()
       });
     } else {
       proceedWithSave();
     }
   };
 
-  // Click outside or Blur logic needs to wait for either input
-  let blurTimeout;
-  const setupBlur = (el) => {
-    el.addEventListener('blur', () => {
-      clearTimeout(blurTimeout);
-      blurTimeout = setTimeout(() => {
-        // Chỉ commit khi không có input nào đang focus
-        if (document.activeElement !== nameInput && document.activeElement !== emailInput) {
-          commit();
-        }
-      }, 200);
-    });
-  };
+  saveBtn.addEventListener('click', commit);
+  cancelBtn.addEventListener('click', cancel);
 
   nameInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') commit();
-    if (e.key === 'Escape') { settled = true; renderEmployeeList(); }
+    if (e.key === 'Escape') cancel();
   });
   emailInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') commit();
-    if (e.key === 'Escape') { settled = true; renderEmployeeList(); }
+    if (e.key === 'Escape') cancel();
   });
-
-  setupBlur(nameInput);
-  setupBlur(emailInput);
 }
 
 function handleAddEmployee() {
